@@ -271,24 +271,27 @@ export default function AdminPage() {
       return;
     }
 
-    // Generate simple random access code
-    const generatedCode = 'SENA-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-
     setActionLoading(true);
     try {
-      const { error } = await supabase.from('access_codes').insert([
-        {
-          code: generatedCode,
-          assigned_email: codeEmail,
-          cohort_id: codeCohortId,
-          role: 'student',
-          status: 'unused',
-          expires_at: codeExpiry,
-        },
-      ]);
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) throw new Error('Unauthorized');
 
-      if (error) throw error;
-      showToast('Code Generated', `Code: ${generatedCode} assigned to ${codeEmail}`, 'success');
+      const res = await fetch('/api/generate-access-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          items: [{ email: codeEmail, cohortId: codeCohortId, expiry: codeExpiry }]
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to generate code.');
+
+      showToast('Code Generated', `Code generated and emailed to ${codeEmail}`, 'success');
       
       setCodeEmail('');
       setCodeExpiry('');
@@ -341,12 +344,9 @@ export default function AdminPage() {
       if (!email.includes('@')) continue;
 
       codesToInsert.push({
-        code: makeCode(),
-        assigned_email: email,
-        cohort_id: cohortId || null,
-        role: 'student',
-        status: 'unused',
-        expires_at: expiry,
+        email,
+        cohortId,
+        expiry,
       });
     }
 
@@ -357,9 +357,23 @@ export default function AdminPage() {
 
     setActionLoading(true);
     try {
-      const { error } = await supabase.from('access_codes').insert(codesToInsert);
-      if (error) throw error;
-      showToast('Import Success', `Successfully imported ${codesToInsert.length} access codes!`, 'success');
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) throw new Error('Unauthorized');
+
+      const res = await fetch('/api/generate-access-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ items: codesToInsert }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to bulk generate codes.');
+
+      showToast('Import Success', `Successfully generated and emailed ${codesToInsert.length} access codes!`, 'success');
       setBulkCsv('');
       await fetchInitialData();
     } catch (err: any) {
