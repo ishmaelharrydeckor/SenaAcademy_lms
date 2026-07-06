@@ -146,7 +146,7 @@ function EnrollForm() {
             <span className="text-[10px] font-mono uppercase tracking-widest text-primary-blue font-semibold">Cohort Admissions</span>
             <h2 className="text-xl font-bold tracking-tight text-white">Sena Academy Signup</h2>
             <p className="text-xs text-zinc-500 leading-relaxed">
-              Complete payment to secure your seat. Admissions cost is <strong className="text-zinc-300">GHS 1,500</strong>.
+              Complete payment to secure your seat. Admissions cost is <strong className="text-zinc-300">GHS 100</strong>.
             </p>
           </div>
 
@@ -205,7 +205,7 @@ function EnrollForm() {
               disabled={submitting || cohorts.length === 0}
             >
               <CreditCard className="h-4 w-4" />
-              {submitting ? 'Redirecting to checkout...' : 'Pay GHS 1,500 via Paystack'}
+              {submitting ? 'Redirecting to checkout...' : 'Pay GHS 100 via Paystack'}
             </Button>
           </form>
         </Card>

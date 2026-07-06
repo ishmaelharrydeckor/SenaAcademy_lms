@@ -8,8 +8,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required registration details' }, { status: 400 });
     }
 
-    // Cohort fee is GHS 1,500 (passed in subunits: 150000 pesewas)
-    const amountInPesewas = 1500 * 100;
+    // Cohort fee is GHS 100 (passed in subunits: 10000 pesewas)
+    const amountInPesewas = 100 * 100;
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
     console.log(`Initializing Paystack transaction for: ${email}`);
