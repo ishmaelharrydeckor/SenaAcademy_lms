@@ -360,3 +360,60 @@ create policy "Users can view and update their own notifications" on public.noti
 drop policy if exists "Admins can view all payment records" on public.payments;
 create policy "Admins can view all payment records" on public.payments
     for select using (public.get_user_role() = 'admin');
+
+--------------------------------------------------------------------------------
+-- DATA MANAGEMENT & PASSWORD RESETS UPGRADES
+--------------------------------------------------------------------------------
+-- Track deleted submission assets
+alter table public.submissions 
+  add column if not exists zip_file_deleted boolean default false not null,
+  add column if not exists pdf_file_deleted boolean default false not null;
+
+-- Safe cohort archiving
+alter table public.cohorts 
+  add column if not exists is_archived boolean default false not null;
+
+-- Password Reset Requests Table
+create table if not exists public.password_reset_requests (
+    id uuid default gen_random_uuid() primary key,
+    email text not null,
+    message text,
+    status text default 'pending' not null check (status in ('pending', 'resolved')),
+    resolved_by uuid references public.profiles(id),
+    resolved_at timestamp with time zone,
+    created_at timestamp with time zone default now() not null
+);
+
+-- Enable RLS
+alter table public.password_reset_requests enable row level security;
+
+-- Policies
+drop policy if exists "Anyone can submit password reset requests" on public.password_reset_requests;
+create policy "Anyone can submit password reset requests" on public.password_reset_requests
+    for insert with check (true);
+
+drop policy if exists "Admins can view and manage password reset requests" on public.password_reset_requests;
+create policy "Admins can view and manage password reset requests" on public.password_reset_requests
+    for all using (public.get_user_role() = 'admin');
+
+-- Safe cohort cascading database deletion transaction RPC
+create or replace function public.delete_cohort_db_cascade(target_cohort_id uuid)
+returns void as $$
+begin
+  -- 1. Delete all submissions for students in this cohort
+  delete from public.submissions
+  where student_id in (select id from public.profiles where cohort_id = target_cohort_id);
+  
+  -- 2. Delete all access codes tied to this cohort
+  delete from public.access_codes
+  where cohort_id = target_cohort_id;
+  
+  -- 3. Delete all profiles rows in this cohort (which cascades to Auth.users via metadata/triggers if set, otherwise deletes database profiles)
+  delete from public.profiles
+  where cohort_id = target_cohort_id;
+  
+  -- 4. Delete the cohort itself
+  delete from public.cohorts
+  where id = target_cohort_id;
+end;
+$$ language plpgsql security definer;

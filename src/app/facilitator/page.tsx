@@ -17,6 +17,7 @@ import {
   FileText,
   Award,
   ArrowLeft,
+  Trash2,
 } from 'lucide-react';
 
 interface SubmissionData {
@@ -33,6 +34,8 @@ interface SubmissionData {
   status: 'submitted' | 'graded' | 'resubmission_requested';
   score: number | null;
   draft_feedback_json: any | null;
+  zip_file_deleted: boolean;
+  pdf_file_deleted: boolean;
   profiles: {
     full_name: string;
     email: string;
@@ -61,6 +64,64 @@ export default function FacilitatorPage() {
   const [weaknesses, setWeaknesses] = useState('');
   const [suggestions, setSuggestions] = useState('');
   const [submittingGrade, setSubmittingGrade] = useState(false);
+
+  // File deletion states
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deletingFileType, setDeletingFileType] = useState<'zip' | 'pdf' | null>(null);
+  const [submittingDelete, setSubmittingDelete] = useState(false);
+
+  const triggerDeleteConfirm = (type: 'zip' | 'pdf') => {
+    setDeletingFileType(type);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteFileSubmit = async () => {
+    if (!activeSubmission || !deletingFileType) return;
+    setSubmittingDelete(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) throw new Error('You must be logged in to delete files.');
+
+      const res = await fetch('/api/admin/delete-file', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          submissionId: activeSubmission.id,
+          fileType: deletingFileType,
+        }),
+      });
+
+      const result = await res.json();
+      if (!res.ok) {
+        throw new Error(result.error || 'Failed to delete file from storage.');
+      }
+
+      showToast('File Deleted', result.message || 'File removed successfully.', 'success');
+
+      // Update local state for active submission
+      const updatedSub = {
+        ...activeSubmission,
+        [deletingFileType === 'zip' ? 'zip_file_url' : 'pdf_file_url']: null,
+        [deletingFileType === 'zip' ? 'zip_file_deleted' : 'pdf_file_deleted']: true,
+      };
+
+      setActiveSubmission(updatedSub);
+
+      // Update submissions list
+      setSubmissions((prev) =>
+        prev.map((s) => (s.id === activeSubmission.id ? updatedSub : s))
+      );
+      setDeleteConfirmOpen(false);
+    } catch (err: any) {
+      showToast('Error', err.message || 'An unexpected error occurred.', 'error');
+    } finally {
+      setSubmittingDelete(false);
+    }
+  };
 
   // Autosave draft references & hook
   const hasUserModified = useRef(false);
@@ -369,25 +430,57 @@ export default function FacilitatorPage() {
                 <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">Workspace Assets</span>
 
                 <div className="space-y-2.5 text-xs">
-                  {activeSubmission.zip_file_url && (
-                    <button
-                      onClick={() => handleDownload(activeSubmission.zip_file_url!)}
-                      className="w-full flex items-center gap-2.5 p-3 rounded-lg border border-zinc-900 bg-zinc-950/40 hover:bg-zinc-900/60 text-zinc-450 hover:text-zinc-200 transition-all text-left cursor-pointer"
-                    >
-                      <Download className="h-4 w-4 text-supporting-purple" />
-                      <span className="truncate">Download ZIP Archive</span>
-                    </button>
-                  )}
+                  {/* ZIP Archive handling */}
+                  {activeSubmission.zip_file_url ? (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleDownload(activeSubmission.zip_file_url!)}
+                        className="flex-1 flex items-center gap-2.5 p-3 rounded-lg border border-zinc-900 bg-zinc-950/40 hover:bg-zinc-900/60 text-zinc-450 hover:text-zinc-200 transition-all text-left cursor-pointer"
+                      >
+                        <Download className="h-4 w-4 text-supporting-purple" />
+                        <span className="truncate">Download ZIP Archive</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => triggerDeleteConfirm('zip')}
+                        className="p-3 rounded-lg border border-red-950/40 bg-red-950/10 hover:bg-red-950/30 text-red-450 hover:text-red-300 transition-all cursor-pointer flex items-center justify-center"
+                        title="Delete file from storage"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : activeSubmission.zip_file_deleted ? (
+                    <div className="p-3 rounded-lg border border-zinc-900 bg-zinc-950/20 text-zinc-650 italic text-[11px] flex items-center gap-2">
+                      <AlertCircle className="h-3.5 w-3.5 text-zinc-600" />
+                      ZIP Archive removed to save storage space.
+                    </div>
+                  ) : null}
 
-                  {activeSubmission.pdf_file_url && (
-                    <button
-                      onClick={() => handleDownload(activeSubmission.pdf_file_url!)}
-                      className="w-full flex items-center gap-2.5 p-3 rounded-lg border border-zinc-900 bg-zinc-950/40 hover:bg-zinc-900/60 text-zinc-450 hover:text-zinc-200 transition-all text-left cursor-pointer"
-                    >
-                      <FileText className="h-4 w-4 text-supporting-purple" />
-                      <span className="truncate">Download PDF Document</span>
-                    </button>
-                  )}
+                  {/* PDF Document handling */}
+                  {activeSubmission.pdf_file_url ? (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleDownload(activeSubmission.pdf_file_url!)}
+                        className="flex-1 flex items-center gap-2.5 p-3 rounded-lg border border-zinc-900 bg-zinc-950/40 hover:bg-zinc-900/60 text-zinc-450 hover:text-zinc-200 transition-all text-left cursor-pointer"
+                      >
+                        <FileText className="h-4 w-4 text-supporting-purple" />
+                        <span className="truncate">Download PDF Document</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => triggerDeleteConfirm('pdf')}
+                        className="p-3 rounded-lg border border-red-950/40 bg-red-950/10 hover:bg-red-950/30 text-red-450 hover:text-red-300 transition-all cursor-pointer flex items-center justify-center"
+                        title="Delete file from storage"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : activeSubmission.pdf_file_deleted ? (
+                    <div className="p-3 rounded-lg border border-zinc-900 bg-zinc-950/20 text-zinc-650 italic text-[11px] flex items-center gap-2">
+                      <AlertCircle className="h-3.5 w-3.5 text-zinc-600" />
+                      PDF Document removed to save storage space.
+                    </div>
+                  ) : null}
 
                   {activeSubmission.github_url && (
                     <a
@@ -607,6 +700,43 @@ export default function FacilitatorPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Delete File Confirmation Modal */}
+      {deleteConfirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
+          <Card className="w-full max-w-md border border-zinc-800 bg-zinc-950 p-6 relative">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2.5 text-error-red">
+                <AlertCircle className="h-5 w-5" />
+                <h3 className="text-lg font-bold text-white tracking-tight">Delete File from Storage?</h3>
+              </div>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                This permanently deletes the uploaded <strong>{deletingFileType === 'zip' ? 'ZIP Archive' : 'PDF Document'}</strong> from Cloudflare R2 storage. 
+                The submission record, grade, and feedback are kept — only the file itself is removed. 
+                <strong className="text-zinc-300"> This cannot be undone.</strong>
+              </p>
+
+              <div className="flex gap-3 justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => setDeleteConfirmOpen(false)}
+                  className="px-4 py-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 cursor-pointer"
+                  disabled={submittingDelete}
+                >
+                  Cancel
+                </button>
+                <Button
+                  onClick={handleDeleteFileSubmit}
+                  className="text-xs bg-error-red hover:bg-red-700 text-white"
+                  disabled={submittingDelete}
+                >
+                  {submittingDelete ? 'Deleting...' : 'Delete Permanently'}
+                </Button>
+              </div>
+            </div>
+          </Card>
         </div>
       )}
     </div>

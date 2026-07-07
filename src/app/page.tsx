@@ -7,6 +7,8 @@ import { Button, Input, Card } from '@/components/UI';
 import { Mail, Lock, Sparkles, KeyRound, User, ChevronRight, GraduationCap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import { supabase } from '@/lib/supabase';
+
 export default function LandingPage() {
   const { signIn, redeemCode, user, profile, loading } = useAuth();
   const { showToast } = useNotifications();
@@ -35,8 +37,47 @@ export default function LandingPage() {
   const [studentPassword, setStudentPassword] = useState('');
   const [validatedCodeData, setValidatedCodeData] = useState<{ email?: string; cohort_id?: string } | null>(null);
 
+  // Password Reset Modal states
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetMessage, setResetMessage] = useState('');
+  const [submittingReset, setSubmittingReset] = useState(false);
+
   // Loading indicator for actions
   const [submitting, setSubmitting] = useState(false);
+
+  const handleResetSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail.trim()) {
+      showToast('Field Error', 'Please enter your email address.', 'warning');
+      return;
+    }
+    setSubmittingReset(true);
+    try {
+      const { error } = await supabase
+        .from('password_reset_requests')
+        .insert({
+          email: resetEmail.trim(),
+          message: resetMessage.trim() || null,
+        });
+
+      if (error) {
+        showToast('Submission Failed', error.message || 'Could not submit request.', 'error');
+      } else {
+        showToast(
+          'Request Submitted',
+          'Your password reset request has been logged. An admin will review it and dispatch a reset link.',
+          'success'
+        );
+        setShowResetModal(false);
+        setResetMessage('');
+      }
+    } catch (err: any) {
+      showToast('Error', err.message || 'An unexpected error occurred.', 'error');
+    } finally {
+      setSubmittingReset(false);
+    }
+  };
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -231,9 +272,16 @@ export default function LandingPage() {
                     />
                     Remember Me
                   </label>
-                  <a href="#" className="text-xs font-medium text-primary-blue hover:underline">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setResetEmail(email);
+                      setShowResetModal(true);
+                    }}
+                    className="text-xs font-medium text-primary-blue hover:underline cursor-pointer bg-transparent border-0 p-0"
+                  >
                     Forgot Password?
-                  </a>
+                  </button>
                 </div>
 
                 <Button type="submit" className="w-full" disabled={submitting}>
@@ -366,6 +414,70 @@ export default function LandingPage() {
           )}
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {showResetModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
+          <Card className="w-full max-w-md border border-zinc-800 bg-zinc-950 p-6 relative">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-bold text-white tracking-tight">Request Password Reset</h3>
+                <p className="text-xs text-zinc-500 mt-1">
+                  Since password resets are manually approved, please submit your request below. An administrator will review it and dispatch a recovery link to your inbox.
+                </p>
+              </div>
+
+              <form onSubmit={handleResetSubmit} className="space-y-4">
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-[38px] h-4 w-4 text-zinc-500" />
+                  <Input
+                    label="Registered Email Address"
+                    id="reset-email"
+                    type="email"
+                    placeholder="name@domain.com"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                    className="pl-7"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="reset-message" className="block text-xs font-semibold text-zinc-400 mb-2">
+                    Message / Explanation (Optional)
+                  </label>
+                  <textarea
+                    id="reset-message"
+                    rows={3}
+                    placeholder="e.g. I no longer have access to my secondary email..."
+                    value={resetMessage}
+                    onChange={(e) => setResetMessage(e.target.value)}
+                    className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 text-xs text-white placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-primary-blue"
+                  />
+                </div>
+
+                <div className="flex gap-3 justify-end pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowResetModal(false)}
+                    className="px-4 py-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 cursor-pointer"
+                    disabled={submittingReset}
+                  >
+                    Cancel
+                  </button>
+                  <Button
+                    type="submit"
+                    className="text-xs bg-primary-blue hover:bg-blue-650"
+                    disabled={submittingReset}
+                  >
+                    {submittingReset ? 'Submitting...' : 'Submit Request'}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
