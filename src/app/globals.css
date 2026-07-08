@@ -104,3 +104,84 @@ body {
 .roadmap-line {
   background: linear-gradient(90deg, #22c55e 0%, #0552fe 50%, #053b85 100%);
 }
+
+/* Light mode variable overrides */
+.light {
+  --background: #F8FAFC;
+  --foreground: #021736;
+  --color-brand-bg: #F8FAFC;
+  --color-brand-card: #FFFFFF;
+  --color-brand-card-hover: #F1F5F9;
+  --color-brand-border: #E2E8F0;
+  color-scheme: light;
+}
+
+/* Specific subpage overrides for zinc classes inside light theme */
+.light .bg-zinc-950 {
+  background-color: #ffffff !important;
+}
+
+.light .bg-zinc-950\/20,
+.light .bg-zinc-950\/30,
+.light .bg-zinc-950\/40 {
+  background-color: rgba(241, 245, 249, 0.4) !important;
+}
+
+.light .bg-zinc-900\/20,
+.light .bg-zinc-900\/40 {
+  background-color: rgba(241, 245, 249, 0.6) !important;
+}
+
+.light .border-zinc-900,
+.light .border-zinc-850,
+.light .border-zinc-800 {
+  border-color: #e2e8f0 !important;
+}
+
+.light .text-zinc-100 {
+  color: #021736 !important;
+}
+
+.light .text-zinc-200 {
+  color: #1e293b !important;
+}
+
+.light .text-zinc-300 {
+  color: #334155 !important;
+}
+
+.light .text-zinc-400 {
+  color: #475569 !important;
+}
+
+.light .text-zinc-450,
+.light .text-zinc-500 {
+  color: #64748b !important;
+}
+
+.light .hover\:bg-zinc-900\/30:hover,
+.light .hover\:bg-zinc-900\/60:hover,
+.light .hover\:bg-zinc-900\/10:hover,
+.light .hover\:bg-zinc-900\/50:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* Glass panel light theme adjustments */
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(2, 23, 54, 0.08) !important;
+  color: #021736 !important;
+}
+
+.light .glass-input {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #021736 !important;
+}
+
+.light .glass-input:focus {
+  border-color: #0552FE !important;
+  box-shadow: 0 0 0 2px rgba(5, 82, 254, 0.15) !important;
+}
+

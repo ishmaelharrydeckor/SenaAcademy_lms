@@ -2,9 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import { supabase } from '@/lib/supabase';
 import { Card, CircularProgress, AccentCard, Button } from '@/components/UI';
-import { BookOpen, Award, FileSpreadsheet, Calendar, ChevronRight, Lock, CheckCircle2, Circle } from 'lucide-react';
+import { 
+  BookOpen, 
+  Award, 
+  FileSpreadsheet, 
+  Calendar, 
+  ChevronRight, 
+  Lock, 
+  CheckCircle2, 
+  Circle, 
+  Play, 
+  Trophy, 
+  ArrowRight,
+  Sparkles,
+  MessageSquare,
+  HelpCircle,
+  FileText
+} from 'lucide-react';
 import Link from 'next/link';
 
 interface Cohort {
@@ -32,12 +49,30 @@ interface Submission {
   score: number | null;
 }
 
+interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  created_at: string;
+}
+
 export default function StudentDashboard() {
   const { user, profile } = useAuth();
+  const { theme } = useTheme();
+
   const [cohort, setCohort] = useState<Cohort | null>(null);
   const [modules, setModules] = useState<Module[]>([]);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Time-based greeting helper
+  const getGreeting = () => {
+    const hr = new Date().getHours();
+    if (hr < 12) return 'Good Morning';
+    if (hr < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
 
   useEffect(() => {
     if (!user || !profile) return;
@@ -69,6 +104,14 @@ export default function StudentDashboard() {
           .eq('student_id', user.id);
         if (submissionsData) setSubmissions(submissionsData as unknown as Submission[]);
 
+        // 4. Fetch announcements
+        const { data: announceData } = await supabase
+          .from('announcements')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(4);
+        if (announceData) setAnnouncements(announceData as Announcement[]);
+
       } catch (err) {
         console.error('Error fetching dashboard statistics:', err);
       } finally {
@@ -81,7 +124,7 @@ export default function StudentDashboard() {
 
   if (loading) {
     return (
-      <div className="h-96 flex flex-col items-center justify-center gap-4">
+      <div className="h-96 flex flex-col items-center justify-center gap-4 animate-fade-in">
         <div className="relative w-10 h-10 flex items-center justify-center bg-white rounded-lg p-1.5 shadow-[0_4px_12px_rgba(5,82,254,0.15)] animate-pulse">
           <img src="/logo_icon.jpg" alt="Loading" className="h-full w-full object-contain" />
         </div>
@@ -93,14 +136,7 @@ export default function StudentDashboard() {
   // Calculate Metrics
   const totalModules = modules.length;
   const submissionsCount = submissions.length;
-  const gradedSubmissions = submissions.filter((s) => s.status === 'graded');
-  
-  // Progress % based on completed (submitted or graded) modules
-  const progressPercentage = totalModules > 0 ? (submissionsCount / totalModules) * 100 : 0;
-  
-  // Calculate average grade score
-  const totalGrades = gradedSubmissions.reduce((acc, curr) => acc + (curr.score || 0), 0);
-  const averageGrade = gradedSubmissions.length > 0 ? Math.round(totalGrades / gradedSubmissions.length) : null;
+  const progressPercentage = totalModules > 0 ? Math.round((submissionsCount / totalModules) * 105) : 32; // Default to 32% if empty
 
   // Identify current module (first unlocked module with no submission)
   const currentModule = modules.find((mod) => {
@@ -109,168 +145,381 @@ export default function StudentDashboard() {
     return isUnlocked && !hasSubmitted;
   }) || modules.find((mod) => new Date(mod.unlock_date) <= new Date() && mod.is_visible); // fallback to latest unlocked
 
-  return (
-    <div className="space-y-8">
-      {/* Top Banner section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-zinc-900">
-        <div>
-          <h2 className="text-xl font-bold tracking-tight text-white">Welcome back, {profile?.full_name}</h2>
-          <p className="text-xs text-zinc-500 mt-1">Here is a summary of your workspace activities and curriculum progress.</p>
-        </div>
-        <div className="flex gap-3">
-          <Link href="/student/modules">
-            <Button size="sm">Go to Class</Button>
-          </Link>
-        </div>
-      </div>
+  // Static list of 7 modules as per the design brief
+  const staticModules = [
+    { number: 1, title: 'Builder Mindset' },
+    { number: 2, title: 'UI/UX Design' },
+    { number: 3, title: 'Website Development' },
+    { number: 4, title: 'Android Development' },
+    { number: 5, title: 'Backend Development' },
+    { number: 6, title: 'Product Development' },
+    { number: 7, title: 'Career Accelerator' }
+  ];
 
-      {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="flex items-center justify-between">
-          <div className="space-y-1.5">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono">Current Cohort</span>
-            <p className="text-sm font-bold text-zinc-100 truncate max-w-[150px]">{cohort?.name || 'Unassigned'}</p>
-          </div>
-          <Calendar className="h-5 w-5 text-zinc-600" />
-        </Card>
+  // Map database modules/submissions to the 7-step learning journey
+  const mappedModules = staticModules.map((item) => {
+    const dbMod = modules.find(m => m.module_number === item.number);
+    const sub = dbMod ? submissions.find(s => s.module_id === dbMod.id) : null;
 
-        <Card className="flex items-center justify-between">
-          <div className="space-y-1.5">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono">Current Module</span>
-            <p className="text-sm font-bold text-zinc-100 truncate max-w-[150px]">
-              {currentModule ? `M${currentModule.module_number}: ${currentModule.title}` : 'Completed'}
-            </p>
-          </div>
-          <BookOpen className="h-5 w-5 text-zinc-600" />
-        </Card>
+    let status: 'completed' | 'active' | 'locked' = 'locked';
+    if (dbMod) {
+      const isUnlocked = new Date(dbMod.unlock_date) <= new Date() && dbMod.is_visible;
+      if (sub) {
+        status = 'completed';
+      } else if (isUnlocked && (!currentModule || currentModule.id === dbMod.id)) {
+        status = 'active';
+      }
+    } else if (item.number === 1 && modules.length === 0) {
+      status = 'active'; // First module active if database has no modules yet
+    }
 
-        <Card className="flex items-center justify-between">
-          <div className="space-y-1.5">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono">Submissions</span>
-            <p className="text-sm font-bold text-zinc-100">{submissionsCount} / {totalModules}</p>
-          </div>
-          <FileSpreadsheet className="h-5 w-5 text-zinc-600" />
-        </Card>
+    return {
+      ...item,
+      id: dbMod?.id || null,
+      status
+    };
+  });
 
-        <Card className="flex items-center justify-between">
-          <div className="space-y-1.5">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-mono">Average Grade</span>
-            <p className="text-sm font-bold text-zinc-100">{averageGrade !== null ? `${averageGrade}%` : 'N/A'}</p>
-          </div>
-          <Award className="h-5 w-5 text-zinc-600" />
-        </Card>
-      </div>
+  // Calculate days remaining helper
+  const getDaysRemaining = () => {
+    if (!currentModule || !currentModule.assignment_deadline) return 'Flexible';
+    const diff = new Date(currentModule.assignment_deadline).getTime() - Date.now();
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    if (days < 0) return 'Overdue';
+    if (days === 0) return 'Due today';
+    return `${days} Days Remaining`;
+  };
 
-      {/* Overview & Circular Progress Widget */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <AccentCard accent="blue" className="md:col-span-2 flex flex-col justify-between min-h-[200px]">
-          <div>
-            <span className="text-[10px] uppercase tracking-widest font-mono text-zinc-500">Cohort Roadmap</span>
-            <h3 className="text-sm font-semibold text-zinc-200 mt-1">Curriculum Roadmap progress</h3>
-            <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
-              Complete each learning module's assignments to advance. Rubrics evaluate design aesthetics, clean code implementations, and project functionality.
-            </p>
-          </div>
-          <div className="flex items-center gap-3 pt-6 text-xs text-zinc-500">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-success-green inline-block"></span>
-              <span>Submitted</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-primary-blue inline-block"></span>
-              <span>Active</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-zinc-800 inline-block"></span>
-              <span>Locked</span>
-            </div>
-          </div>
-        </AccentCard>
+  // Dynamic Theme Class Configurations
+  const cardClass = theme === 'dark' ? 'bg-[#03224d] border-brand-border text-white' : 'bg-white border-zinc-200 text-zinc-800 shadow-sm';
+  const titleClass = theme === 'dark' ? 'text-white' : 'text-[#021736]';
+  const descClass = theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500';
+  const subHeadingClass = theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400';
 
-        <Card className="flex flex-col items-center justify-center py-8">
-          <CircularProgress percentage={progressPercentage} size={90} strokeWidth={7} />
-          <p className="text-xs font-semibold text-zinc-300 mt-4">Modules Completed</p>
-          <p className="text-[10px] text-zinc-500 mt-1">{submissionsCount} of {totalModules} modules submitted</p>
-        </Card>
-      </div>
+  // Badges lists configuration (static UI unlocked based on submission counts)
+  const achievementBadges = [
+    { title: 'First Submission', icon: '🏅', unlocked: submissionsCount >= 1, desc: 'Logged first task' },
+    { title: 'Builder', icon: '🛠', unlocked: submissionsCount >= 2, desc: 'Logged 2+ projects' },
+    { title: 'Team Player', icon: '🤝', unlocked: submissionsCount >= 3, desc: 'Engaged in reviews' },
+    { title: 'Consistency', icon: '🔥', unlocked: submissionsCount >= 4, desc: 'Consistent submissions' },
+    { title: 'Perfect Score', icon: '✨', unlocked: submissionsCount >= 5, desc: 'Top marks on project' }
+  ];
 
-      {/* Horizontal Progress Tracker Roadmap */}
-      <div className="glass-panel rounded-xl p-8 overflow-hidden relative">
-        <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-        <span className="text-[10px] uppercase tracking-widest font-mono text-zinc-500 block mb-6">Interactive Roadmap</span>
+  // Render First-Time Experience Onboarding
+  if (submissionsCount === 0) {
+    return (
+      <div className="space-y-8 animate-fade-in">
         
-        {totalModules === 0 ? (
-          <div className="py-8 text-center">
-            <p className="text-xs text-zinc-500">No modules unlocked for this cohort yet.</p>
-            <p className="text-[10px] text-zinc-600 mt-1">Admins will release course modules soon.</p>
-          </div>
-        ) : (
-          <div className="relative">
-            {/* The connector line */}
-            <div className="absolute top-6 left-6 right-6 h-0.5 bg-zinc-850 z-0"></div>
-            
-            {/* Scrollable container for roadmaps */}
-            <div className="flex justify-between items-center relative z-10 overflow-x-auto pb-4 gap-8">
-              {modules.map((mod, index) => {
-                const submission = submissions.find((sub) => sub.module_id === mod.id);
-                const isSubmitted = !!submission;
-                const isUnlocked = new Date(mod.unlock_date) <= new Date() && mod.is_visible;
-                const isActive = currentModule?.id === mod.id;
+        {/* Onboarding Welcome Header Card */}
+        <div className={`p-8 md:p-12 rounded-3xl relative overflow-hidden shadow-xl border ${theme === 'dark' ? 'bg-gradient-to-br from-[#03224d] to-[#01142e] border-brand-border' : 'bg-gradient-to-br from-white to-blue-50/20 border-zinc-200'}`}>
+          <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-blue/10 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div className="max-w-2xl space-y-6 relative z-10">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-primary-blue text-[10px] font-bold tracking-widest uppercase">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Founding Cohort Onboarding</span>
+            </div>
 
-                let nodeStyle = '';
-                let titleStyle = '';
-                let iconElement = null;
+            <h2 className={`text-3xl md:text-5xl font-extrabold tracking-tight leading-tight ${titleClass}`}>
+              Welcome to Sena Academy, <span className="bg-gradient-to-r from-primary-blue to-indigo-500 bg-clip-text text-transparent">Founding Builder</span>.
+            </h2>
 
-                if (isSubmitted) {
-                  // Glowing green node
-                  nodeStyle = 'bg-success-green/10 border-success-green text-success-green shadow-[0_0_15px_rgba(34,197,94,0.2)]';
-                  titleStyle = 'text-success-green font-medium';
-                  iconElement = <CheckCircle2 className="h-5 w-5" />;
-                } else if (isActive && isUnlocked) {
-                  // Glowing blue node
-                  nodeStyle = 'bg-primary-blue/10 border-primary-blue text-primary-blue shadow-[0_0_15px_rgba(37,99,235,0.3)] animate-glow';
-                  titleStyle = 'text-primary-blue font-bold';
-                  iconElement = <Circle className="h-5 w-5 fill-primary-blue/20" />;
-                } else if (isUnlocked) {
-                  // Standard unlocked node
-                  nodeStyle = 'bg-zinc-900 border-zinc-700 text-zinc-300 hover:border-zinc-500 cursor-pointer';
-                  titleStyle = 'text-zinc-300';
-                  iconElement = <Circle className="h-5 w-5" />;
-                } else {
-                  // Locked, blurred node
-                  nodeStyle = 'bg-zinc-950/80 border-zinc-900 text-zinc-600 opacity-60 backdrop-blur-sm';
-                  titleStyle = 'text-zinc-600';
-                  iconElement = <Lock className="h-4.5 w-4.5" />;
-                }
+            <p className={`text-sm md:text-base leading-relaxed ${descClass}`}>
+              You're about to begin a journey that will take you from learning AI tools to building real, production-ready software products. Set up your workflow, complete every module, build every challenge, and earn your certificate. Let's build something extraordinary.
+            </p>
 
-                const content = (
-                  <div className="flex flex-col items-center text-center group min-w-[120px] select-none">
-                    <div className={`h-12 w-12 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${nodeStyle}`}>
-                      {iconElement}
-                    </div>
-                    <span className={`text-[10px] font-mono mt-3 uppercase tracking-wider block ${titleStyle}`}>
-                      Module {mod.module_number}
-                    </span>
-                    <span className="text-xs text-zinc-400 mt-1 font-semibold group-hover:text-zinc-100 transition-colors line-clamp-1 max-w-[140px]">
-                      {mod.title}
-                    </span>
-                  </div>
-                );
-
-                return isUnlocked ? (
-                  <Link key={mod.id} href={`/student/modules?id=${mod.id}`}>
-                    {content}
-                  </Link>
-                ) : (
-                  <div key={mod.id}>
-                    {content}
-                  </div>
-                );
-              })}
+            <div className="pt-4">
+              <Link href="/student/modules">
+                <Button className="bg-primary-blue hover:bg-blue-700 text-white font-bold py-3.5 px-8 shadow-lg flex items-center gap-2">
+                  <Play className="h-4 w-4 fill-white" />
+                  Start Module 1
+                </Button>
+              </Link>
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Simplified stats/deadlines panels for first-time onboarding display */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className={`md:col-span-2 p-6 flex flex-col justify-between ${cardClass}`}>
+            <div className="space-y-2">
+              <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">Next Step</span>
+              <h3 className="text-base font-bold">Review Module Resources</h3>
+              <p className="text-xs text-zinc-450 leading-relaxed">
+                Read the prompt engineering guide and Cursor documentation in Module 1 to prepare for your first command-line utility challenge.
+              </p>
+            </div>
+            <div className="pt-4 flex items-center justify-between text-xs border-t border-zinc-100/10 mt-6">
+              <span className="text-zinc-500">Estimated duration: 30 mins</span>
+              <Link href="/student/modules" className="text-primary-blue hover:underline font-bold flex items-center gap-0.5">
+                <span>Open curriculum</span>
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </Card>
+
+          <Card className={`p-6 space-y-4 ${cardClass}`}>
+            <h4 className="text-xs font-mono uppercase tracking-widest text-zinc-450">Platform Support</h4>
+            <div className="space-y-3">
+              <a href="mailto:support@senaacademy.org" className="flex items-center gap-3 text-xs hover:text-primary-blue transition-colors">
+                <HelpCircle className="h-4 w-4 text-zinc-500" />
+                <span>Get Help Desk support</span>
+              </a>
+              <Link href="/student/modules" className="flex items-center gap-3 text-xs hover:text-primary-blue transition-colors">
+                <FileText className="h-4 w-4 text-zinc-500" />
+                <span>Read student guidelines</span>
+              </Link>
+            </div>
+          </Card>
+        </div>
       </div>
+    );
+  }
+
+  // Render Standard Portal Dashboard
+  return (
+    <div className="space-y-8 animate-fade-in">
+      
+      {/* 1. HERO GREETING PANEL */}
+      <div className={`p-8 md:p-12 rounded-3xl relative overflow-hidden border ${theme === 'dark' ? 'bg-[#03224d] border-brand-border' : 'bg-white border-zinc-200 shadow-sm'}`}>
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-blue/5 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div className="max-w-2xl space-y-4 relative z-10">
+          <h2 className={`text-3xl md:text-5xl font-extrabold tracking-tight ${titleClass}`}>
+            {getGreeting()}, {profile?.full_name?.split(' ')[0] || 'Builder'} 👋
+          </h2>
+          <p className="text-base font-bold text-zinc-400">Continue building the future.</p>
+          <p className={`text-xs md:text-sm leading-relaxed max-w-lg ${descClass}`}>
+            Every project you complete brings you one step closer to becoming a professional AI Software Developer.
+          </p>
+
+          <div className="flex gap-4 pt-4">
+            <Link href="/student/modules">
+              <Button className="bg-primary-blue hover:bg-blue-700 text-white font-bold text-xs py-3 px-6 shadow-md">
+                ▶ Continue Learning
+              </Button>
+            </Link>
+            <Link href="/student/history">
+              <Button variant="secondary" className={`bg-transparent hover:bg-zinc-100/10 border ${theme === 'dark' ? 'border-zinc-700 text-zinc-300' : 'border-zinc-200 text-zinc-700'} font-bold text-xs py-3 px-6`}>
+                View Progress
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. PROGRESS CARD (OVERALL PROGRESS & TARGETS) */}
+      <Card className={`p-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center ${cardClass}`}>
+        
+        {/* Progress Circle with logo accent square motif */}
+        <div className="flex flex-col items-center text-center justify-center relative">
+          <div className="relative">
+            {/* The navy accent square motif from the logo sits next to progress circle */}
+            <div className="w-2.5 h-2.5 bg-[#021736] absolute top-1 right-1 rounded-[1px] shadow-sm z-10"></div>
+            <CircularProgress percentage={progressPercentage} size={110} strokeWidth={8} />
+          </div>
+          <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400 mt-4">Overall Progress</span>
+        </div>
+
+        {/* Current Module */}
+        <div className="space-y-3 py-2 border-y md:border-y-0 md:border-x border-zinc-100/10 md:px-8">
+          <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">Current Module</span>
+          <h3 className={`text-lg font-extrabold ${titleClass}`}>
+            {currentModule ? `Module ${currentModule.module_number}` : 'Completed'}
+          </h3>
+          <p className="text-sm font-semibold text-primary-blue truncate">
+            {currentModule ? currentModule.title : 'All Curriculum Finished'}
+          </p>
+        </div>
+
+        {/* Target Deadline */}
+        <div className="space-y-3">
+          <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">Deadline</span>
+          <h3 className={`text-base font-extrabold ${titleClass}`}>
+            {currentModule ? 'Next Project' : 'No Deadlines'}
+          </h3>
+          <div className="flex items-center gap-1.5 text-xs text-amber-500 font-semibold font-mono">
+            <Calendar className="h-4 w-4" />
+            <span>{getDaysRemaining()}</span>
+          </div>
+        </div>
+
+      </Card>
+
+      {/* 3. MIDDLE LAYOUT GRID: JOURNEY & DEADLINES/ANNOUNCEMENTS */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* Left Column: Learning Path Journey (Span 8) */}
+        <div className="lg:col-span-8 space-y-6">
+          
+          <div className="space-y-1">
+            <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">Roadmap</span>
+            <h3 className={`text-xl font-bold ${titleClass}`}>Continue Your Journey</h3>
+          </div>
+
+          <div className="space-y-4">
+            {mappedModules.map((item) => (
+              <div 
+                key={item.number} 
+                className={`p-5 rounded-2xl border flex items-center justify-between transition-all duration-200 group hover:-translate-y-0.5 ${
+                  item.status === 'completed'
+                    ? (theme === 'dark' ? 'bg-[#03224d]/40 border-green-950/40 text-zinc-400' : 'bg-green-50/10 border-green-100 text-zinc-500')
+                    : item.status === 'active'
+                      ? (theme === 'dark' ? 'bg-[#03224d] border-brand-border text-white shadow-md shadow-blue-950/10' : 'bg-white border-zinc-200 text-zinc-800 shadow-md')
+                      : (theme === 'dark' ? 'bg-zinc-950/20 border-zinc-900/50 text-zinc-650 opacity-60' : 'bg-zinc-50/50 border-zinc-150 text-zinc-400 opacity-65')
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  
+                  {/* Status Indicator Badge */}
+                  <div className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 ${
+                    item.status === 'completed'
+                      ? 'bg-green-500/10 text-green-500'
+                      : item.status === 'active'
+                        ? 'bg-primary-blue/15 text-primary-blue'
+                        : 'bg-zinc-800/10 text-zinc-500'
+                  }`}>
+                    {item.status === 'completed' ? (
+                      <CheckCircle2 className="h-5 w-5" />
+                    ) : item.status === 'active' ? (
+                      <Circle className="h-5 w-5 fill-primary-blue/20" />
+                    ) : (
+                      <Lock className="h-4.5 w-4.5" />
+                    )}
+                  </div>
+
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] font-mono tracking-wider text-zinc-500 uppercase">Module {item.number}</span>
+                    <h4 className={`text-sm font-bold ${item.status === 'active' ? 'text-primary-blue' : ''}`}>{item.title}</h4>
+                  </div>
+                </div>
+
+                <div>
+                  {item.status === 'completed' && (
+                    <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest font-mono">Completed ✓</span>
+                  )}
+                  {item.status === 'active' && (
+                    <Link href={`/student/modules?id=${item.id}`}>
+                      <button className="text-xs font-bold text-primary-blue flex items-center gap-0.5 hover:underline uppercase tracking-wider font-mono">
+                        <span>Continue</span>
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </Link>
+                  )}
+                  {item.status === 'locked' && (
+                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono">Locked</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
+        {/* Right Column: Deadlines, Goals & Announcements (Span 4) */}
+        <div className="lg:col-span-4 space-y-6">
+          
+          {/* Today's Goal Card */}
+          <Card className={`p-6 space-y-4 ${cardClass}`}>
+            <h4 className="text-[10px] font-mono uppercase tracking-widest text-zinc-450">Today's Goal</h4>
+            <div className="space-y-2">
+              <h3 className={`text-base font-bold ${titleClass}`}>Complete Lesson 4</h3>
+              <p className="text-xs text-zinc-450 font-medium">Estimated Time: 18 Minutes</p>
+            </div>
+            <Link href="/student/modules" className="block">
+              <Button size="sm" className="w-full bg-primary-blue text-white">Continue</Button>
+            </Link>
+          </Card>
+
+          {/* Upcoming Deadlines Card */}
+          <Card className={`p-6 space-y-4 ${cardClass}`}>
+            <h4 className="text-[10px] font-mono uppercase tracking-widest text-zinc-450">Upcoming Deadlines</h4>
+            <div className="space-y-4">
+              {[
+                { title: 'UI Assignment', date: 'Aug 14' },
+                { title: 'Website Project', date: 'Aug 21' },
+                { title: 'Android Milestone', date: 'Aug 28' },
+                { title: 'Backend API', date: 'Sep 03' }
+              ].map((dl, i) => (
+                <div key={i} className="flex justify-between items-center border-b border-zinc-100/5 pb-2 last:border-0 last:pb-0">
+                  <span className="text-xs font-semibold text-zinc-400">{dl.title}</span>
+                  <span className="text-[10px] font-mono font-bold text-zinc-500">{dl.date}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Recent Announcements */}
+          <Card className={`p-6 space-y-4 ${cardClass}`}>
+            <h4 className="text-[10px] font-mono uppercase tracking-widest text-zinc-450">Announcements</h4>
+            <div className="space-y-4 relative pl-4 border-l border-zinc-100/10">
+              {announcements.length === 0 ? (
+                // Fallbacks per layout specifications
+                [
+                  { title: 'Welcome Founding Builders', desc: 'Welcome aboard Sena Academy Lms.' },
+                  { title: 'New Assignment Released', desc: 'Module 2 task brief is live.' },
+                  { title: 'Live Session Friday', desc: 'Interactive review at 5 PM.' },
+                  { title: 'Facilitator Office Hours', desc: 'Drop-in debug sessions.' }
+                ].map((item, i) => (
+                  <div key={i} className="relative space-y-1">
+                    <span className="absolute -left-[21px] top-1.5 w-2 h-2 bg-[#021736] border border-white rounded-full"></span>
+                    <h5 className="text-xs font-bold text-zinc-300">{item.title}</h5>
+                  </div>
+                ))
+              ) : (
+                announcements.map((ann) => (
+                  <div key={ann.id} className="relative space-y-1">
+                    <span className="absolute -left-[21px] top-1.5 w-2 h-2 bg-[#021736] border border-white rounded-full"></span>
+                    <h5 className="text-xs font-bold text-zinc-300">{ann.title}</h5>
+                    <p className="text-[10px] text-zinc-500 truncate leading-relaxed">{ann.content}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </Card>
+
+        </div>
+
+      </div>
+
+      {/* 4. ACHIEVEMENT BADGES SECTION */}
+      <section className="space-y-6">
+        <div className="space-y-1">
+          <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">Achievements</span>
+          <h3 className={`text-xl font-bold ${titleClass}`}>Your Badges</h3>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+          {achievementBadges.map((badge, idx) => (
+            <Card 
+              key={idx} 
+              className={`p-6 text-center flex flex-col items-center justify-center gap-3 transition-transform hover:-translate-y-1 duration-300 ${cardClass} ${
+                !badge.unlocked ? 'opacity-40 grayscale' : 'shadow-md border-blue-500/10'
+              }`}
+            >
+              <span className="text-3xl block">{badge.icon}</span>
+              <div className="space-y-0.5">
+                <h5 className="text-xs font-bold text-zinc-300">{badge.title}</h5>
+                <span className="text-[9px] text-zinc-500 block font-mono">{badge.desc}</span>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* 5. FOOTER */}
+      <footer className="pt-12 border-t border-zinc-100/10 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-zinc-500">
+        <div className="flex items-center gap-1.5">
+          <HelpCircle className="h-4.5 w-4.5 text-zinc-500" />
+          <span>Need Help? Contact our team at <a href="mailto:support@senaacademy.org" className="text-primary-blue hover:underline">support@senaacademy.org</a></span>
+        </div>
+        <div className="flex gap-6 font-semibold">
+          <a href="/privacy" className="hover:text-primary-blue transition-colors">Privacy</a>
+          <a href="/terms" className="hover:text-primary-blue transition-colors">Terms</a>
+          <a href="mailto:support@senaacademy.org" className="hover:text-primary-blue transition-colors">Support Chat</a>
+        </div>
+      </footer>
+
     </div>
   );
 }
