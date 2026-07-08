@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Card, Button, Input, LoadingScreen } from '@/components/UI';
 import { CreditCard, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { useTheme } from '@/context/ThemeContext';
 
 interface Cohort {
   id: string;
@@ -88,14 +89,22 @@ function EnrollForm() {
     return <LoadingScreen message="Loading checkout info..." />;
   }
 
+  const { theme } = useTheme();
+
   // Success Landing State (Returned from Paystack)
   if (reference) {
     return (
-      <main className="min-h-screen bg-black text-zinc-100 flex flex-col justify-center items-center p-4 relative overflow-hidden">
+      <main className={`min-h-screen flex flex-col justify-center items-center p-4 relative overflow-hidden transition-colors duration-250 ${
+        theme === 'dark' ? 'bg-[#021736] text-zinc-100' : 'bg-[#F8FAFC] text-zinc-800'
+      }`}>
         {/* Glow ambient background */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-blue/10 blur-[100px] rounded-full pointer-events-none"></div>
+        {theme === 'dark' && (
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-blue/10 blur-[100px] rounded-full pointer-events-none"></div>
+        )}
 
-        <Card className="max-w-md w-full text-center p-8 space-y-6 relative overflow-hidden border-zinc-800">
+        <Card className={`max-w-md w-full text-center p-8 space-y-6 relative overflow-hidden ${
+          theme === 'dark' ? 'border-zinc-800' : 'border-zinc-200'
+        }`}>
           <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-success-green/20 to-transparent"></div>
           
           <div className="mx-auto w-12 h-12 rounded-full bg-success-green/10 flex items-center justify-center">
@@ -103,15 +112,15 @@ function EnrollForm() {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-bold tracking-tight text-white">Payment Received!</h2>
+            <h2 className={`text-xl font-bold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#021736]'}`}>Payment Received!</h2>
             <p className="text-xs text-zinc-400 leading-relaxed">
               Your transaction reference is <code className="text-zinc-300 font-mono text-[11px]">{reference}</code>.
             </p>
           </div>
 
-          <div className="bg-zinc-950/60 border border-zinc-900 rounded-lg p-4 text-left text-xs text-zinc-400 space-y-2">
-            <p className="font-semibold text-zinc-200">What happens next?</p>
-            <ul className="list-disc pl-4 space-y-1 text-zinc-500">
+          <div className={`${theme === 'dark' ? 'bg-zinc-950/60 border border-zinc-900' : 'bg-zinc-100/50 border border-zinc-200'} rounded-lg p-4 text-left text-xs text-zinc-405 space-y-2`}>
+            <p className={`font-semibold ${theme === 'dark' ? 'text-zinc-200' : 'text-zinc-800'}`}>What happens next?</p>
+            <ul className="list-disc pl-4 space-y-1 text-zinc-550">
               <li>Paystack verifies the transaction.</li>
               <li>An access code (SENA-XXXX-XXXX) is generated.</li>
               <li>The code will be sent to your email inbox (and spam folder) within 5 minutes.</li>
@@ -130,18 +139,24 @@ function EnrollForm() {
 
   // Payment Form Screen
   return (
-    <main className="min-h-screen bg-black text-zinc-100 flex flex-col justify-center items-center p-4 relative overflow-hidden">
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-blue/10 blur-[100px] rounded-full pointer-events-none"></div>
+    <main className={`min-h-screen flex flex-col justify-center items-center p-4 relative overflow-hidden transition-colors duration-250 ${
+      theme === 'dark' ? 'bg-[#021736] text-zinc-100' : 'bg-[#F8FAFC] text-zinc-800'
+    }`}>
+      {theme === 'dark' && (
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-blue/10 blur-[100px] rounded-full pointer-events-none"></div>
+      )}
 
       <div className="max-w-md w-full space-y-4 relative">
         <button
           onClick={() => router.push('/')}
-          className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
+          className={`flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer ${
+            theme === 'dark' ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-700'
+          }`}
         >
           <ArrowLeft className="h-3 w-3" /> Back
         </button>
 
-        <Card className="p-6 sm:p-8 space-y-5 border-zinc-800">
+        <Card className={`p-6 sm:p-8 space-y-5 ${theme === 'dark' ? 'border-zinc-800' : 'border-zinc-200'}`}>
           <div className="space-y-1.5">
             <span className="text-[10px] font-mono uppercase tracking-widest text-primary-blue font-semibold">Cohort Admissions</span>
             <h2 className="text-xl font-bold tracking-tight text-white">Sena Academy Signup</h2>
