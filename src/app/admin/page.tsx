@@ -118,6 +118,10 @@ export default function AdminPage() {
   // Password reset action state
   const [resolvingReqId, setResolvingReqId] = useState<string | null>(null);
 
+  // Site settings state
+  const [whatsappMemberCountInput, setWhatsappMemberCountInput] = useState('238');
+  const [savingSettings, setSavingSettings] = useState(false);
+
   // --- FORM STATES ---
   // Cohort Form
   const [cohortName, setCohortName] = useState('');
@@ -221,6 +225,20 @@ export default function AdminPage() {
         .select('*')
         .order('created_at', { ascending: false });
       if (resetReqData) setResetRequests(resetReqData as PasswordResetRequest[]);
+
+      // Fetch site settings
+      try {
+        const { data: settingData } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'whatsapp_member_count')
+          .maybeSingle();
+        if (settingData?.value) {
+          setWhatsappMemberCountInput(settingData.value);
+        }
+      } catch (err) {
+        console.warn('site_settings query warning:', err);
+      }
 
     } catch (err: any) {
       showToast('Error', 'Failed to retrieve admin details: ' + err.message, 'error');
@@ -400,6 +418,29 @@ export default function AdminPage() {
       showToast('Action Failed', err.message || 'Could not resolve password reset request.', 'error');
     } finally {
       setResolvingReqId(null);
+    }
+  };
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!whatsappMemberCountInput.trim()) {
+      showToast('Validation Error', 'Please enter a valid count.', 'warning');
+      return;
+    }
+
+    setSavingSettings(true);
+    try {
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert([{ key: 'whatsapp_member_count', value: whatsappMemberCountInput.trim() }], { onConflict: 'key' });
+
+      if (error) throw error;
+      showToast('Settings Updated', 'WhatsApp member count successfully updated.', 'success');
+      await fetchInitialData();
+    } catch (err: any) {
+      showToast('Update Failed', err.message || 'Could not save settings.', 'error');
+    } finally {
+      setSavingSettings(false);
     }
   };
 
@@ -718,11 +759,11 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="h-96 flex flex-col items-center justify-center gap-3">
-        <div className="relative w-8 h-8 border-2 border-zinc-800 rounded-full">
-          <div className="absolute w-8 h-8 border-2 border-t-primary-blue border-r-supporting-purple rounded-full animate-spin"></div>
+      <div className="h-96 flex flex-col items-center justify-center gap-4">
+        <div className="relative w-10 h-10 flex items-center justify-center bg-white rounded-lg p-1.5 shadow-[0_4px_12px_rgba(5,82,254,0.15)] animate-pulse">
+          <img src="/logo_icon.jpg" alt="Loading" className="h-full w-full object-contain" />
         </div>
-        <p className="text-xs text-zinc-500 uppercase tracking-widest">Loading control panels...</p>
+        <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Loading control panels...</p>
       </div>
     );
   }
@@ -1838,6 +1879,42 @@ export default function AdminPage() {
                 </Button>
               </div>
             </div>
+          </Card>
+
+          <Card className="space-y-4">
+            <div className="flex items-center gap-2.5">
+              <Megaphone className="h-5 w-5 text-supporting-purple" />
+              <div>
+                <h4 className="text-sm font-bold text-zinc-200">WhatsApp Community Settings</h4>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Configure the manually-declared WhatsApp group member count displayed on the public landing page.</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleSaveSettings} className="space-y-4 pt-2">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-zinc-400" htmlFor="whatsapp-member-count-input">
+                  WhatsApp Member Count (Display Value)
+                </label>
+                <input
+                  id="whatsapp-member-count-input"
+                  type="text"
+                  placeholder="e.g. 238"
+                  value={whatsappMemberCountInput}
+                  onChange={(e) => setWhatsappMemberCountInput(e.target.value)}
+                  className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950/80 border border-zinc-900 focus:outline-none focus:ring-1 focus:ring-primary-blue"
+                />
+              </div>
+
+              <div className="pt-2">
+                <Button
+                  type="submit"
+                  className="w-full sm:w-auto text-xs bg-primary-blue hover:bg-blue-650"
+                  disabled={savingSettings}
+                >
+                  {savingSettings ? 'Saving...' : 'Save Settings'}
+                </Button>
+              </div>
+            </form>
           </Card>
         </div>
       )}

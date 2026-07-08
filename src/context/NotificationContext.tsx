@@ -186,7 +186,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                 <span className="w-2.5 h-2.5 rounded-full bg-success-green inline-block shadow-[0_0_8px_#22c55e]"></span>
               )}
               {toast.type === 'info' && (
-                <span className="w-2.5 h-2.5 rounded-full bg-primary-blue inline-block shadow-[0_0_8px_#2563eb]"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-primary-blue inline-block shadow-[0_0_8px_#0552fe]"></span>
               )}
               {toast.type === 'warning' && (
                 <span className="w-2.5 h-2.5 rounded-full bg-warning-orange inline-block shadow-[0_0_8px_#f59e0b]"></span>

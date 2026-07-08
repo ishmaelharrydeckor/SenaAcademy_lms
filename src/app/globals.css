@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-bg: #09090b;
-  --color-brand-card: #18181b;
-  --color-brand-card-hover: #222226;
-  --color-brand-border: #27272a;
-  --color-brand-border-focus: #3f3f46;
+  --color-brand-bg: #021736;
+  --color-brand-card: #03224d;
+  --color-brand-card-hover: #042c63;
+  --color-brand-border: #053b85;
+  --color-brand-border-focus: #0751b8;
   
-  --color-primary-blue: #2563eb;
-  --color-primary-blue-glow: rgba(37, 99, 235, 0.15);
+  --color-primary-blue: #0552FE;
+  --color-primary-blue-glow: rgba(5, 82, 254, 0.15);
   
   --color-supporting-purple: #7c3aed;
   --color-supporting-purple-glow: rgba(124, 58, 237, 0.15);
@@ -25,10 +25,10 @@
 
 @keyframes glow {
   from {
-    box-shadow: 0 0 4px rgba(37, 99, 235, 0.2), 0 0 10px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 4px rgba(5, 82, 254, 0.2), 0 0 10px rgba(5, 82, 254, 0.1);
   }
   to {
-    box-shadow: 0 0 8px rgba(37, 99, 235, 0.4), 0 0 20px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 0 8px rgba(5, 82, 254, 0.4), 0 0 20px rgba(5, 82, 254, 0.2);
   }
 }
 
@@ -49,7 +49,7 @@
 }
 
 :root {
-  --background: #09090b;
+  --background: #021736;
   --foreground: #f4f4f5;
   color-scheme: dark;
 }
@@ -68,39 +68,39 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: #021736;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: #053b85;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #0751b8;
 }
 
 /* Glassmorphism utility */
 .glass-panel {
-  background: rgba(24, 24, 27, 0.7);
+  background: rgba(3, 34, 77, 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .glass-input {
-  background: rgba(9, 9, 11, 0.6);
+  background: rgba(2, 23, 54, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-input:focus {
-  border-color: rgba(37, 99, 235, 0.6);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  border-color: rgba(5, 82, 254, 0.6);
+  box-shadow: 0 0 0 2px rgba(5, 82, 254, 0.2);
   outline: none;
 }
 
 /* Roadmap line gradient background */
 .roadmap-line {
-  background: linear-gradient(90deg, #22c55e 0%, #2563eb 50%, #27272a 100%);
+  background: linear-gradient(90deg, #22c55e 0%, #0552fe 50%, #053b85 100%);
 }

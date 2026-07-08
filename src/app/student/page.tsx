@@ -81,11 +81,11 @@ export default function StudentDashboard() {
 
   if (loading) {
     return (
-      <div className="h-96 flex flex-col items-center justify-center gap-3">
-        <div className="relative w-8 h-8 border-2 border-zinc-800 rounded-full">
-          <div className="absolute w-8 h-8 border-2 border-t-primary-blue border-r-supporting-purple rounded-full animate-spin"></div>
+      <div className="h-96 flex flex-col items-center justify-center gap-4">
+        <div className="relative w-10 h-10 flex items-center justify-center bg-white rounded-lg p-1.5 shadow-[0_4px_12px_rgba(5,82,254,0.15)] animate-pulse">
+          <img src="/logo_icon.jpg" alt="Loading" className="h-full w-full object-contain" />
         </div>
-        <p className="text-xs text-zinc-500 uppercase tracking-widest">Loading Dashboard details...</p>
+        <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Loading Dashboard details...</p>
       </div>
     );
   }

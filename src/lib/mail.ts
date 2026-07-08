@@ -28,14 +28,14 @@ export async function sendAccessCodeEmail(
       subject: `Sena Academy Enrollment: Your Access Code for ${cohortName}`,
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 580px; margin: 0 auto; padding: 32px 24px; border: 1px solid #e4e4e7; border-radius: 12px; background-color: #ffffff; color: #18181b;">
-          <h2 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-top: 0; margin-bottom: 8px;">Welcome to Sena Academy!</h2>
+          <h2 style="font-size: 20px; font-weight: 700; color: #021736; margin-top: 0; margin-bottom: 8px;">Welcome to Sena Academy!</h2>
           <p style="font-size: 13px; color: #52525b; line-height: 1.5; margin-bottom: 24px;">
             Hi ${studentName},<br/><br/>
             Thank you for completing your payment. Your enrollment for <strong>${cohortName}</strong> is verified. Below is your unique registration access code:
           </p>
           
           <div style="padding: 16px; border-radius: 8px; background-color: #f4f4f5; text-align: center; margin-bottom: 24px; border: 1px solid #e4e4e7;">
-            <code style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 18px; font-weight: 750; letter-spacing: 1.5px; color: #2563eb; user-select: all;">${accessCode}</code>
+            <code style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 18px; font-weight: 750; letter-spacing: 1.5px; color: #0552fe; user-select: all;">${accessCode}</code>
           </div>
 
           <p style="font-size: 13px; color: #52525b; line-height: 1.5; margin-bottom: 24px;">
@@ -43,7 +43,7 @@ export async function sendAccessCodeEmail(
           </p>
 
           <div style="text-align: center; margin-bottom: 32px;">
-            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}" style="display: inline-block; padding: 12px 24px; font-size: 13px; font-weight: 650; text-decoration: none; color: #ffffff; background-color: #2563eb; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.1), 0 2px 4px -1px rgba(37,99,235,0.06);">
+            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}" style="display: inline-block; padding: 12px 24px; font-size: 13px; font-weight: 650; text-decoration: none; color: #ffffff; background-color: #0552fe; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(5,82,254,0.1), 0 2px 4px -1px rgba(5,82,254,0.06);">
               Activate Account
             </a>
           </div>
@@ -78,21 +78,21 @@ export async function sendPasswordResetEmail(
       subject: 'Sena Academy: Reset Your Password',
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 580px; margin: 0 auto; padding: 32px 24px; border: 1px solid #e4e4e7; border-radius: 12px; background-color: #ffffff; color: #18181b;">
-          <h2 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-top: 0; margin-bottom: 8px;">Password Reset Request</h2>
+          <h2 style="font-size: 20px; font-weight: 700; color: #021736; margin-top: 0; margin-bottom: 8px;">Password Reset Request</h2>
           <p style="font-size: 13px; color: #52525b; line-height: 1.5; margin-bottom: 24px;">
             Hello,<br/><br/>
             An administrator has approved your password reset request. Click the button below to choose a new password:
           </p>
           
           <div style="text-align: center; margin-bottom: 32px; margin-top: 24px;">
-            <a href="${resetLink}" style="display: inline-block; padding: 12px 24px; font-size: 13px; font-weight: 650; text-decoration: none; color: #ffffff; background-color: #2563eb; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.1), 0 2px 4px -1px rgba(37,99,235,0.06);">
+            <a href="${resetLink}" style="display: inline-block; padding: 12px 24px; font-size: 13px; font-weight: 650; text-decoration: none; color: #ffffff; background-color: #0552fe; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(5,82,254,0.1), 0 2px 4px -1px rgba(5,82,254,0.06);">
               Reset Password
             </a>
           </div>
 
           <p style="font-size: 11px; color: #71717a; line-height: 1.5; margin-bottom: 24px;">
             If the button doesn't work, copy and paste this link into your browser: <br/>
-            <a href="${resetLink}" style="color: #2563eb; word-break: break-all;">${resetLink}</a>
+            <a href="${resetLink}" style="color: #0552fe; word-break: break-all;">${resetLink}</a>
           </p>
 
           <hr style="border: 0; border-top: 1px solid #e4e4e7; margin: 24px 0;" />
@@ -126,7 +126,7 @@ export async function sendFacilitatorOnboardingEmail(
       subject: 'Sena Academy: Facilitator Account Created',
       html: `
         <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 580px; margin: 0 auto; padding: 32px 24px; border: 1px solid #e4e4e7; border-radius: 12px; background-color: #ffffff; color: #18181b;">
-          <h2 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-top: 0; margin-bottom: 8px;">Welcome to Sena Academy, ${name}!</h2>
+          <h2 style="font-size: 20px; font-weight: 700; color: #021736; margin-top: 0; margin-bottom: 8px;">Welcome to Sena Academy, ${name}!</h2>
           <p style="font-size: 13px; color: #52525b; line-height: 1.5; margin-bottom: 24px;">
             Hello ${name},<br/><br/>
             An administrator has created a **Facilitator** account for you on the Sena Academy Learning Portal. 
@@ -134,14 +134,14 @@ export async function sendFacilitatorOnboardingEmail(
           </p>
           
           <div style="text-align: center; margin-bottom: 32px; margin-top: 24px;">
-            <a href="${setupLink}" style="display: inline-block; padding: 12px 24px; font-size: 13px; font-weight: 650; text-decoration: none; color: #ffffff; background-color: #2563eb; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.1), 0 2px 4px -1px rgba(37,99,235,0.06);">
+            <a href="${setupLink}" style="display: inline-block; padding: 12px 24px; font-size: 13px; font-weight: 650; text-decoration: none; color: #ffffff; background-color: #0552fe; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(5,82,254,0.1), 0 2px 4px -1px rgba(5,82,254,0.06);">
               Activate Account
             </a>
           </div>
 
           <p style="font-size: 11px; color: #71717a; line-height: 1.5; margin-bottom: 24px;">
             If the button doesn't work, copy and paste this link into your browser: <br/>
-            <a href="${setupLink}" style="color: #2563eb; word-break: break-all;">${setupLink}</a>
+            <a href="${setupLink}" style="color: #0552fe; word-break: break-all;">${setupLink}</a>
           </p>
 
           <hr style="border: 0; border-top: 1px solid #e4e4e7; margin: 24px 0;" />

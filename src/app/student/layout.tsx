@@ -51,16 +51,16 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   ];
 
   return (
-    <div className="min-h-screen flex bg-zinc-950 text-zinc-100 relative">
+    <div className="min-h-screen flex bg-brand-bg text-zinc-100 relative">
       {/* Background radial highlights */}
       <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-primary-blue/5 rounded-full blur-3xl pointer-events-none"></div>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 border-r border-zinc-900 bg-zinc-950 p-6 justify-between shrink-0">
+      <aside className="hidden md:flex flex-col w-64 border-r border-brand-border bg-brand-bg p-6 justify-between shrink-0">
         <div className="space-y-8">
           <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-primary-blue to-supporting-purple flex items-center justify-center">
-              <GraduationCap className="h-4.5 w-4.5 text-white" />
+            <div className="h-8 w-8 rounded-lg bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm">
+              <img src="/logo_icon.jpg" alt="Sena Logo Icon" className="h-full w-full object-contain" />
             </div>
             <span className="text-sm font-bold tracking-tight text-white">SENA STUDENT</span>
           </div>
@@ -118,12 +118,12 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           ></div>
 
           {/* Drawer content */}
-          <div className="relative flex flex-col w-64 max-w-xs bg-zinc-950 border-r border-zinc-900 p-6 justify-between z-10 animate-fade-in">
+          <div className="relative flex flex-col w-64 max-w-xs bg-brand-bg border-r border-brand-border p-6 justify-between z-10 animate-fade-in">
             <div className="space-y-8">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-lg bg-gradient-to-tr from-primary-blue to-supporting-purple flex items-center justify-center">
-                    <GraduationCap className="h-4 w-4 text-white" />
+                  <div className="h-7 w-7 rounded-lg bg-white p-1 flex items-center justify-center shrink-0 shadow-sm">
+                    <img src="/logo_icon.jpg" alt="Sena Logo Icon" className="h-full w-full object-contain" />
                   </div>
                   <span className="text-xs font-bold text-white uppercase tracking-wider">Student Portal</span>
                 </div>
@@ -183,7 +183,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       {/* Main Workspace Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         {/* Top bar header */}
-        <header className="h-16 border-b border-zinc-900 flex items-center justify-between px-6 bg-zinc-950/80 backdrop-blur sticky top-0 z-30">
+        <header className="h-16 border-b border-brand-border flex items-center justify-between px-6 bg-brand-bg/85 backdrop-blur sticky top-0 z-30">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setMobileMenuOpen(true)}

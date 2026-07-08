@@ -417,3 +417,29 @@ begin
   where id = target_cohort_id;
 end;
 $$ language plpgsql security definer;
+
+--------------------------------------------------------------------------------
+-- 14. SITE SETTINGS TABLE
+--------------------------------------------------------------------------------
+create table if not exists public.site_settings (
+    key text primary key,
+    value text not null,
+    updated_at timestamp with time zone default now() not null
+);
+
+-- Enable RLS
+alter table public.site_settings enable row level security;
+
+-- Policies
+drop policy if exists "Site settings are viewable by anyone" on public.site_settings;
+create policy "Site settings are viewable by anyone" on public.site_settings
+    for select using (true);
+
+drop policy if exists "Admins can manage site settings" on public.site_settings;
+create policy "Admins can manage site settings" on public.site_settings
+    for all using (public.get_user_role() = 'admin');
+
+-- Seed initial settings
+insert into public.site_settings (key, value)
+values ('whatsapp_member_count', '238')
+on conflict (key) do nothing;
