@@ -18,11 +18,11 @@ export function Card({
     <div
       onClick={onClick}
       className={`glass-panel rounded-xl p-6 transition-all duration-300 relative overflow-hidden group ${
-        hoverable ? 'hover:bg-zinc-900/60 hover:border-zinc-700/50 cursor-pointer hover:-translate-y-0.5' : ''
+        hoverable ? 'hover:bg-bg-surface-hover hover:border-accent-primary/25 cursor-pointer hover:-translate-y-0.5 shadow-md hover:shadow-lg' : ''
       } ${className}`}
     >
       {/* Decorative inner top light edge */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none"></div>
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"></div>
       {children}
     </div>
   );
@@ -39,15 +39,15 @@ export function AccentCard({
   accent?: 'blue' | 'purple' | 'green' | 'orange';
 }) {
   const accentBorder = {
-    blue: 'border-l-2 border-l-primary-blue shadow-[inset_4px_0_12px_rgba(37,99,235,0.05)]',
-    purple: 'border-l-2 border-l-supporting-purple shadow-[inset_4px_0_12px_rgba(124,58,237,0.05)]',
-    green: 'border-l-2 border-l-success-green shadow-[inset_4px_0_12px_rgba(34,197,94,0.05)]',
-    orange: 'border-l-2 border-l-warning-orange shadow-[inset_4px_0_12px_rgba(245,158,11,0.05)]',
+    blue: 'border-l-2 border-l-accent-primary shadow-[inset_4px_0_12px_rgba(5,82,254,0.03)]',
+    purple: 'border-l-2 border-l-supporting-purple shadow-[inset_4px_0_12px_rgba(124,58,237,0.03)]',
+    green: 'border-l-2 border-l-success-green shadow-[inset_4px_0_12px_rgba(34,197,94,0.03)]',
+    orange: 'border-l-2 border-l-warning-orange shadow-[inset_4px_0_12px_rgba(245,158,11,0.03)]',
   }[accent];
 
   return (
     <div className={`glass-panel rounded-xl p-6 relative overflow-hidden ${accentBorder} ${className}`}>
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"></div>
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/3 to-transparent pointer-events-none"></div>
       {children}
     </div>
   );
@@ -71,7 +71,7 @@ export function Button({
   disabled?: boolean;
   className?: string;
 }) {
-  const baseStyle = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 outline-none select-none active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100';
+  const baseStyle = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 outline-none select-none active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 border border-transparent';
   
   const sizeStyle = {
     sm: 'px-3 py-1.5 text-xs',
@@ -80,11 +80,11 @@ export function Button({
   }[size];
 
   const variantStyle = {
-    primary: 'bg-primary-blue hover:bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.25)] hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] border border-blue-500/20',
-    secondary: 'bg-zinc-800 hover:bg-zinc-700/80 text-zinc-100 border border-zinc-700/50',
-    success: 'bg-success-green hover:bg-green-600 text-white shadow-[0_0_15px_rgba(34,197,94,0.25)] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] border border-green-500/20',
-    danger: 'bg-red-600 hover:bg-red-700 text-white border border-red-500/20 hover:shadow-[0_0_15px_rgba(220,38,38,0.2)]',
-    ghost: 'hover:bg-zinc-800/60 text-zinc-400 hover:text-zinc-100 border border-transparent',
+    primary: 'bg-accent-primary hover:bg-accent-primary-hover text-white shadow-[0_4px_12px_rgba(5,82,254,0.15)] hover:shadow-[0_4px_16px_rgba(5,82,254,0.25)] border-accent-primary/20',
+    secondary: 'bg-bg-surface hover:bg-bg-surface-hover text-text-primary border-border-brand',
+    success: 'bg-success-green hover:bg-green-600 text-white shadow-[0_4px_12px_rgba(34,197,94,0.15)] border-green-500/20',
+    danger: 'bg-red-600 hover:bg-red-700 text-white border-red-500/20',
+    ghost: 'hover:bg-bg-surface-hover text-text-secondary hover:text-text-primary',
   }[variant];
 
   return (
@@ -126,7 +126,7 @@ export function Input({
   return (
     <div className={`flex flex-col gap-1.5 w-full ${className}`}>
       {label && (
-        <label htmlFor={id} className="text-xs font-medium text-zinc-400 select-none">
+        <label htmlFor={id} className="text-xs font-medium text-text-secondary select-none">
           {label}
         </label>
       )}
@@ -138,7 +138,7 @@ export function Input({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className="glass-input text-sm text-zinc-100 rounded-lg px-3.5 py-2.5 w-full placeholder-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="glass-input text-sm text-text-primary rounded-lg px-3.5 py-2.5 w-full placeholder-text-secondary/40 disabled:opacity-50 disabled:cursor-not-allowed"
       />
       {error && <span className="text-[11px] text-red-400 select-none">{error}</span>}
     </div>

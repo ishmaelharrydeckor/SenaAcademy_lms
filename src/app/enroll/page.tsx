@@ -94,17 +94,13 @@ function EnrollForm() {
   // Success Landing State (Returned from Paystack)
   if (reference) {
     return (
-      <main className={`min-h-screen flex flex-col justify-center items-center p-4 relative overflow-hidden transition-colors duration-250 ${
-        theme === 'dark' ? 'bg-[#021736] text-zinc-100' : 'bg-[#F8FAFC] text-zinc-800'
-      }`}>
+      <main className="min-h-screen flex flex-col justify-center items-center p-4 relative overflow-hidden transition-colors duration-250 bg-bg-canvas text-text-primary">
         {/* Glow ambient background */}
         {theme === 'dark' && (
           <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-blue/10 blur-[100px] rounded-full pointer-events-none"></div>
         )}
 
-        <Card className={`max-w-md w-full text-center p-8 space-y-6 relative overflow-hidden ${
-          theme === 'dark' ? 'border-zinc-800' : 'border-zinc-200'
-        }`}>
+        <Card className="max-w-md w-full text-center p-8 space-y-6 relative overflow-hidden border-border-brand">
           <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-success-green/20 to-transparent"></div>
           
           <div className="mx-auto w-12 h-12 rounded-full bg-success-green/10 flex items-center justify-center">
@@ -112,15 +108,15 @@ function EnrollForm() {
           </div>
 
           <div className="space-y-2">
-            <h2 className={`text-xl font-bold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-[#021736]'}`}>Payment Received!</h2>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              Your transaction reference is <code className="text-zinc-300 font-mono text-[11px]">{reference}</code>.
+            <h2 className="text-xl font-bold tracking-tight text-text-primary">Payment Received!</h2>
+            <p className="text-xs text-text-secondary leading-relaxed">
+              Your transaction reference is <code className="text-text-primary font-mono text-[11px]">{reference}</code>.
             </p>
           </div>
 
-          <div className={`${theme === 'dark' ? 'bg-zinc-950/60 border border-zinc-900' : 'bg-zinc-100/50 border border-zinc-200'} rounded-lg p-4 text-left text-xs text-zinc-405 space-y-2`}>
-            <p className={`font-semibold ${theme === 'dark' ? 'text-zinc-200' : 'text-zinc-800'}`}>What happens next?</p>
-            <ul className="list-disc pl-4 space-y-1 text-zinc-550">
+          <div className="bg-bg-surface-hover/30 border border-border-brand rounded-lg p-4 text-left text-xs text-text-secondary space-y-2">
+            <p className="font-semibold text-text-primary">What happens next?</p>
+            <ul className="list-disc pl-4 space-y-1 text-text-secondary opacity-90">
               <li>Paystack verifies the transaction.</li>
               <li>An access code (SENA-XXXX-XXXX) is generated.</li>
               <li>The code will be sent to your email inbox (and spam folder) within 5 minutes.</li>
@@ -139,9 +135,7 @@ function EnrollForm() {
 
   // Payment Form Screen
   return (
-    <main className={`min-h-screen flex flex-col justify-center items-center p-4 relative overflow-hidden transition-colors duration-250 ${
-      theme === 'dark' ? 'bg-[#021736] text-zinc-100' : 'bg-[#F8FAFC] text-zinc-800'
-    }`}>
+    <main className="min-h-screen flex flex-col justify-center items-center p-4 relative overflow-hidden transition-colors duration-250 bg-bg-canvas text-text-primary">
       {theme === 'dark' && (
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary-blue/10 blur-[100px] rounded-full pointer-events-none"></div>
       )}
@@ -149,24 +143,22 @@ function EnrollForm() {
       <div className="max-w-md w-full space-y-4 relative">
         <button
           onClick={() => router.push('/')}
-          className={`flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer ${
-            theme === 'dark' ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-700'
-          }`}
+          className="flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer text-text-secondary hover:text-text-primary"
         >
           <ArrowLeft className="h-3 w-3" /> Back
         </button>
 
-        <Card className={`p-6 sm:p-8 space-y-5 ${theme === 'dark' ? 'border-zinc-800' : 'border-zinc-200'}`}>
+        <Card className="p-6 sm:p-8 space-y-5 border-border-brand">
           <div className="space-y-1.5">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-primary-blue font-semibold">Cohort Admissions</span>
-            <h2 className="text-xl font-bold tracking-tight text-white">Sena Academy Signup</h2>
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              Complete payment to secure your seat. Admissions cost is <strong className="text-zinc-300">GHS 100</strong>.
+            <span className="text-[10px] font-mono uppercase tracking-widest text-accent-primary font-semibold">Cohort Admissions</span>
+            <h2 className="text-xl font-bold tracking-tight text-text-primary">Sena Academy Signup</h2>
+            <p className="text-xs text-text-secondary leading-relaxed">
+              Complete payment to secure your seat. Admissions cost is <strong className="text-text-primary">GHS 100</strong>.
             </p>
           </div>
 
           {errorMsg && (
-            <div className="bg-danger-red/10 border border-danger-red/20 text-danger-red text-xs p-3 rounded-lg text-center">
+            <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-xs p-3 rounded-lg text-center font-semibold">
               {errorMsg}
             </div>
           )}
@@ -194,19 +186,19 @@ function EnrollForm() {
             />
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-zinc-400">Select Cohort</label>
+              <label className="text-xs font-medium text-text-secondary">Select Cohort</label>
               {cohorts.length === 0 ? (
-                <p className="text-xs text-zinc-500 italic">No active cohorts open for enrollment.</p>
+                <p className="text-xs text-text-secondary italic">No active cohorts open for enrollment.</p>
               ) : (
                 <select
                   value={cohortId}
                   onChange={(e) => setCohortId(e.target.value)}
-                  className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950"
+                  className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-transparent"
                   required
                   disabled={submitting}
                 >
                   {cohorts.map((c) => (
-                    <option key={c.id} value={c.id}>
+                    <option key={c.id} value={c.id} className="text-zinc-800">
                       {c.name}
                     </option>
                   ))}
@@ -216,7 +208,7 @@ function EnrollForm() {
 
             <Button
               type="submit"
-              className="w-full text-xs font-semibold flex items-center justify-center gap-2 pt-2.5 pb-2.5 bg-primary-blue hover:bg-blue-650"
+              className="w-full text-xs font-semibold flex items-center justify-center gap-2 pt-2.5 pb-2.5"
               disabled={submitting || cohorts.length === 0}
             >
               <CreditCard className="h-4 w-4" />

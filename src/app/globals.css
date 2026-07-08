@@ -1,22 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-bg: #021736;
-  --color-brand-card: #03224d;
-  --color-brand-card-hover: #042c63;
-  --color-brand-border: #053b85;
-  --color-brand-border-focus: #0751b8;
-  
-  --color-primary-blue: #0552FE;
-  --color-primary-blue-glow: rgba(5, 82, 254, 0.15);
-  
-  --color-supporting-purple: #7c3aed;
-  --color-supporting-purple-glow: rgba(124, 58, 237, 0.15);
-  
-  --color-success-green: #22c55e;
-  --color-success-green-glow: rgba(34, 197, 94, 0.2);
-  
-  --color-warning-orange: #f59e0b;
+  --color-bg-canvas: var(--bg-canvas);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-hover: var(--bg-surface-hover);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border-brand: var(--border);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-primary-hover: var(--accent-primary-hover);
+  --color-success-brand: var(--success);
+  --color-warning-brand: var(--warning);
   
   --animate-glow: glow 2s ease-in-out infinite alternate;
   --animate-fade-in: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -25,10 +19,10 @@
 
 @keyframes glow {
   from {
-    box-shadow: 0 0 4px rgba(5, 82, 254, 0.2), 0 0 10px rgba(5, 82, 254, 0.1);
+    box-shadow: 0 0 4px rgba(5, 82, 254, 0.15), 0 0 10px rgba(5, 82, 254, 0.05);
   }
   to {
-    box-shadow: 0 0 8px rgba(5, 82, 254, 0.4), 0 0 20px rgba(5, 82, 254, 0.2);
+    box-shadow: 0 0 8px rgba(5, 82, 254, 0.3), 0 0 20px rgba(5, 82, 254, 0.1);
   }
 }
 
@@ -48,140 +42,87 @@
   }
 }
 
+/* Master Design Tokens - Default is Premium Dark Navy Spec */
 :root {
-  --background: #021736;
-  --foreground: #f4f4f5;
+  --bg-canvas: #021736;
+  --bg-surface: #0A1F42;
+  --bg-surface-hover: #10285A;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --border: rgba(255, 255, 255, 0.08);
+  --accent-primary: #0552FE;
+  --accent-primary-hover: #2E6BFF;
+  --success: #22C55E;
+  --warning: #F59E0B;
   color-scheme: dark;
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  overflow-x: hidden;
+/* Master Design Tokens - Light Mode Spec */
+:root[data-theme="light"] {
+  --bg-canvas: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-hover: #F1F5F9;
+  --text-primary: #021736;
+  --text-secondary: #475569;
+  --border: rgba(2, 23, 54, 0.08);
+  --accent-primary: #0552FE;
+  --accent-primary-hover: #0440CC;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  color-scheme: light;
 }
 
-/* Custom Scrollbar */
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  overflow-x: hidden;
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
+}
+
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #021736;
+  background: var(--bg-canvas);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #053b85;
+  background: var(--border);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0751b8;
+  background: var(--accent-primary);
 }
 
-/* Glassmorphism utility */
+/* Glassmorphism panel using semantic variables */
 .glass-panel {
-  background: rgba(3, 34, 77, 0.7);
+  background-color: var(--bg-surface);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  transition: background-color 0.25s ease-in-out, border-color 0.25s ease-in-out;
 }
 
+/* Glass styled form inputs */
 .glass-input {
-  background: rgba(2, 23, 54, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--bg-canvas);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-input:focus {
-  border-color: rgba(5, 82, 254, 0.6);
-  box-shadow: 0 0 0 2px rgba(5, 82, 254, 0.2);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--accent-primary-hover);
   outline: none;
 }
 
 /* Roadmap line gradient background */
 .roadmap-line {
-  background: linear-gradient(90deg, #22c55e 0%, #0552fe 50%, #053b85 100%);
+  background: linear-gradient(90deg, #22c55e 0%, var(--accent-primary) 50%, var(--bg-surface-hover) 100%);
 }
-
-/* Light mode variable overrides */
-.light {
-  --background: #F8FAFC;
-  --foreground: #021736;
-  --color-brand-bg: #F8FAFC;
-  --color-brand-card: #FFFFFF;
-  --color-brand-card-hover: #F1F5F9;
-  --color-brand-border: #E2E8F0;
-  color-scheme: light;
-}
-
-/* Specific subpage overrides for zinc classes inside light theme */
-.light .bg-zinc-950 {
-  background-color: #ffffff !important;
-}
-
-.light .bg-zinc-950\/20,
-.light .bg-zinc-950\/30,
-.light .bg-zinc-950\/40 {
-  background-color: rgba(241, 245, 249, 0.4) !important;
-}
-
-.light .bg-zinc-900\/20,
-.light .bg-zinc-900\/40 {
-  background-color: rgba(241, 245, 249, 0.6) !important;
-}
-
-.light .border-zinc-900,
-.light .border-zinc-850,
-.light .border-zinc-800 {
-  border-color: #e2e8f0 !important;
-}
-
-.light .text-zinc-100 {
-  color: #021736 !important;
-}
-
-.light .text-zinc-200 {
-  color: #1e293b !important;
-}
-
-.light .text-zinc-300 {
-  color: #334155 !important;
-}
-
-.light .text-zinc-400 {
-  color: #475569 !important;
-}
-
-.light .text-zinc-450,
-.light .text-zinc-500 {
-  color: #64748b !important;
-}
-
-.light .hover\:bg-zinc-900\/30:hover,
-.light .hover\:bg-zinc-900\/60:hover,
-.light .hover\:bg-zinc-900\/10:hover,
-.light .hover\:bg-zinc-900\/50:hover {
-  background-color: #f1f5f9 !important;
-}
-
-/* Glass panel light theme adjustments */
-.light .glass-panel {
-  background: rgba(255, 255, 255, 0.8) !important;
-  backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(2, 23, 54, 0.08) !important;
-  color: #021736 !important;
-}
-
-.light .glass-input {
-  background: rgba(255, 255, 255, 0.9) !important;
-  border: 1px solid #cbd5e1 !important;
-  color: #021736 !important;
-}
-
-.light .glass-input:focus {
-  border-color: #0552FE !important;
-  box-shadow: 0 0 0 2px rgba(5, 82, 254, 0.15) !important;
-}
-

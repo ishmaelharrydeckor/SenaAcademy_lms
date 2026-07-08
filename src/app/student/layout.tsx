@@ -61,41 +61,37 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
     { name: 'Project History', href: '/student/history', icon: History },
   ];
 
-  // Dynamic Theme Styling Variables
-  const bgClass = theme === 'dark' ? 'bg-[#021736] text-zinc-100' : 'bg-[#F8FAFC] text-zinc-800';
-  const sidebarClass = theme === 'dark' ? 'bg-[#021736] border-brand-border' : 'bg-white border-zinc-200 shadow-sm';
-  const mobileDrawerClass = theme === 'dark' ? 'bg-[#021736] border-brand-border' : 'bg-white border-zinc-200 shadow-xl';
-  const headerClass = theme === 'dark' ? 'bg-[#021736]/85 border-brand-border' : 'bg-white/85 border-zinc-200 shadow-sm';
-  const textClass = theme === 'dark' ? 'text-white' : 'text-[#021736]';
-  const userCardBorderClass = theme === 'dark' ? 'border-zinc-900' : 'border-zinc-100';
-  const userAvatarClass = theme === 'dark' ? 'bg-zinc-900 border-zinc-850 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-700';
-  const userTitleClass = theme === 'dark' ? 'text-zinc-200' : 'text-zinc-800';
-  const userSubtitleClass = theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400';
-  const signOutClass = theme === 'dark' ? 'text-zinc-500 hover:text-red-400 hover:bg-red-500/5' : 'text-zinc-400 hover:text-red-500 hover:bg-red-50/50';
-  const topBarTextClass = theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400';
-  const topBarActiveTextClass = theme === 'dark' ? 'text-zinc-300' : 'text-zinc-700';
+  // Design Token CSS class mappings
+  const bgClass = 'bg-bg-canvas text-text-primary';
+  const sidebarClass = 'bg-bg-surface border-border-brand';
+  const mobileDrawerClass = 'bg-bg-surface border-border-brand shadow-xl';
+  const headerClass = 'bg-bg-canvas/80 border-border-brand shadow-sm';
+  const textClass = 'text-text-primary';
+  const userCardBorderClass = 'border-border-brand';
+  const userAvatarClass = 'bg-bg-surface-hover border-border-brand text-text-primary';
+  const userTitleClass = 'text-text-primary';
+  const userSubtitleClass = 'text-text-secondary';
+  const signOutClass = 'text-text-secondary hover:text-red-500 hover:bg-red-500/5';
+  const topBarTextClass = 'text-text-secondary';
+  const topBarActiveTextClass = 'text-text-primary';
 
   const getLinkStyle = (active: boolean) => {
     if (active) {
-      return theme === 'dark'
-        ? 'bg-[#03224d] text-white border-l-2 border-l-primary-blue shadow-inner'
-        : 'bg-blue-50/80 text-primary-blue border-l-2 border-l-primary-blue font-bold';
+      return 'bg-bg-surface-hover text-text-primary border-l-2 border-l-accent-primary font-semibold shadow-inner';
     }
-    return theme === 'dark'
-      ? 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/30'
-      : 'text-zinc-600 hover:text-primary-blue hover:bg-blue-50/30';
+    return 'text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover/50';
   };
 
   const getIconStyle = (active: boolean) => {
-    if (active) return 'text-primary-blue';
-    return theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400';
+    if (active) return 'text-accent-primary';
+    return 'text-text-secondary';
   };
 
   return (
     <div className={`min-h-screen flex ${bgClass} ${theme} relative transition-colors duration-250`}>
       {/* Background radial highlights (only in dark mode for premium look) */}
       {theme === 'dark' && (
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-primary-blue/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-accent-primary/5 rounded-full blur-3xl pointer-events-none"></div>
       )}
 
       {/* Desktop Sidebar */}
@@ -110,7 +106,7 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
                 <span className={`text-sm font-bold tracking-tight ${textClass}`}>SENA STUDENT</span>
               </>
             ) : (
-              <img src="/logo_full.jpg" alt="Sena Academy Logo" className="h-8 object-contain" />
+              <img src="/logo_full.jpg" alt="Sena Academy Logo" className="h-8 md:h-9 object-contain" />
             )}
           </div>
 
@@ -174,7 +170,7 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
                 </div>
                 <button 
                   onClick={() => setMobileMenuOpen(false)} 
-                  className={theme === 'dark' ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'}
+                  className="text-text-secondary hover:text-text-primary"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -231,13 +227,13 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className={`md:hidden ${theme === 'dark' ? 'text-zinc-400 hover:text-white' : 'text-zinc-650 hover:text-zinc-950'}`}
+              className="md:hidden text-text-secondary hover:text-text-primary"
             >
               <Menu className="h-5 w-5" />
             </button>
             <div className="hidden md:flex items-center gap-2">
               <span className={`text-xs font-mono ${topBarTextClass}`}>Student Space</span>
-              <span className={theme === 'dark' ? 'text-zinc-700' : 'text-zinc-300'}>/</span>
+              <span className="text-text-secondary/40">/</span>
               <span className={`text-xs capitalize ${topBarActiveTextClass}`}>{pathname.split('/').pop() || 'Dashboard'}</span>
             </div>
           </div>
@@ -246,7 +242,7 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              className={`p-2 rounded-lg transition-colors ${theme === 'dark' ? 'text-zinc-400 hover:text-white hover:bg-zinc-900/50' : 'text-zinc-650 hover:text-primary-blue hover:bg-blue-50/50'}`}
+              className="p-2 rounded-lg transition-colors text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover/50"
               aria-label="Toggle Theme"
             >
               {theme === 'dark' ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
@@ -255,11 +251,11 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
             {/* Realtime Notifications Trigger Button */}
             <button
               onClick={() => setNotificationsOpen(true)}
-              className={`relative p-2 rounded-lg transition-colors ${theme === 'dark' ? 'text-zinc-400 hover:text-white hover:bg-zinc-900/50' : 'text-zinc-650 hover:text-primary-blue hover:bg-blue-50/50'}`}
+              className="relative p-2 rounded-lg transition-colors text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover/50"
             >
               <Bell className="h-4.5 w-4.5" />
               {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary-blue ring-2 ring-zinc-950 animate-pulse"></span>
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-accent-primary ring-2 ring-bg-canvas animate-pulse"></span>
               )}
             </button>
           </div>
@@ -281,26 +277,26 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
           ></div>
 
           {/* Slider Panel */}
-          <div className={`relative w-full max-w-md border-l flex flex-col justify-between h-full z-10 animate-fade-in shadow-2xl ${theme === 'dark' ? 'bg-zinc-950 border-zinc-900' : 'bg-white border-zinc-200'}`}>
+          <div className={`relative w-full max-w-md border-l flex flex-col justify-between h-full z-10 animate-fade-in shadow-2xl bg-bg-surface border-border-brand`}>
             <div className="flex flex-col h-full">
               {/* Drawer Header */}
-              <div className={`p-6 border-b flex items-center justify-between ${theme === 'dark' ? 'border-zinc-900 bg-zinc-950/40' : 'border-zinc-100 bg-zinc-50/30'}`}>
+              <div className="p-6 border-b flex items-center justify-between border-border-brand bg-bg-surface/40">
                 <div>
-                  <h3 className={`text-sm font-bold ${theme === 'dark' ? 'text-zinc-100' : 'text-zinc-800'}`}>Notifications</h3>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">Manage your updates and project grades.</p>
+                  <h3 className="text-sm font-bold text-text-primary">Notifications</h3>
+                  <p className="text-[11px] text-text-secondary mt-0.5">Manage your updates and project grades.</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {unreadCount > 0 && (
                     <button
                       onClick={() => markAllAsRead()}
-                      className="text-[10px] text-primary-blue hover:underline font-semibold"
+                      className="text-[10px] text-accent-primary hover:underline font-semibold"
                     >
                       Clear All
                     </button>
                   )}
                   <button
                     onClick={() => setNotificationsOpen(false)}
-                    className={`p-1 rounded ${theme === 'dark' ? 'text-zinc-400 hover:text-white hover:bg-zinc-900' : 'text-zinc-500 hover:text-zinc-800 hover:bg-zinc-100'}`}
+                    className="p-1 rounded text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover"
                   >
                     <X className="h-4.5 w-4.5" />
                   </button>
@@ -311,9 +307,9 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {notifications.length === 0 ? (
                   <div className="h-64 flex flex-col items-center justify-center text-center">
-                    <Bell className="h-8 w-8 text-zinc-700 stroke-[1.5] mb-2" />
-                    <p className="text-xs text-zinc-500">You are all caught up.</p>
-                    <p className="text-[10px] text-zinc-650 mt-1">No alerts or grades received yet.</p>
+                    <Bell className="h-8 w-8 text-text-secondary opacity-40 stroke-[1.5] mb-2" />
+                    <p className="text-xs text-text-secondary">You are all caught up.</p>
+                    <p className="text-[10px] text-text-secondary opacity-60 mt-1">No alerts or grades received yet.</p>
                   </div>
                 ) : (
                   notifications.map((notif) => (
@@ -327,22 +323,18 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
                         }
                       }}
                       className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
-                        theme === 'dark'
-                          ? notif.is_read
-                            ? 'border-zinc-900 bg-zinc-950/20 text-zinc-400 hover:bg-zinc-900/10'
-                            : 'border-zinc-800 bg-zinc-900/20 text-zinc-100 hover:bg-zinc-900/40 shadow-sm'
-                          : notif.is_read
-                            ? 'border-zinc-100 bg-zinc-50/50 text-zinc-500 hover:bg-zinc-100/50'
-                            : 'border-blue-100 bg-blue-50/15 text-zinc-800 hover:bg-blue-50/30 shadow-sm'
+                        notif.is_read
+                          ? 'border-border-brand/40 bg-bg-surface-hover/10 text-text-secondary hover:bg-bg-surface-hover/20'
+                          : 'border-border-brand bg-bg-surface-hover/40 text-text-primary hover:bg-bg-surface-hover/60 shadow-sm'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1">
-                          <h4 className={`text-xs font-semibold ${theme === 'dark' ? 'text-zinc-100' : 'text-zinc-800'}`}>
+                          <h4 className="text-xs font-semibold text-text-primary">
                             {notif.title}
                           </h4>
-                          <p className={`text-[11px] leading-relaxed ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500'}`}>{notif.message}</p>
-                          <span className={`text-[9px] font-mono block mt-1 ${theme === 'dark' ? 'text-zinc-600' : 'text-zinc-400'}`}>
+                          <p className="text-[11px] leading-relaxed text-text-secondary">{notif.message}</p>
+                          <span className="text-[9px] font-mono text-text-secondary opacity-60 block mt-1">
                             {new Date(notif.created_at).toLocaleDateString(undefined, {
                               month: 'short',
                               day: 'numeric',
@@ -352,7 +344,7 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
                           </span>
                         </div>
                         {!notif.is_read && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-primary-blue mt-1 shrink-0"></span>
+                          <span className="h-1.5 w-1.5 rounded-full bg-accent-primary mt-1 shrink-0"></span>
                         )}
                       </div>
                     </div>

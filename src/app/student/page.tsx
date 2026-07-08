@@ -136,7 +136,7 @@ export default function StudentDashboard() {
   // Calculate Metrics
   const totalModules = modules.length;
   const submissionsCount = submissions.length;
-  const progressPercentage = totalModules > 0 ? Math.round((submissionsCount / totalModules) * 105) : 32; // Default to 32% if empty
+  const progressPercentage = totalModules > 0 ? Math.round((submissionsCount / totalModules) * 100) : 32; // Default to 32% if empty
 
   // Identify current module (first unlocked module with no submission)
   const currentModule = modules.find((mod) => {
@@ -190,11 +190,10 @@ export default function StudentDashboard() {
     return `${days} Days Remaining`;
   };
 
-  // Dynamic Theme Class Configurations
-  const cardClass = theme === 'dark' ? 'bg-[#03224d] border-brand-border text-white' : 'bg-white border-zinc-200 text-zinc-800 shadow-sm';
-  const titleClass = theme === 'dark' ? 'text-white' : 'text-[#021736]';
-  const descClass = theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500';
-  const subHeadingClass = theme === 'dark' ? 'text-zinc-500' : 'text-zinc-400';
+  // Design Token Class Mappings
+  const cardClass = 'bg-bg-surface border-border-brand text-text-primary';
+  const titleClass = 'text-text-primary';
+  const descClass = 'text-text-secondary';
 
   // Badges lists configuration (static UI unlocked based on submission counts)
   const achievementBadges = [
@@ -211,17 +210,19 @@ export default function StudentDashboard() {
       <div className="space-y-8 animate-fade-in">
         
         {/* Onboarding Welcome Header Card */}
-        <div className={`p-8 md:p-12 rounded-3xl relative overflow-hidden shadow-xl border ${theme === 'dark' ? 'bg-gradient-to-br from-[#03224d] to-[#01142e] border-brand-border' : 'bg-gradient-to-br from-white to-blue-50/20 border-zinc-200'}`}>
-          <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-blue/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className={`p-8 md:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-border-brand bg-bg-surface`}>
+          {theme === 'dark' && (
+            <div className="absolute -top-40 -left-40 w-96 h-96 bg-accent-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+          )}
           
           <div className="max-w-2xl space-y-6 relative z-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-primary-blue text-[10px] font-bold tracking-widest uppercase">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-primary/10 border border-accent-primary/20 text-accent-primary text-[10px] font-bold tracking-widest uppercase">
               <Sparkles className="h-3.5 w-3.5" />
               <span>Founding Cohort Onboarding</span>
             </div>
 
             <h2 className={`text-3xl md:text-5xl font-extrabold tracking-tight leading-tight ${titleClass}`}>
-              Welcome to Sena Academy, <span className="bg-gradient-to-r from-primary-blue to-indigo-500 bg-clip-text text-transparent">Founding Builder</span>.
+              Welcome to Sena Academy, <span className="bg-gradient-to-r from-accent-primary to-indigo-500 bg-clip-text text-transparent">Founding Builder</span>.
             </h2>
 
             <p className={`text-sm md:text-base leading-relaxed ${descClass}`}>
@@ -230,7 +231,7 @@ export default function StudentDashboard() {
 
             <div className="pt-4">
               <Link href="/student/modules">
-                <Button className="bg-primary-blue hover:bg-blue-700 text-white font-bold py-3.5 px-8 shadow-lg flex items-center gap-2">
+                <Button className="bg-accent-primary hover:bg-accent-primary-hover text-white font-bold py-3.5 px-8 shadow-lg flex items-center gap-2">
                   <Play className="h-4 w-4 fill-white" />
                   Start Module 1
                 </Button>
@@ -243,15 +244,15 @@ export default function StudentDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className={`md:col-span-2 p-6 flex flex-col justify-between ${cardClass}`}>
             <div className="space-y-2">
-              <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">Next Step</span>
+              <span className="text-[10px] font-mono tracking-widest uppercase text-text-secondary">Next Step</span>
               <h3 className="text-base font-bold">Review Module Resources</h3>
-              <p className="text-xs text-zinc-450 leading-relaxed">
+              <p className="text-xs text-text-secondary leading-relaxed">
                 Read the prompt engineering guide and Cursor documentation in Module 1 to prepare for your first command-line utility challenge.
               </p>
             </div>
-            <div className="pt-4 flex items-center justify-between text-xs border-t border-zinc-100/10 mt-6">
-              <span className="text-zinc-500">Estimated duration: 30 mins</span>
-              <Link href="/student/modules" className="text-primary-blue hover:underline font-bold flex items-center gap-0.5">
+            <div className="pt-4 flex items-center justify-between text-xs border-t border-border-brand/40 mt-6">
+              <span className="text-text-secondary">Estimated duration: 30 mins</span>
+              <Link href="/student/modules" className="text-accent-primary hover:underline font-bold flex items-center gap-0.5">
                 <span>Open curriculum</span>
                 <ChevronRight className="h-3.5 w-3.5" />
               </Link>
@@ -259,14 +260,14 @@ export default function StudentDashboard() {
           </Card>
 
           <Card className={`p-6 space-y-4 ${cardClass}`}>
-            <h4 className="text-xs font-mono uppercase tracking-widest text-zinc-450">Platform Support</h4>
+            <h4 className="text-xs font-mono uppercase tracking-widest text-text-secondary">Platform Support</h4>
             <div className="space-y-3">
-              <a href="mailto:support@senaacademy.org" className="flex items-center gap-3 text-xs hover:text-primary-blue transition-colors">
-                <HelpCircle className="h-4 w-4 text-zinc-500" />
+              <a href="mailto:support@senaacademy.org" className="flex items-center gap-3 text-xs hover:text-accent-primary transition-colors text-text-primary">
+                <HelpCircle className="h-4 w-4 text-text-secondary" />
                 <span>Get Help Desk support</span>
               </a>
-              <Link href="/student/modules" className="flex items-center gap-3 text-xs hover:text-primary-blue transition-colors">
-                <FileText className="h-4 w-4 text-zinc-500" />
+              <Link href="/student/modules" className="flex items-center gap-3 text-xs hover:text-accent-primary transition-colors text-text-primary">
+                <FileText className="h-4 w-4 text-text-secondary" />
                 <span>Read student guidelines</span>
               </Link>
             </div>
@@ -281,26 +282,28 @@ export default function StudentDashboard() {
     <div className="space-y-8 animate-fade-in">
       
       {/* 1. HERO GREETING PANEL */}
-      <div className={`p-8 md:p-12 rounded-3xl relative overflow-hidden border ${theme === 'dark' ? 'bg-[#03224d] border-brand-border' : 'bg-white border-zinc-200 shadow-sm'}`}>
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-blue/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className={`p-8 md:p-12 rounded-3xl relative overflow-hidden border border-border-brand bg-bg-surface`}>
+        {theme === 'dark' && (
+          <div className="absolute -top-40 -left-40 w-96 h-96 bg-accent-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+        )}
         
         <div className="max-w-2xl space-y-4 relative z-10">
           <h2 className={`text-3xl md:text-5xl font-extrabold tracking-tight ${titleClass}`}>
             {getGreeting()}, {profile?.full_name?.split(' ')[0] || 'Builder'} 👋
           </h2>
-          <p className="text-base font-bold text-zinc-400">Continue building the future.</p>
+          <p className="text-base font-bold text-text-secondary">Continue building the future.</p>
           <p className={`text-xs md:text-sm leading-relaxed max-w-lg ${descClass}`}>
             Every project you complete brings you one step closer to becoming a professional AI Software Developer.
           </p>
 
           <div className="flex gap-4 pt-4">
             <Link href="/student/modules">
-              <Button className="bg-primary-blue hover:bg-blue-700 text-white font-bold text-xs py-3 px-6 shadow-md">
+              <Button className="bg-accent-primary hover:bg-accent-primary-hover text-white font-bold text-xs py-3 px-6 shadow-md">
                 ▶ Continue Learning
               </Button>
             </Link>
             <Link href="/student/history">
-              <Button variant="secondary" className={`bg-transparent hover:bg-zinc-100/10 border ${theme === 'dark' ? 'border-zinc-700 text-zinc-300' : 'border-zinc-200 text-zinc-700'} font-bold text-xs py-3 px-6`}>
+              <Button variant="secondary" className="font-bold text-xs py-3 px-6">
                 View Progress
               </Button>
             </Link>
@@ -314,27 +317,27 @@ export default function StudentDashboard() {
         {/* Progress Circle with logo accent square motif */}
         <div className="flex flex-col items-center text-center justify-center relative">
           <div className="relative">
-            {/* The navy accent square motif from the logo sits next to progress circle */}
-            <div className="w-2.5 h-2.5 bg-[#021736] absolute top-1 right-1 rounded-[1px] shadow-sm z-10"></div>
+            {/* The accent primary square motif from the logo sits next to progress circle */}
+            <div className="w-2.5 h-2.5 bg-accent-primary absolute top-1 right-1 rounded-[1px] shadow-sm z-10"></div>
             <CircularProgress percentage={progressPercentage} size={110} strokeWidth={8} />
           </div>
-          <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400 mt-4">Overall Progress</span>
+          <span className="text-[10px] font-mono tracking-widest uppercase text-text-secondary mt-4">Overall Progress</span>
         </div>
 
         {/* Current Module */}
-        <div className="space-y-3 py-2 border-y md:border-y-0 md:border-x border-zinc-100/10 md:px-8">
-          <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">Current Module</span>
+        <div className="space-y-3 py-2 border-y md:border-y-0 md:border-x border-border-brand/40 md:px-8">
+          <span className="text-[10px] font-mono tracking-widest uppercase text-text-secondary">Current Module</span>
           <h3 className={`text-lg font-extrabold ${titleClass}`}>
             {currentModule ? `Module ${currentModule.module_number}` : 'Completed'}
           </h3>
-          <p className="text-sm font-semibold text-primary-blue truncate">
+          <p className="text-sm font-semibold text-accent-primary truncate">
             {currentModule ? currentModule.title : 'All Curriculum Finished'}
           </p>
         </div>
 
         {/* Target Deadline */}
         <div className="space-y-3">
-          <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">Deadline</span>
+          <span className="text-[10px] font-mono tracking-widest uppercase text-text-secondary">Deadline</span>
           <h3 className={`text-base font-extrabold ${titleClass}`}>
             {currentModule ? 'Next Project' : 'No Deadlines'}
           </h3>
@@ -353,7 +356,7 @@ export default function StudentDashboard() {
         <div className="lg:col-span-8 space-y-6">
           
           <div className="space-y-1">
-            <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">Roadmap</span>
+            <span className="text-[10px] font-mono tracking-widest uppercase text-text-secondary">Roadmap</span>
             <h3 className={`text-xl font-bold ${titleClass}`}>Continue Your Journey</h3>
           </div>
 
@@ -363,10 +366,10 @@ export default function StudentDashboard() {
                 key={item.number} 
                 className={`p-5 rounded-2xl border flex items-center justify-between transition-all duration-200 group hover:-translate-y-0.5 ${
                   item.status === 'completed'
-                    ? (theme === 'dark' ? 'bg-[#03224d]/40 border-green-950/40 text-zinc-400' : 'bg-green-50/10 border-green-100 text-zinc-500')
+                    ? 'bg-bg-surface/40 border-green-500/20 text-text-secondary opacity-80'
                     : item.status === 'active'
-                      ? (theme === 'dark' ? 'bg-[#03224d] border-brand-border text-white shadow-md shadow-blue-950/10' : 'bg-white border-zinc-200 text-zinc-800 shadow-md')
-                      : (theme === 'dark' ? 'bg-zinc-950/20 border-zinc-900/50 text-zinc-650 opacity-60' : 'bg-zinc-50/50 border-zinc-150 text-zinc-400 opacity-65')
+                      ? 'bg-bg-surface border-accent-primary text-text-primary shadow-md'
+                      : 'bg-bg-surface/10 border-border-brand/40 text-text-secondary opacity-40'
                 }`}
               >
                 <div className="flex items-center gap-4">
@@ -376,21 +379,21 @@ export default function StudentDashboard() {
                     item.status === 'completed'
                       ? 'bg-green-500/10 text-green-500'
                       : item.status === 'active'
-                        ? 'bg-primary-blue/15 text-primary-blue'
-                        : 'bg-zinc-800/10 text-zinc-500'
+                        ? 'bg-accent-primary/15 text-accent-primary'
+                        : 'bg-bg-surface-hover text-text-secondary'
                   }`}>
                     {item.status === 'completed' ? (
                       <CheckCircle2 className="h-5 w-5" />
                     ) : item.status === 'active' ? (
-                      <Circle className="h-5 w-5 fill-primary-blue/20" />
+                      <Circle className="h-5 w-5 fill-accent-primary/20" />
                     ) : (
                       <Lock className="h-4.5 w-4.5" />
                     )}
                   </div>
 
                   <div className="space-y-0.5">
-                    <span className="text-[10px] font-mono tracking-wider text-zinc-500 uppercase">Module {item.number}</span>
-                    <h4 className={`text-sm font-bold ${item.status === 'active' ? 'text-primary-blue' : ''}`}>{item.title}</h4>
+                    <span className="text-[10px] font-mono tracking-wider text-text-secondary uppercase">Module {item.number}</span>
+                    <h4 className={`text-sm font-bold ${item.status === 'active' ? 'text-accent-primary' : ''}`}>{item.title}</h4>
                   </div>
                 </div>
 
@@ -400,14 +403,14 @@ export default function StudentDashboard() {
                   )}
                   {item.status === 'active' && (
                     <Link href={`/student/modules?id=${item.id}`}>
-                      <button className="text-xs font-bold text-primary-blue flex items-center gap-0.5 hover:underline uppercase tracking-wider font-mono">
+                      <button className="text-xs font-bold text-accent-primary flex items-center gap-0.5 hover:underline uppercase tracking-wider font-mono cursor-pointer">
                         <span>Continue</span>
                         <ChevronRight className="h-4 w-4" />
                       </button>
                     </Link>
                   )}
                   {item.status === 'locked' && (
-                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono">Locked</span>
+                    <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest font-mono">Locked</span>
                   )}
                 </div>
               </div>
@@ -421,19 +424,19 @@ export default function StudentDashboard() {
           
           {/* Today's Goal Card */}
           <Card className={`p-6 space-y-4 ${cardClass}`}>
-            <h4 className="text-[10px] font-mono uppercase tracking-widest text-zinc-450">Today's Goal</h4>
+            <h4 className="text-[10px] font-mono uppercase tracking-widest text-text-secondary">Today's Goal</h4>
             <div className="space-y-2">
               <h3 className={`text-base font-bold ${titleClass}`}>Complete Lesson 4</h3>
-              <p className="text-xs text-zinc-450 font-medium">Estimated Time: 18 Minutes</p>
+              <p className="text-xs text-text-secondary font-medium">Estimated Time: 18 Minutes</p>
             </div>
             <Link href="/student/modules" className="block">
-              <Button size="sm" className="w-full bg-primary-blue text-white">Continue</Button>
+              <Button size="sm" className="w-full">Continue</Button>
             </Link>
           </Card>
 
           {/* Upcoming Deadlines Card */}
           <Card className={`p-6 space-y-4 ${cardClass}`}>
-            <h4 className="text-[10px] font-mono uppercase tracking-widest text-zinc-450">Upcoming Deadlines</h4>
+            <h4 className="text-[10px] font-mono uppercase tracking-widest text-text-secondary">Upcoming Deadlines</h4>
             <div className="space-y-4">
               {[
                 { title: 'UI Assignment', date: 'Aug 14' },
@@ -441,9 +444,9 @@ export default function StudentDashboard() {
                 { title: 'Android Milestone', date: 'Aug 28' },
                 { title: 'Backend API', date: 'Sep 03' }
               ].map((dl, i) => (
-                <div key={i} className="flex justify-between items-center border-b border-zinc-100/5 pb-2 last:border-0 last:pb-0">
-                  <span className="text-xs font-semibold text-zinc-400">{dl.title}</span>
-                  <span className="text-[10px] font-mono font-bold text-zinc-500">{dl.date}</span>
+                <div key={i} className="flex justify-between items-center border-b border-border-brand/40 pb-2 last:border-0 last:pb-0">
+                  <span className="text-xs font-semibold text-text-secondary">{dl.title}</span>
+                  <span className="text-[10px] font-mono font-bold text-text-secondary">{dl.date}</span>
                 </div>
               ))}
             </div>
@@ -451,8 +454,8 @@ export default function StudentDashboard() {
 
           {/* Recent Announcements */}
           <Card className={`p-6 space-y-4 ${cardClass}`}>
-            <h4 className="text-[10px] font-mono uppercase tracking-widest text-zinc-450">Announcements</h4>
-            <div className="space-y-4 relative pl-4 border-l border-zinc-100/10">
+            <h4 className="text-[10px] font-mono uppercase tracking-widest text-text-secondary">Announcements</h4>
+            <div className="space-y-4 relative pl-4 border-l border-border-brand/40">
               {announcements.length === 0 ? (
                 // Fallbacks per layout specifications
                 [
@@ -462,16 +465,16 @@ export default function StudentDashboard() {
                   { title: 'Facilitator Office Hours', desc: 'Drop-in debug sessions.' }
                 ].map((item, i) => (
                   <div key={i} className="relative space-y-1">
-                    <span className="absolute -left-[21px] top-1.5 w-2 h-2 bg-[#021736] border border-white rounded-full"></span>
-                    <h5 className="text-xs font-bold text-zinc-300">{item.title}</h5>
+                    <span className="absolute -left-[21px] top-1.5 w-2 h-2 bg-accent-primary border border-bg-surface rounded-full"></span>
+                    <h5 className="text-xs font-bold text-text-primary">{item.title}</h5>
                   </div>
                 ))
               ) : (
                 announcements.map((ann) => (
                   <div key={ann.id} className="relative space-y-1">
-                    <span className="absolute -left-[21px] top-1.5 w-2 h-2 bg-[#021736] border border-white rounded-full"></span>
-                    <h5 className="text-xs font-bold text-zinc-300">{ann.title}</h5>
-                    <p className="text-[10px] text-zinc-500 truncate leading-relaxed">{ann.content}</p>
+                    <span className="absolute -left-[21px] top-1.5 w-2 h-2 bg-accent-primary border border-bg-surface rounded-full"></span>
+                    <h5 className="text-xs font-bold text-text-primary">{ann.title}</h5>
+                    <p className="text-[10px] text-text-secondary truncate leading-relaxed">{ann.content}</p>
                   </div>
                 ))
               )}
@@ -485,7 +488,7 @@ export default function StudentDashboard() {
       {/* 4. ACHIEVEMENT BADGES SECTION */}
       <section className="space-y-6">
         <div className="space-y-1">
-          <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-400">Achievements</span>
+          <span className="text-[10px] font-mono tracking-widest uppercase text-text-secondary">Achievements</span>
           <h3 className={`text-xl font-bold ${titleClass}`}>Your Badges</h3>
         </div>
 
@@ -494,13 +497,13 @@ export default function StudentDashboard() {
             <Card 
               key={idx} 
               className={`p-6 text-center flex flex-col items-center justify-center gap-3 transition-transform hover:-translate-y-1 duration-300 ${cardClass} ${
-                !badge.unlocked ? 'opacity-40 grayscale' : 'shadow-md border-blue-500/10'
+                !badge.unlocked ? 'opacity-40 grayscale' : 'shadow-md border-accent-primary/20'
               }`}
             >
               <span className="text-3xl block">{badge.icon}</span>
               <div className="space-y-0.5">
-                <h5 className="text-xs font-bold text-zinc-300">{badge.title}</h5>
-                <span className="text-[9px] text-zinc-500 block font-mono">{badge.desc}</span>
+                <h5 className="text-xs font-bold text-text-primary">{badge.title}</h5>
+                <span className="text-[9px] text-text-secondary block font-mono">{badge.desc}</span>
               </div>
             </Card>
           ))}
@@ -508,15 +511,15 @@ export default function StudentDashboard() {
       </section>
 
       {/* 5. FOOTER */}
-      <footer className="pt-12 border-t border-zinc-100/10 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-zinc-500">
+      <footer className="pt-12 border-t border-border-brand/40 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-text-secondary">
         <div className="flex items-center gap-1.5">
-          <HelpCircle className="h-4.5 w-4.5 text-zinc-500" />
-          <span>Need Help? Contact our team at <a href="mailto:support@senaacademy.org" className="text-primary-blue hover:underline">support@senaacademy.org</a></span>
+          <HelpCircle className="h-4.5 w-4.5 text-text-secondary" />
+          <span>Need Help? Contact our team at <a href="mailto:support@senaacademy.org" className="text-accent-primary hover:underline">support@senaacademy.org</a></span>
         </div>
         <div className="flex gap-6 font-semibold">
-          <a href="/privacy" className="hover:text-primary-blue transition-colors">Privacy</a>
-          <a href="/terms" className="hover:text-primary-blue transition-colors">Terms</a>
-          <a href="mailto:support@senaacademy.org" className="hover:text-primary-blue transition-colors">Support Chat</a>
+          <a href="/privacy" className="hover:text-accent-primary transition-colors">Privacy</a>
+          <a href="/terms" className="hover:text-accent-primary transition-colors">Terms</a>
+          <a href="mailto:support@senaacademy.org" className="hover:text-accent-primary transition-colors">Support Chat</a>
         </div>
       </footer>
 

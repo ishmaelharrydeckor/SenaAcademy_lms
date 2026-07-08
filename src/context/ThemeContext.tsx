@@ -14,15 +14,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const saved = localStorage.getItem('theme') as Theme;
-    if (saved === 'light' || saved === 'dark') {
-      setTheme(saved);
-    }
+    const activeTheme = saved === 'light' || saved === 'dark' ? saved : 'dark';
+    setTheme(activeTheme);
+    document.documentElement.setAttribute('data-theme', activeTheme);
   }, []);
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
     localStorage.setItem('theme', next);
+    document.documentElement.setAttribute('data-theme', next);
   };
 
   return (
