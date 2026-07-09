@@ -215,7 +215,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               className="p-2 rounded-lg transition-colors text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover/50"
               aria-label="Toggle Theme"
             >
-              {theme === 'dark' ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
+              {theme === 'dark' ? <Moon className="h-4.5 w-4.5" /> : <Sun className="h-4.5 w-4.5" />}
             </button>
           </div>
         </header>
