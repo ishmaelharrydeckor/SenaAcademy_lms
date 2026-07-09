@@ -19,10 +19,10 @@
 
 @keyframes glow {
   from {
-    box-shadow: 0 0 4px rgba(5, 82, 254, 0.15), 0 0 10px rgba(5, 82, 254, 0.05);
+    box-shadow: 0 0 4px rgba(37, 99, 235, 0.2), 0 0 10px rgba(37, 99, 235, 0.1);
   }
   to {
-    box-shadow: 0 0 8px rgba(5, 82, 254, 0.3), 0 0 20px rgba(5, 82, 254, 0.1);
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.4), 0 0 20px rgba(37, 99, 235, 0.2);
   }
 }
 
@@ -42,33 +42,33 @@
   }
 }
 
-/* Master Design Tokens - Default is Premium Dark Navy Spec */
+/* Master Design Tokens - restored original Premium Black/Zinc-Slate Spec */
 :root {
-  --bg-canvas: #021736;
-  --bg-surface: #0A1F42;
-  --bg-surface-hover: #10285A;
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --border: rgba(255, 255, 255, 0.08);
-  --accent-primary: #0552FE;
-  --accent-primary-hover: #2E6BFF;
-  --success: #22C55E;
-  --warning: #F59E0B;
+  --bg-canvas: #09090b;
+  --bg-surface: rgba(24, 24, 27, 0.7);
+  --bg-surface-hover: #222226;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --border: rgba(255, 255, 255, 0.05);
+  --accent-primary: #2563eb;
+  --accent-primary-hover: #3b82f6;
+  --success: #22c55e;
+  --warning: #f59e0b;
   color-scheme: dark;
 }
 
-/* Master Design Tokens - Light Mode Spec */
+/* Master Design Tokens - Light Inversion Spec */
 :root[data-theme="light"] {
-  --bg-canvas: #F8FAFC;
-  --bg-surface: #FFFFFF;
-  --bg-surface-hover: #F1F5F9;
-  --text-primary: #021736;
-  --text-secondary: #475569;
-  --border: rgba(2, 23, 54, 0.08);
-  --accent-primary: #0552FE;
-  --accent-primary-hover: #0440CC;
-  --success: #22C55E;
-  --warning: #F59E0B;
+  --bg-canvas: #f4f4f5;
+  --bg-surface: rgba(255, 255, 255, 0.85);
+  --bg-surface-hover: #e4e4e7;
+  --text-primary: #09090b;
+  --text-secondary: #71717a;
+  --border: rgba(9, 9, 11, 0.05);
+  --accent-primary: #2563eb;
+  --accent-primary-hover: #1d4ed8;
+  --success: #22c55e;
+  --warning: #f59e0b;
   color-scheme: light;
 }
 
@@ -96,7 +96,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-primary);
+  background: var(--bg-surface-hover);
 }
 
 /* Glassmorphism panel using semantic variables */
