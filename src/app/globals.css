@@ -57,18 +57,18 @@
   color-scheme: dark;
 }
 
-/* Master Design Tokens - Light Inversion Spec */
+/* Master Design Tokens - Premium Ice-Blue Glassmorphic Light Spec */
 :root[data-theme="light"] {
-  --bg-canvas: #f4f4f5;
-  --bg-surface: rgba(255, 255, 255, 0.85);
-  --bg-surface-hover: #e4e4e7;
-  --text-primary: #09090b;
-  --text-secondary: #71717a;
-  --border: rgba(9, 9, 11, 0.05);
-  --accent-primary: #2563eb;
+  --bg-canvas: #f0f4f8;                  /* Premium ice-blue gray canvas */
+  --bg-surface: rgba(255, 255, 255, 0.75); /* Frosted semi-transparent glass surface */
+  --bg-surface-hover: rgba(255, 255, 255, 0.95);
+  --text-primary: #0f172a;                /* Deep premium slate text */
+  --text-secondary: #475569;              /* Supporting slate text */
+  --border: rgba(15, 23, 42, 0.06);       /* Soft slate border */
+  --accent-primary: #2563eb;              /* Royal Blue constant */
   --accent-primary-hover: #1d4ed8;
-  --success: #22c55e;
-  --warning: #f59e0b;
+  --success: #16a34a;
+  --warning: #d97706;
   color-scheme: light;
 }
 
@@ -99,13 +99,14 @@ body {
   background: var(--bg-surface-hover);
 }
 
-/* Glassmorphism panel using semantic variables */
+/* Glassmorphism panel using semantic variables with premium soft shadows */
 .glass-panel {
   background-color: var(--bg-surface);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
-  transition: background-color 0.25s ease-in-out, border-color 0.25s ease-in-out;
+  box-shadow: 0 4px 30px rgba(15, 23, 42, 0.02);
+  transition: background-color 0.25s ease-in-out, border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
 }
 
 /* Glass styled form inputs */
