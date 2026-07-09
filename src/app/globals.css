@@ -42,7 +42,7 @@
   }
 }
 
-/* Master Design Tokens - restored original Premium Black/Zinc-Slate Spec */
+/* Master Design Tokens - Premium Black/Zinc-Slate Dark Spec */
 :root {
   --bg-canvas: #09090b;
   --bg-surface: rgba(24, 24, 27, 0.7);
@@ -57,18 +57,18 @@
   color-scheme: dark;
 }
 
-/* Master Design Tokens - Premium Ice-Blue Glassmorphic Light Spec */
+/* Master Design Tokens - Premium High-Contrast Legible Light Spec */
 :root[data-theme="light"] {
-  --bg-canvas: #f0f4f8;                  /* Premium ice-blue gray canvas */
-  --bg-surface: rgba(255, 255, 255, 0.75); /* Frosted semi-transparent glass surface */
-  --bg-surface-hover: rgba(255, 255, 255, 0.95);
-  --text-primary: #0f172a;                /* Deep premium slate text */
-  --text-secondary: #475569;              /* Supporting slate text */
-  --border: rgba(15, 23, 42, 0.06);       /* Soft slate border */
-  --accent-primary: #2563eb;              /* Royal Blue constant */
+  --bg-canvas: #f8fafc;                  /* Bright, clean slate-50 canvas */
+  --bg-surface: #ffffff;                 /* Solid white card for high contrast */
+  --bg-surface-hover: #f1f5f9;           /* Clean gray hover state */
+  --text-primary: #0f172a;                /* Sharp dark slate primary text */
+  --text-secondary: #475569;              /* High-contrast slate secondary text */
+  --border: #e2e8f0;                      /* Crisp border gray line */
+  --accent-primary: #2563eb;              /* High-contrast Royal Blue constant */
   --accent-primary-hover: #1d4ed8;
-  --success: #16a34a;
-  --warning: #d97706;
+  --success: #15803d;
+  --warning: #b45309;
   color-scheme: light;
 }
 
