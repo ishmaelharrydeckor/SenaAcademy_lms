@@ -266,13 +266,6 @@ export default function LandingPage() {
           )}
         </div>
         <div className="flex items-center gap-3 md:gap-4">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-lg transition-colors text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover/50"
-            aria-label="Toggle Theme"
-          >
-            {theme === 'dark' ? <Moon className="h-4.5 w-4.5" /> : <Sun className="h-4.5 w-4.5" />}
-          </button>
           
           <button 
             onClick={() => openModalAt('login')}

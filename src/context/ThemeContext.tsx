@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type Theme = 'light' | 'dark';
+type Theme = 'dark';
 
 interface ThemeContextType {
   theme: Theme;
@@ -10,20 +10,16 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
+  // Hardcoded to dark mode only
+  const theme: Theme = 'dark';
 
   useEffect(() => {
-    const saved = localStorage.getItem('theme') as Theme;
-    const activeTheme = saved === 'light' || saved === 'dark' ? saved : 'dark';
-    setTheme(activeTheme);
-    document.documentElement.setAttribute('data-theme', activeTheme);
+    localStorage.removeItem('theme');
+    document.documentElement.setAttribute('data-theme', 'dark');
   }, []);
 
   const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    localStorage.setItem('theme', next);
-    document.documentElement.setAttribute('data-theme', next);
+    // No-op to disable toggling completely
   };
 
   return (

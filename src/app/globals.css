@@ -57,21 +57,6 @@
   color-scheme: dark;
 }
 
-/* Master Design Tokens - Premium High-Contrast Legible Light Spec */
-:root[data-theme="light"] {
-  --bg-canvas: #f8fafc;                  /* Bright, clean slate-50 canvas */
-  --bg-surface: #ffffff;                 /* Solid white card for high contrast */
-  --bg-surface-hover: #f1f5f9;           /* Clean gray hover state */
-  --text-primary: #0f172a;                /* Sharp dark slate primary text */
-  --text-secondary: #475569;              /* High-contrast slate secondary text */
-  --border: #e2e8f0;                      /* Crisp border gray line */
-  --accent-primary: #2563eb;              /* High-contrast Royal Blue constant */
-  --accent-primary-hover: #1d4ed8;
-  --success: #15803d;
-  --warning: #b45309;
-  color-scheme: light;
-}
-
 body {
   background-color: var(--bg-canvas);
   color: var(--text-primary);
