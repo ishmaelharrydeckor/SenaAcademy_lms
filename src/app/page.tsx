@@ -207,7 +207,7 @@ export default function LandingPage() {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-bg-canvas">
         <div className="flex flex-col items-center gap-4 animate-fade-in">
-          <img src="/logo_icon.jpg" alt="Sena Symbol" className="h-10 w-10 object-contain animate-pulse" />
+          <img src="/logo_icon.png" alt="Sena Symbol" className="h-10 w-10 object-contain animate-pulse" />
           <p className="text-xs text-text-secondary font-mono tracking-widest uppercase">Initializing Portal...</p>
         </div>
       </div>
@@ -257,12 +257,12 @@ export default function LandingPage() {
           {theme === 'dark' ? (
             <>
               <div className="h-8 w-8 rounded-lg bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm">
-                <img src="/logo_icon.jpg" alt="Sena Logo Icon" className="h-full w-full object-contain" />
+                <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-full w-full object-contain" />
               </div>
               <span className="text-sm font-bold tracking-tight text-white uppercase">Sena Academy</span>
             </>
           ) : (
-            <img src="/logo_full.jpg" alt="Sena Academy Logo" className="h-8 md:h-9 object-contain" />
+            <img src="/logo_full.png" alt="Sena Academy Logo" className="h-8 md:h-9 object-contain" />
           )}
         </div>
         <div className="flex items-center gap-3 md:gap-4">
@@ -657,12 +657,12 @@ export default function LandingPage() {
             {theme === 'dark' ? (
               <div className="flex items-center gap-2.5">
                 <div className="h-8 w-8 rounded-lg bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm">
-                  <img src="/logo_icon.jpg" alt="Sena Logo Icon" className="h-full w-full object-contain" />
+                  <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-full w-full object-contain" />
                 </div>
                 <span className="text-sm font-bold tracking-tight text-white uppercase">Sena Academy</span>
               </div>
             ) : (
-              <img src="/logo_full.jpg" alt="Sena Academy Logo" className="h-8 object-contain" />
+              <img src="/logo_full.png" alt="Sena Academy Logo" className="h-8 object-contain" />
             )}
             <p className="text-[10px] text-text-secondary font-mono">© 2026 Sena Academy. All rights reserved.</p>
           </div>
@@ -698,7 +698,7 @@ export default function LandingPage() {
             {/* Modal Header */}
             <div className="flex justify-between items-center border-b p-5 border-border-brand">
               <div className="flex items-center gap-1.5">
-                <img src="/logo_icon.jpg" alt="Sena Badge" className="h-5 w-5 object-contain" />
+                <img src="/logo_icon.png" alt="Sena Badge" className="h-5 w-5 object-contain" />
                 <span className="text-xs font-bold font-mono tracking-wider text-text-secondary uppercase">
                   {authTab === 'login' && 'Sign In'}
                   {authTab === 'redeem_code' && 'Redeem Code'}

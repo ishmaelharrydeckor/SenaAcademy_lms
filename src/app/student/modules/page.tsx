@@ -286,7 +286,7 @@ export default function StudentModules() {
     return (
       <div className="h-96 flex flex-col items-center justify-center gap-4">
         <div className="relative w-10 h-10 flex items-center justify-center bg-white rounded-lg p-1.5 shadow-[0_4px_12px_rgba(5,82,254,0.15)] animate-pulse">
-          <img src="/logo_icon.jpg" alt="Loading" className="h-full w-full object-contain" />
+          <img src="/logo_icon.png" alt="Loading" className="h-full w-full object-contain" />
         </div>
         <p className="text-[10px] font-mono text-text-secondary uppercase tracking-widest">Loading modules data...</p>
       </div>

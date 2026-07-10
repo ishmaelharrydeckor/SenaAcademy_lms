@@ -101,12 +101,12 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
             {theme === 'dark' ? (
               <>
                 <div className="h-8 w-8 rounded-lg bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm">
-                  <img src="/logo_icon.jpg" alt="Sena Logo Icon" className="h-full w-full object-contain" />
+                  <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-full w-full object-contain" />
                 </div>
                 <span className={`text-sm font-bold tracking-tight ${textClass}`}>SENA STUDENT</span>
               </>
             ) : (
-              <img src="/logo_full.jpg" alt="Sena Academy Logo" className="h-8 md:h-9 object-contain" />
+              <img src="/logo_full.png" alt="Sena Academy Logo" className="h-8 md:h-9 object-contain" />
             )}
           </div>
 
@@ -164,7 +164,7 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="h-7 w-7 rounded-lg bg-white p-1 flex items-center justify-center shrink-0 shadow-sm">
-                    <img src="/logo_icon.jpg" alt="Sena Logo Icon" className="h-full w-full object-contain" />
+                    <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-full w-full object-contain" />
                   </div>
                   <span className={`text-xs font-bold uppercase tracking-wider ${textClass}`}>Student Portal</span>
                 </div>
