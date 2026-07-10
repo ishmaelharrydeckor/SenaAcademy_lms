@@ -163,7 +163,7 @@ export default function LandingPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Verification failed');
       
-      setValidatedCodeData({ code: data.code, email: data.email });
+      setValidatedCodeData({ code: accessCode, email: data.email });
       setAuthTab('redeem_register');
       showToast('Code Verified', 'Please set up your profile password.', 'success');
     } catch (err: any) {
