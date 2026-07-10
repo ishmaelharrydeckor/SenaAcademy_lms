@@ -67,6 +67,19 @@ export default function LandingPage() {
     }
   }, [user, profile, router]);
 
+  // Check URL parameters to trigger auto code-redemption modal
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('redeem') === 'true') {
+        openModalAt('redeem_code');
+        // Clean up parameters to prevent repeating on refresh
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+      }
+    }
+  }, []);
+
   // Public Stats State
   const [stats, setStats] = useState<PublicStats>({
     studentsCount: 0,

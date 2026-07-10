@@ -124,7 +124,7 @@ function EnrollForm() {
           </div>
 
           <div className="pt-2">
-            <Button onClick={() => router.push('/')} className="w-full text-xs font-semibold">
+            <Button onClick={() => router.push('/?redeem=true')} className="w-full text-xs font-semibold">
               Go to Code Redemption Page
             </Button>
           </div>
