@@ -69,10 +69,19 @@ export async function POST(request: NextRequest) {
 
     const actionLink = linkData.properties.action_link;
 
-    // 6. Send Email containing the link
-    const emailResult = await sendPasswordResetEmail(email, actionLink);
+    // 6. Fetch user profile to get studentName
+    const { data: userProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('full_name')
+      .eq('email', email)
+      .single();
+
+    const studentName = userProfile?.full_name || 'Trainee';
+
+    // 7. Send Email containing the link
+    const emailResult = await sendPasswordResetEmail(email, actionLink, studentName);
     if (!emailResult.success) {
-      return NextResponse.json({ error: 'Failed to deliver recovery email via SMTP' }, { status: 502 });
+      return NextResponse.json({ error: 'Failed to deliver recovery email via Resend' }, { status: 502 });
     }
 
     // 7. Mark request resolved in database

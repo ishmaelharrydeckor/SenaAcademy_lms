@@ -164,6 +164,7 @@ export default function AdminPage() {
   const [announceTitle, setAnnounceTitle] = useState('');
   const [announceContent, setAnnounceContent] = useState('');
   const [announceCohortId, setAnnounceCohortId] = useState(''); // empty = global
+  const [announcements, setAnnouncements] = useState<any[]>([]);
 
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -239,6 +240,18 @@ export default function AdminPage() {
       } catch (err) {
         console.warn('site_settings query warning:', err);
       }
+
+      // Fetch announcements
+      const { data: announceData } = await supabase
+        .from('announcements')
+        .select(`
+          *,
+          cohorts:cohort_id (
+            name
+          )
+        `)
+        .order('created_at', { ascending: false });
+      if (announceData) setAnnouncements(announceData);
 
     } catch (err: any) {
       showToast('Error', 'Failed to retrieve admin details: ' + err.message, 'error');
@@ -750,6 +763,23 @@ export default function AdminPage() {
       setAnnounceTitle('');
       setAnnounceContent('');
       setAnnounceCohortId('');
+      await fetchInitialData();
+    } catch (err: any) {
+      showToast('Error', err.message, 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Delete Announcement
+  const handleDeleteAnnouncement = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this announcement?')) return;
+    setActionLoading(true);
+    try {
+      const { error } = await supabase.from('announcements').delete().eq('id', id);
+      if (error) throw error;
+      showToast('Announcement Deleted', 'Announcement removed successfully.', 'success');
+      await fetchInitialData();
     } catch (err: any) {
       showToast('Error', err.message, 'error');
     } finally {
@@ -1522,8 +1552,19 @@ export default function AdminPage() {
 
           {/* List panel */}
           <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Access Key Registry</h3>
-            <div className="overflow-x-auto glass-panel rounded-xl border border-zinc-900">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Access Key Registry</h3>
+              <Button
+                onClick={() => handleExportTable('access_codes')}
+                disabled={exportLoading}
+                variant="secondary"
+                size="sm"
+                className="text-[10px]"
+              >
+                {exportLoading ? 'Exporting...' : 'Export Access Codes (CSV)'}
+              </Button>
+            </div>
+            <div className="overflow-x-auto glass-panel rounded-xl border border-zinc-900 font-sans">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="border-b border-zinc-900 bg-zinc-950/40 text-zinc-500 font-mono">
@@ -1819,11 +1860,54 @@ export default function AdminPage() {
 
           {/* List panel */}
           <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">History Log</h3>
-            <div className="py-8 text-center glass-panel rounded-xl">
-              <Megaphone className="h-8 w-8 text-zinc-800 stroke-[1.5] mx-auto mb-2" />
-              <p className="text-xs text-zinc-500">Live announcements are dispatched instantly.</p>
-              <p className="text-[10px] text-zinc-650 mt-1">Real-time socket messages notify all targeted trainee devices.</p>
+            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">History Log ({announcements.length})</h3>
+            <div className="overflow-x-auto glass-panel rounded-xl border border-zinc-900">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-zinc-900 bg-zinc-950/40 text-zinc-500 font-mono">
+                    <th className="p-4">Title</th>
+                    <th className="p-4">Content</th>
+                    <th className="p-4">Cohort</th>
+                    <th className="p-4">Date</th>
+                    <th className="p-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-900">
+                  {announcements.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="p-8 text-center text-zinc-500">
+                        No announcements published yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    announcements.map((ann) => (
+                      <tr key={ann.id} className="hover:bg-zinc-900/10">
+                        <td className="p-4 font-bold text-zinc-100">{ann.title}</td>
+                        <td className="p-4 text-zinc-400 max-w-[200px] truncate" title={ann.content}>
+                          {ann.content}
+                        </td>
+                        <td className="p-4 font-mono text-zinc-500">
+                          {ann.cohorts?.name || 'Global (All Cohorts)'}
+                        </td>
+                        <td className="p-4 text-zinc-550">
+                          {new Date(ann.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="p-4 text-right">
+                          <Button
+                            onClick={() => handleDeleteAnnouncement(ann.id)}
+                            variant="danger"
+                            size="sm"
+                            className="text-[10px] px-2 py-1"
+                            disabled={actionLoading}
+                          >
+                            Delete
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

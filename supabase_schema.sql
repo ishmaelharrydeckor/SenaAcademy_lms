@@ -353,8 +353,23 @@ create policy "Admins can manage announcements" on public.announcements
 
 -- Notifications Policies
 drop policy if exists "Users can view and update their own notifications" on public.notifications;
-create policy "Users can view and update their own notifications" on public.notifications
-    for all using (user_id = auth.uid());
+drop policy if exists "Users can select their own notifications" on public.notifications;
+create policy "Users can select their own notifications" on public.notifications
+    for select using (user_id = auth.uid());
+
+drop policy if exists "Users can update their own notifications" on public.notifications;
+create policy "Users can update their own notifications" on public.notifications
+    for update using (user_id = auth.uid());
+
+drop policy if exists "Users can delete their own notifications" on public.notifications;
+create policy "Users can delete their own notifications" on public.notifications
+    for delete using (user_id = auth.uid());
+
+drop policy if exists "Admins and facilitators can insert notifications" on public.notifications;
+create policy "Admins and facilitators can insert notifications" on public.notifications
+    for insert with check (
+        public.get_user_role() in ('admin', 'facilitator') or user_id = auth.uid()
+    );
 
 -- Payments Policies (Admins only)
 drop policy if exists "Admins can view all payment records" on public.payments;
