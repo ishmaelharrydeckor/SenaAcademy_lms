@@ -104,7 +104,7 @@ begin
 
   if code_record.expires_at < now() then
     -- Auto expire code in lookup
-    update public.access_codes set status = 'expired' where id = code_record.id;
+    update public.access_codes set status = 'expired' where code = input_code;
     return jsonb_build_object('valid', false, 'reason', 'This access code has expired.');
   end if;
 
@@ -136,7 +136,7 @@ begin
   set status = 'redeemed',
       redeemed_at = now(),
       redeemed_by = user_id
-  where id = code_record.id;
+  where code = input_code;
 
   -- 2. Link the student profile to the cohort in the profiles table
   update public.profiles

@@ -87,6 +87,7 @@ export default function AdminPage() {
   const [facilitators, setFacilitators] = useState<any[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
   const [codes, setCodes] = useState<AccessCode[]>([]);
+  const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [resetRequests, setResetRequests] = useState<PasswordResetRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -728,6 +729,25 @@ export default function AdminPage() {
       const { error } = await supabase.from('access_codes').delete().eq('code', code);
       if (error) throw error;
       showToast('Key Deleted', `Access key ${code} has been permanently deleted.`, 'warning');
+      setSelectedCodes(prev => prev.filter(c => c !== code));
+      await fetchInitialData();
+    } catch (err: any) {
+      showToast('Error', err.message, 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Delete Selected Access Codes
+  const handleDeleteSelectedCodes = async () => {
+    if (selectedCodes.length === 0) return;
+    if (!confirm(`WARNING: Are you sure you want to permanently delete the ${selectedCodes.length} selected access keys? This will wipe their records and cannot be undone.`)) return;
+    setActionLoading(true);
+    try {
+      const { error } = await supabase.from('access_codes').delete().in('code', selectedCodes);
+      if (error) throw error;
+      showToast('Keys Deleted', `${selectedCodes.length} access keys have been permanently deleted.`, 'warning');
+      setSelectedCodes([]);
       await fetchInitialData();
     } catch (err: any) {
       showToast('Error', err.message, 'error');
@@ -861,7 +881,10 @@ export default function AdminPage() {
           return (
             <button
               key={tab.name}
-              onClick={() => setActiveTab(tab.name as any)}
+              onClick={() => {
+                setActiveTab(tab.name as any);
+                setSelectedCodes([]);
+              }}
               className={`flex items-center gap-2 px-5 py-3 text-xs font-semibold select-none border-b-2 transition-all ${
                 active
                   ? 'border-primary-blue text-white bg-zinc-900/10'
@@ -1586,20 +1609,47 @@ export default function AdminPage() {
           <div className="lg:col-span-2 space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Access Key Registry</h3>
-              <Button
-                onClick={() => handleExportTable('access_codes')}
-                disabled={exportLoading}
-                variant="secondary"
-                size="sm"
-                className="text-[10px]"
-              >
-                {exportLoading ? 'Exporting...' : 'Export Access Codes (CSV)'}
-              </Button>
+              <div className="flex items-center gap-3">
+                {selectedCodes.length > 0 && (
+                  <Button
+                    onClick={handleDeleteSelectedCodes}
+                    variant="danger"
+                    size="sm"
+                    className="text-[10px]"
+                    disabled={actionLoading}
+                  >
+                    Delete Selected ({selectedCodes.length})
+                  </Button>
+                )}
+                <Button
+                  onClick={() => handleExportTable('access_codes')}
+                  disabled={exportLoading}
+                  variant="secondary"
+                  size="sm"
+                  className="text-[10px]"
+                >
+                  {exportLoading ? 'Exporting...' : 'Export Access Codes (CSV)'}
+                </Button>
+              </div>
             </div>
             <div className="overflow-x-auto glass-panel rounded-xl border border-zinc-900 font-sans">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="border-b border-zinc-900 bg-zinc-950/40 text-zinc-500 font-mono">
+                    <th className="p-4 w-10">
+                      <input
+                        type="checkbox"
+                        checked={codes.length > 0 && selectedCodes.length === codes.length}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedCodes(codes.map((c) => c.code));
+                          } else {
+                            setSelectedCodes([]);
+                          }
+                        }}
+                        className="rounded border-zinc-800 bg-zinc-950 text-accent-primary focus:ring-accent-primary/30 h-3.5 w-3.5 cursor-pointer"
+                      />
+                    </th>
                     <th className="p-4">Key Code</th>
                     <th className="p-4">Assigned Student</th>
                     <th className="p-4">Expiry Date</th>
@@ -1610,6 +1660,20 @@ export default function AdminPage() {
                 <tbody className="divide-y divide-zinc-900">
                   {codes.map((k) => (
                     <tr key={k.code} className="hover:bg-zinc-900/10">
+                      <td className="p-4 w-10">
+                        <input
+                          type="checkbox"
+                          checked={selectedCodes.includes(k.code)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedCodes((prev) => [...prev, k.code]);
+                            } else {
+                              setSelectedCodes((prev) => prev.filter((c) => c !== k.code));
+                            }
+                          }}
+                          className="rounded border-zinc-800 bg-zinc-950 text-accent-primary focus:ring-accent-primary/30 h-3.5 w-3.5 cursor-pointer"
+                        />
+                      </td>
                       <td className="p-4 font-mono font-bold text-zinc-100 select-all">{k.code}</td>
                       <td className="p-4 font-mono text-zinc-400">{k.assigned_email}</td>
                       <td className="p-4 text-zinc-550">{new Date(k.expires_at).toLocaleDateString()}</td>
@@ -1647,7 +1711,7 @@ export default function AdminPage() {
                   ))}
                   {codes.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="p-8 text-center text-zinc-500 italic">No access codes generated.</td>
+                      <td colSpan={6} className="p-8 text-center text-zinc-500 italic">No access codes generated.</td>
                     </tr>
                   )}
                 </tbody>
