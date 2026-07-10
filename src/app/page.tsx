@@ -145,7 +145,7 @@ export default function LandingPage() {
       const res = await fetch('/api/verify-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ accessCode })
+        body: JSON.stringify({ code: accessCode })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Verification failed');
