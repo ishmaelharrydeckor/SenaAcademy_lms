@@ -811,7 +811,7 @@ export default function LandingPage() {
                       type="text"
                       placeholder="e.g. SENA-XXXXXX"
                       value={accessCode}
-                      onChange={(e) => setAccessCode(e.target.value)}
+                      onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
                       required
                       className="pl-7 uppercase"
                     />
