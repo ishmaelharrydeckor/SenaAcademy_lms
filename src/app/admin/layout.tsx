@@ -68,9 +68,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2.5">
             {theme === 'dark' ? (
               <>
-                <div className="h-8 w-8 rounded-lg bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm">
-                  <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-full w-full object-contain" />
-                </div>
+                <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-8 w-8 object-cover shrink-0" />
                 <span className="text-sm font-bold tracking-tight text-white uppercase">SENA ADMIN</span>
               </>
             ) : (
@@ -134,9 +132,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
             <div className="space-y-8">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-lg bg-white p-1 flex items-center justify-center shrink-0 shadow-sm">
-                    <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-full w-full object-contain" />
-                  </div>
+                  <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-7 w-7 object-cover shrink-0" />
                   <span className="text-xs font-bold text-text-primary uppercase tracking-wider">Admin Portal</span>
                 </div>
                 <button onClick={() => setMobileMenuOpen(false)} className="text-text-secondary hover:text-text-primary">

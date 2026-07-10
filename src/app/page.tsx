@@ -189,7 +189,7 @@ export default function LandingPage() {
     try {
       const { error } = await supabase.from('password_reset_requests').insert({
         email: resetEmail,
-        reason: resetMessage || null
+        message: resetMessage || null
       });
       if (error) throw error;
       showToast('Ticket Logged', 'Admin has received your reset request.', 'success');
@@ -256,9 +256,7 @@ export default function LandingPage() {
         <div className="flex items-center gap-2.5">
           {theme === 'dark' ? (
             <>
-              <div className="h-8 w-8 rounded-lg bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm">
-                <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-full w-full object-contain" />
-              </div>
+              <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-8 w-8 object-cover shrink-0" />
               <span className="text-sm font-bold tracking-tight text-white uppercase">Sena Academy</span>
             </>
           ) : (
