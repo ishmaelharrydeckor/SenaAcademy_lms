@@ -19,7 +19,7 @@ import {
   sendAccessCodeEmail,
   sendPasswordResetEmail,
   sendFacilitatorOnboardingEmail,
-} from './src/lib/mail.tsx';
+} from './src/lib/mail';
 
 console.log('--- Resend Email Diagnostic Tool ---');
 console.log('RESEND_API_KEY:', process.env.RESEND_API_KEY ? 'Present' : 'Missing');
