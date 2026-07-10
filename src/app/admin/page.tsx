@@ -720,6 +720,38 @@ export default function AdminPage() {
     }
   };
 
+  // Delete Access Code
+  const handleDeleteCode = async (code: string) => {
+    if (!confirm(`WARNING: Are you sure you want to permanently delete access key "${code}"? This will wipe the record and cannot be undone.`)) return;
+    setActionLoading(true);
+    try {
+      const { error } = await supabase.from('access_codes').delete().eq('code', code);
+      if (error) throw error;
+      showToast('Key Deleted', `Access key ${code} has been permanently deleted.`, 'warning');
+      await fetchInitialData();
+    } catch (err: any) {
+      showToast('Error', err.message, 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Delete Payment Log
+  const handleDeletePayment = async (id: string, reference: string) => {
+    if (!confirm(`WARNING: Are you sure you want to permanently delete transaction record "${reference}"? This will wipe the payment history log and cannot be undone.`)) return;
+    setActionLoading(true);
+    try {
+      const { error } = await supabase.from('payments').delete().eq('id', id);
+      if (error) throw error;
+      showToast('Payment Record Deleted', `Transaction ${reference} has been removed.`, 'warning');
+      await fetchInitialData();
+    } catch (err: any) {
+      showToast('Error', err.message, 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   // Announcement publisher
   const handleAnnouncementSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1593,14 +1625,23 @@ export default function AdminPage() {
                         </span>
                       </td>
                       <td className="p-4 text-right">
-                        {k.status === 'unused' && (
+                        <div className="flex justify-end items-center gap-3">
+                          {k.status === 'unused' && (
+                            <button
+                              onClick={() => handleRevokeCode(k.code)}
+                              className="text-[10px] text-yellow-500 hover:text-yellow-400 font-bold transition-colors cursor-pointer"
+                            >
+                              Revoke
+                            </button>
+                          )}
                           <button
-                            onClick={() => handleRevokeCode(k.code)}
-                            className="text-[10px] text-red-400 hover:text-red-300 font-bold transition-colors"
+                            onClick={() => handleDeleteCode(k.code)}
+                            className="text-[10px] text-red-500 hover:text-red-400 font-bold transition-colors cursor-pointer"
+                            disabled={actionLoading}
                           >
-                            Revoke
+                            Delete
                           </button>
-                        )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1677,6 +1718,7 @@ export default function AdminPage() {
                         <th className="p-4">Amount</th>
                         <th className="p-4">Status</th>
                         <th className="p-4">Code Sent</th>
+                        <th className="p-4 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-900/60">
@@ -1718,6 +1760,15 @@ export default function AdminPage() {
                               }`}>
                                 {p.access_code_generated ? 'Completed' : 'Pending'}
                               </span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <button
+                                onClick={() => handleDeletePayment(p.id, p.paystack_reference)}
+                                className="text-[10px] text-red-500 hover:text-red-400 font-bold transition-colors cursor-pointer"
+                                disabled={actionLoading}
+                              >
+                                Delete
+                              </button>
                             </td>
                           </tr>
                         );

@@ -373,8 +373,9 @@ create policy "Admins and facilitators can insert notifications" on public.notif
 
 -- Payments Policies (Admins only)
 drop policy if exists "Admins can view all payment records" on public.payments;
-create policy "Admins can view all payment records" on public.payments
-    for select using (public.get_user_role() = 'admin');
+drop policy if exists "Admins have full control of payments" on public.payments;
+create policy "Admins have full control of payments" on public.payments
+    for all using (public.get_user_role() = 'admin');
 
 --------------------------------------------------------------------------------
 -- DATA MANAGEMENT & PASSWORD RESETS UPGRADES
