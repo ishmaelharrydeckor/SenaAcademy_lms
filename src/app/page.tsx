@@ -61,9 +61,9 @@ export default function LandingPage() {
   // Navigation redirect if already logged in
   useEffect(() => {
     if (user && profile) {
-      if (profile.role === 'admin') router.push('/admin');
-      else if (profile.role === 'facilitator') router.push('/facilitator');
-      else router.push('/student');
+      if (profile.role === 'admin') router.replace('/admin');
+      else if (profile.role === 'facilitator') router.replace('/facilitator');
+      else router.replace('/student');
     }
   }, [user, profile, router]);
 
@@ -277,7 +277,12 @@ export default function LandingPage() {
           )}
         </div>
         <div className="flex items-center gap-3 md:gap-4">
-          
+          <a 
+            href="/events"
+            className="text-xs font-semibold transition-colors text-text-secondary hover:text-text-primary mr-2"
+          >
+            Events
+          </a>
           <button 
             onClick={() => openModalAt('login')}
             className="text-xs font-semibold transition-colors text-text-secondary hover:text-text-primary"
