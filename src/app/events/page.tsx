@@ -87,7 +87,7 @@ export default function EventsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-bg-canvas text-text-primary relative overflow-hidden flex flex-col">
+    <main className="events-theme min-h-screen bg-bg-canvas text-text-primary relative overflow-hidden flex flex-col">
       {/* Decorative background glows */}
       <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-accent-primary/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-accent-primary/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
