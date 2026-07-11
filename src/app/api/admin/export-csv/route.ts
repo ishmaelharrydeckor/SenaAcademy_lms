@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     // 3. Parse table parameter
     const searchParams = request.nextUrl.searchParams;
     const tableName = searchParams.get('table');
-    const allowedTables = ['profiles', 'submissions', 'modules', 'access_codes', 'payments'];
+    const allowedTables = ['profiles', 'submissions', 'modules', 'access_codes', 'payments', 'events', 'event_registrations'];
 
     if (!tableName || !allowedTables.includes(tableName)) {
       return NextResponse.json({ error: 'Bad Request: Invalid or missing table parameter' }, { status: 400 });
@@ -42,6 +42,12 @@ export async function GET(request: NextRequest) {
 
     // 4. Fetch table data from Supabase
     let query = supabaseAdmin.from(tableName).select('*');
+    
+    // Apply event_id filter for event_registrations if provided
+    const eventId = searchParams.get('event_id');
+    if (tableName === 'event_registrations' && eventId) {
+      query = query.eq('event_id', eventId);
+    }
     
     // Sort logically by creation date
     if (tableName === 'modules') {

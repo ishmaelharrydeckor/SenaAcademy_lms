@@ -26,6 +26,11 @@ import {
   Clock,
   AlertCircle,
   RefreshCw,
+  Calendar,
+  MapPin,
+  Video,
+  ChevronLeft,
+  Loader2,
 } from 'lucide-react';
 
 interface Cohort {
@@ -169,6 +174,176 @@ export default function AdminPage() {
 
   const [actionLoading, setActionLoading] = useState(false);
 
+  // --- EVENTS STATE ---
+  const [eventsList, setEventsList] = useState<any[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
+  const [registrants, setRegistrants] = useState<any[]>([]);
+  const [loadingRegistrants, setLoadingRegistrants] = useState(false);
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
+
+  // Event Form States
+  const [eventTitle, setEventTitle] = useState('');
+  const [eventSlug, setEventSlug] = useState('');
+  const [eventDesc, setEventDesc] = useState('');
+  const [eventCoverUrl, setEventCoverUrl] = useState('');
+  const [eventType, setEventType] = useState<'online' | 'in_person'>('online');
+  const [eventLocation, setEventLocation] = useState('');
+  const [eventMeetingLink, setEventMeetingLink] = useState('');
+  const [eventStart, setEventStart] = useState('');
+  const [eventEnd, setEventEnd] = useState('');
+  const [eventIsPaid, setEventIsPaid] = useState(false);
+  const [eventPrice, setEventPrice] = useState('');
+  const [eventCapacity, setEventCapacity] = useState('');
+  const [eventStatus, setEventStatus] = useState<'draft' | 'published' | 'cancelled'>('draft');
+  const [eventFormSubmitting, setEventFormSubmitting] = useState(false);
+
+  const fetchEvents = async () => {
+    try {
+      const { data, error } = await supabase.from('events').select('*').order('start_time', { ascending: false });
+      if (data) setEventsList(data);
+    } catch (err) {
+      console.error('Error reloading events:', err);
+    }
+  };
+
+  const fetchRegistrants = async (eventId: string) => {
+    setLoadingRegistrants(true);
+    try {
+      const { data, error } = await supabase
+        .from('event_registrations')
+        .select('*')
+        .eq('event_id', eventId)
+        .order('created_at', { ascending: false });
+      if (data) setRegistrants(data);
+    } catch (err) {
+      console.error('Error fetching registrants:', err);
+    } finally {
+      setLoadingRegistrants(false);
+    }
+  };
+
+  const handleTitleChange = (val: string) => {
+    setEventTitle(val);
+    if (!editingEventId) {
+      const autoSlug = val
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+      setEventSlug(autoSlug);
+    }
+  };
+
+  const resetEventForm = () => {
+    setEditingEventId(null);
+    setEventTitle('');
+    setEventSlug('');
+    setEventDesc('');
+    setEventCoverUrl('');
+    setEventType('online');
+    setEventLocation('');
+    setEventMeetingLink('');
+    setEventStart('');
+    setEventEnd('');
+    setEventIsPaid(false);
+    setEventPrice('');
+    setEventCapacity('');
+    setEventStatus('draft');
+  };
+
+  const handleEventFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!eventTitle || !eventSlug || !eventDesc || !eventStart || !eventEnd) {
+      showToast('Validation Error', 'Please fill in all required fields.', 'error');
+      return;
+    }
+
+    setEventFormSubmitting(true);
+    
+    const payload = {
+      title: eventTitle,
+      slug: eventSlug,
+      description: eventDesc,
+      cover_image_url: eventCoverUrl || null,
+      event_type: eventType,
+      location: eventType === 'in_person' ? eventLocation : null,
+      meeting_link: eventType === 'online' ? eventMeetingLink : null,
+      start_time: new Date(eventStart).toISOString(),
+      end_time: new Date(eventEnd).toISOString(),
+      is_paid: eventIsPaid,
+      price: eventIsPaid ? Number(eventPrice) : null,
+      currency: 'GHS',
+      capacity: eventCapacity ? Number(eventCapacity) : null,
+      status: eventStatus,
+    };
+
+    try {
+      if (editingEventId) {
+        const { error } = await supabase
+          .from('events')
+          .update(payload)
+          .eq('id', editingEventId);
+
+        if (error) throw error;
+        showToast('Success', 'Event updated successfully.', 'success');
+      } else {
+        const { data: { user } } = await supabase.auth.getUser();
+        const { error } = await supabase
+          .from('events')
+          .insert({
+            ...payload,
+            created_by: user?.id,
+          });
+
+        if (error) throw error;
+        showToast('Success', 'Event created successfully.', 'success');
+      }
+
+      resetEventForm();
+      fetchEvents();
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error', err.message || 'Failed to save event.', 'error');
+    } finally {
+      setEventFormSubmitting(false);
+    }
+  };
+
+  const loadEventForEdit = (ev: any) => {
+    setEditingEventId(ev.id);
+    setEventTitle(ev.title);
+    setEventSlug(ev.slug);
+    setEventDesc(ev.description);
+    setEventCoverUrl(ev.cover_image_url || '');
+    setEventType(ev.event_type);
+    setEventLocation(ev.location || '');
+    setEventMeetingLink(ev.meeting_link || '');
+    setEventStart(new Date(ev.start_time).toISOString().slice(0, 16));
+    setEventEnd(new Date(ev.end_time).toISOString().slice(0, 16));
+    setEventIsPaid(ev.is_paid);
+    setEventPrice(ev.price?.toString() || '');
+    setEventCapacity(ev.capacity?.toString() || '');
+    setEventStatus(ev.status);
+  };
+
+  const handleToggleCheckIn = async (regId: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('event_registrations')
+        .update({ checked_in: !currentStatus })
+        .eq('id', regId);
+
+      if (error) throw error;
+      
+      setRegistrants(prev =>
+        prev.map(r => r.id === regId ? { ...r, checked_in: !currentStatus } : r)
+      );
+      showToast('Success', 'Registrant check-in status toggled.', 'success');
+    } catch (err: any) {
+      console.error(err);
+      showToast('Error', 'Failed to update check-in status.', 'error');
+    }
+  };
+
   useEffect(() => {
     fetchInitialData();
   }, []);
@@ -176,6 +351,10 @@ export default function AdminPage() {
   const fetchInitialData = async () => {
     setLoading(true);
     try {
+      // Fetch events
+      const { data: eventData } = await supabase.from('events').select('*').order('start_time', { ascending: false });
+      if (eventData) setEventsList(eventData);
+
       // Fetch cohorts
       const { data: cohortData } = await supabase.from('cohorts').select('*').order('created_at', { ascending: false });
       if (cohortData) setCohorts(cohortData as Cohort[]);
@@ -261,14 +440,15 @@ export default function AdminPage() {
     }
   };
 
-  const handleExportTable = async (tableName: string) => {
+  const handleExportTable = async (tableName: string, eventId?: string) => {
     setExportLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) throw new Error('You must be logged in to export files.');
 
-      const res = await fetch(`/api/admin/export-csv?table=${tableName}`, {
+      const eventQuery = eventId ? `&event_id=${eventId}` : '';
+      const res = await fetch(`/api/admin/export-csv?table=${tableName}${eventQuery}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -860,6 +1040,7 @@ export default function AdminPage() {
     { name: 'payments', label: 'Payments', icon: CreditCard },
     { name: 'resets', label: 'Resets', icon: Key },
     { name: 'announcements', label: 'Announcements', icon: Megaphone },
+    { name: 'events', label: 'Events', icon: Calendar },
     { name: 'settings', label: 'Settings', icon: FileSpreadsheet },
   ];
 
@@ -884,6 +1065,8 @@ export default function AdminPage() {
               onClick={() => {
                 setActiveTab(tab.name as any);
                 setSelectedCodes([]);
+                setSelectedEvent(null);
+                resetEventForm();
               }}
               className={`flex items-center gap-2 px-5 py-3 text-xs font-semibold select-none border-b-2 transition-all ${
                 active
@@ -2028,6 +2211,351 @@ export default function AdminPage() {
         </div>
       )}
 
+      {/* --- EVENTS TAB PANEL --- */}
+      {activeTab === 'events' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+          {/* Left Column: Create/Edit Form */}
+          <div className="lg:col-span-1">
+            <Card className="space-y-4">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-550 block">
+                {editingEventId ? 'Modify Event Details' : 'Publish New Event'}
+              </span>
+              <form onSubmit={handleEventFormSubmit} className="space-y-4">
+                <Input
+                  label="Event Title"
+                  id="ev-title"
+                  placeholder="e.g. Next.js Masterclass"
+                  value={eventTitle}
+                  onChange={(e) => handleTitleChange(e.target.value)}
+                  required
+                />
+                
+                <Input
+                  label="Clean URL Slug"
+                  id="ev-slug"
+                  placeholder="e.g. nextjs-masterclass"
+                  value={eventSlug}
+                  onChange={(e) => setEventSlug(e.target.value)}
+                  required
+                />
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-zinc-400">Description</label>
+                  <textarea
+                    rows={4}
+                    placeholder="Provide a detailed description of the event..."
+                    value={eventDesc}
+                    onChange={(e) => setEventDesc(e.target.value)}
+                    className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950/80 border border-zinc-900 focus:outline-none focus:ring-1 focus:ring-primary-blue min-h-[100px]"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-zinc-400">Event Format</label>
+                  <select
+                    value={eventType}
+                    onChange={(e: any) => setEventType(e.target.value)}
+                    className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950/80 border border-zinc-900 focus:outline-none focus:ring-1 focus:ring-primary-blue"
+                  >
+                    <option value="online">Online Webinar</option>
+                    <option value="in_person">In-Person Meetup</option>
+                  </select>
+                </div>
+
+                {eventType === 'in_person' ? (
+                  <Input
+                    label="Physical Address Venue"
+                    id="ev-location"
+                    placeholder="e.g. Room 4, Sena Campus, Accra"
+                    value={eventLocation}
+                    onChange={(e) => setEventLocation(e.target.value)}
+                    required
+                  />
+                ) : (
+                  <Input
+                    label="Online Meeting Link URL"
+                    id="ev-link"
+                    placeholder="e.g. https://meet.google.com/..."
+                    value={eventMeetingLink}
+                    onChange={(e) => setEventMeetingLink(e.target.value)}
+                    required
+                  />
+                )}
+
+                <Input
+                  label="Cover Image URL (Optional)"
+                  id="ev-cover"
+                  placeholder="https://domain.com/image.jpg"
+                  value={eventCoverUrl}
+                  onChange={(e) => setEventCoverUrl(e.target.value)}
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    label="Start Date & Time"
+                    id="ev-start"
+                    type="datetime-local"
+                    value={eventStart}
+                    onChange={(e) => setEventStart(e.target.value)}
+                    required
+                  />
+                  <Input
+                    label="End Date & Time"
+                    id="ev-end"
+                    type="datetime-local"
+                    value={eventEnd}
+                    onChange={(e) => setEventEnd(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-2 rounded bg-zinc-950/50 border border-zinc-900">
+                  <span className="text-xs font-medium text-zinc-400">Is Paid Event?</span>
+                  <input
+                    type="checkbox"
+                    checked={eventIsPaid}
+                    onChange={(e) => setEventIsPaid(e.target.checked)}
+                    className="h-4 w-4 rounded border-zinc-900 text-primary-blue focus:ring-primary-blue"
+                  />
+                </div>
+
+                {eventIsPaid && (
+                  <Input
+                    label="Ticket Price (GHS)"
+                    id="ev-price"
+                    type="number"
+                    placeholder="e.g. 50"
+                    value={eventPrice}
+                    onChange={(e) => setEventPrice(e.target.value)}
+                    required
+                  />
+                )}
+
+                <Input
+                  label="Maximum Capacity (Optional)"
+                  id="ev-capacity"
+                  type="number"
+                  placeholder="e.g. 50 (blank = unlimited)"
+                  value={eventCapacity}
+                  onChange={(e) => setEventCapacity(e.target.value)}
+                />
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-zinc-400">Publishing Status</label>
+                  <select
+                    value={eventStatus}
+                    onChange={(e: any) => setEventStatus(e.target.value)}
+                    className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950/80 border border-zinc-900 focus:outline-none focus:ring-1 focus:ring-primary-blue"
+                  >
+                    <option value="draft">Draft (Private)</option>
+                    <option value="published">Published (Public)</option>
+                    <option value="cancelled">Cancelled (Public Notice)</option>
+                  </select>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    type="submit"
+                    className="flex-1 text-xs bg-primary-blue hover:bg-blue-650"
+                    disabled={eventFormSubmitting}
+                  >
+                    {eventFormSubmitting ? 'Saving...' : editingEventId ? 'Update Event' : 'Create Event'}
+                  </Button>
+                  {editingEventId && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={resetEventForm}
+                      className="text-xs"
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                </div>
+              </form>
+            </Card>
+          </div>
+
+          {/* Right Column: Events List / RSVP view */}
+          <div className="lg:col-span-2">
+            {!selectedEvent ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
+                  <span className="text-xs font-mono uppercase tracking-widest text-zinc-550">
+                    Active Academy Events ({eventsList.length})
+                  </span>
+                </div>
+                <div className="glass-panel rounded-xl overflow-hidden border border-zinc-900 bg-zinc-950/50">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-zinc-900 bg-zinc-900/40 text-zinc-500 font-mono uppercase tracking-wider text-[10px]">
+                          <th className="p-4">Title</th>
+                          <th className="p-4">Format</th>
+                          <th className="p-4">Date</th>
+                          <th className="p-4">Price</th>
+                          <th className="p-4">Status</th>
+                          <th className="p-4 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-900 text-zinc-300">
+                        {eventsList.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="p-8 text-center text-zinc-500 italic">
+                              No events created on the platform yet.
+                            </td>
+                          </tr>
+                        ) : (
+                          eventsList.map((ev) => (
+                            <tr key={ev.id} className="hover:bg-zinc-900/20">
+                              <td className="p-4 font-semibold text-zinc-100 truncate max-w-[150px]" title={ev.title}>
+                                {ev.title}
+                              </td>
+                              <td className="p-4 capitalize">{ev.event_type.replace('_', ' ')}</td>
+                              <td className="p-4 text-zinc-400">
+                                {new Date(ev.start_time).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              </td>
+                              <td className="p-4">
+                                {ev.is_paid ? `GHS ${ev.price}` : 'Free'}
+                              </td>
+                              <td className="p-4">
+                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
+                                  ev.status === 'published' 
+                                    ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                                    : ev.status === 'cancelled'
+                                    ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+                                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                                }`}>
+                                  {ev.status}
+                                </span>
+                              </td>
+                              <td className="p-4 text-right space-x-1.5 whitespace-nowrap">
+                                <Button
+                                  size="sm"
+                                  variant="secondary"
+                                  onClick={() => loadEventForEdit(ev)}
+                                  className="text-[10px] px-2 py-1"
+                                >
+                                  Edit
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="primary"
+                                  onClick={() => {
+                                    setSelectedEvent(ev);
+                                    fetchRegistrants(ev.id);
+                                  }}
+                                  className="text-[10px] px-2 py-1"
+                                >
+                                  RSVPs
+                                </Button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Back Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
+                  <button
+                    onClick={() => setSelectedEvent(null)}
+                    className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer text-zinc-400 hover:text-white"
+                  >
+                    <ChevronLeft className="h-4 w-4" /> Back to Events
+                  </button>
+                  <Button
+                    onClick={() => handleExportTable('event_registrations', selectedEvent.id)}
+                    className="text-[10px] px-3 py-1.5 flex items-center gap-1.5 bg-zinc-900 border border-zinc-800"
+                    disabled={exportLoading}
+                  >
+                    <FileSpreadsheet className="h-3.5 w-3.5 text-primary-blue" />
+                    {exportLoading ? 'Exporting...' : 'Export RSVPs (CSV)'}
+                  </Button>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-base font-bold text-zinc-100">{selectedEvent.title} RSVP Registry</h3>
+                  <p className="text-[11px] text-zinc-500">
+                    Format: <span className="capitalize text-zinc-400">{selectedEvent.event_type}</span> | 
+                    Price: <span className="text-zinc-400">{selectedEvent.is_paid ? `GHS ${selectedEvent.price}` : 'Free'}</span> |
+                    Capacity: <span className="text-zinc-400">{selectedEvent.capacity ? `${registrants.length} / ${selectedEvent.capacity} filled` : `${registrants.length} registered`}</span>
+                  </p>
+                </div>
+
+                <div className="glass-panel rounded-xl overflow-hidden border border-zinc-900 bg-zinc-950/50">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-zinc-900 bg-zinc-900/40 text-zinc-500 font-mono uppercase tracking-wider text-[10px]">
+                          <th className="p-4">Name</th>
+                          <th className="p-4">Email</th>
+                          <th className="p-4">Payment</th>
+                          <th className="p-4">Checked-In</th>
+                          <th className="p-4 text-right">Registered At</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-900 text-zinc-300">
+                        {loadingRegistrants ? (
+                          <tr>
+                            <td colSpan={5} className="p-8 text-center text-zinc-500">
+                              <span className="flex items-center gap-2 justify-center">
+                                <Loader2 className="h-4 w-4 animate-spin text-primary-blue" />
+                                Retrieving registrants list...
+                              </span>
+                            </td>
+                          </tr>
+                        ) : registrants.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="p-8 text-center text-zinc-500 italic">
+                              No attendees registered for this event yet.
+                            </td>
+                          </tr>
+                        ) : (
+                          registrants.map((reg) => (
+                            <tr key={reg.id} className="hover:bg-zinc-900/20">
+                              <td className="p-4 font-semibold text-zinc-100">{reg.full_name}</td>
+                              <td className="p-4 text-zinc-400">{reg.email}</td>
+                              <td className="p-4">
+                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
+                                  reg.payment_status === 'paid' 
+                                    ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                                    : reg.payment_status === 'pending'
+                                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                                }`}>
+                                  {reg.payment_status.replace('_', ' ')}
+                                </span>
+                              </td>
+                              <td className="p-4">
+                                <input
+                                  type="checkbox"
+                                  checked={reg.checked_in}
+                                  onChange={() => handleToggleCheckIn(reg.id, reg.checked_in)}
+                                  className="h-4 w-4 rounded border-zinc-900 text-primary-blue focus:ring-primary-blue cursor-pointer"
+                                />
+                              </td>
+                              <td className="p-4 text-right text-zinc-500">
+                                {new Date(reg.created_at).toLocaleDateString()}
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* --- SETTINGS TAB PANEL --- */}
       {activeTab === 'settings' && (
         <div className="max-w-2xl space-y-6 animate-fade-in">
@@ -2058,6 +2586,8 @@ export default function AdminPage() {
                   <option value="submissions">Submissions Log (submissions)</option>
                   <option value="modules">Curriculum Modules (modules)</option>
                   <option value="access_codes">Access Codes Registry (access_codes)</option>
+                  <option value="events">Academy Events (events)</option>
+                  <option value="event_registrations">Event Registrations (event_registrations)</option>
                 </select>
               </div>
 

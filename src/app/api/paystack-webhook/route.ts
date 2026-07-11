@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
-import { sendAccessCodeEmail } from '@/lib/mail';
+import { sendAccessCodeEmail, sendEventRegistrationEmail } from '@/lib/mail';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder-project.supabase.co';
 const supabaseServiceRole = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-role-key';
@@ -49,13 +49,84 @@ export async function POST(request: NextRequest) {
     const metadata = data.metadata || {};
     const fullName = metadata.full_name || 'Trainee';
     const cohortId = metadata.cohort_id;
+    const eventId = metadata.event_id;
 
-    if (!email || !cohortId) {
-      console.error('Webhook payload is missing student email or cohort_id metadata.');
-      return NextResponse.json({ error: 'Missing metadata in payload' }, { status: 400 });
+    // Check for email first
+    if (!email) {
+      console.error(`[Paystack Webhook Error] Missing customer email in payload. Reference: ${reference}`);
+      return NextResponse.json({ error: 'Missing customer email in payload' }, { status: 400 });
     }
 
-    // 3. Prevent duplicate processing
+    // Logging fallback if neither cohortId nor eventId is present
+    if (!cohortId && !eventId) {
+      console.error(
+        `[Paystack Webhook Error] Webhook payload missing both cohort_id and event_id metadata.\n` +
+        `Reference: ${reference}\n` +
+        `Raw Payload Metadata: ${JSON.stringify(metadata)}\n` +
+        `Timestamp: ${new Date().toISOString()}`
+      );
+      return NextResponse.json({ error: 'Missing cohort_id or event_id metadata' }, { status: 400 });
+    }
+
+    // Branch 1: Event Registration
+    if (eventId) {
+      console.log(`Processing event registration payment for event: ${eventId}, email: ${email}`);
+      
+      // Prevent duplicate processing
+      const { data: existingReg } = await supabaseAdmin
+        .from('event_registrations')
+        .select('id')
+        .eq('paystack_reference', reference)
+        .maybeSingle();
+
+      if (existingReg) {
+        console.log(`Event registration for reference ${reference} has already been processed.`);
+        return NextResponse.json({ status: 'already_processed' }, { status: 200 });
+      }
+
+      // Call the atomic capacity-safe registration function
+      const { data: regResult, error: regError } = await supabaseAdmin.rpc('register_for_event', {
+        p_event_id: eventId,
+        p_full_name: fullName,
+        p_email: email,
+        p_payment_status: 'paid',
+        p_paystack_reference: reference
+      });
+
+      if (regError || !regResult || regResult.length === 0) {
+        console.error('Failed to register for event via RPC:', regError?.message || 'Empty response');
+        return NextResponse.json({ error: 'Database registration failed' }, { status: 550 });
+      }
+
+      const result = regResult[0];
+      if (!result.success) {
+        console.error('Event registration blocked by capacity check:', result.error_message);
+        return NextResponse.json({ error: result.error_message || 'Event registration failed' }, { status: 400 });
+      }
+
+      // Fetch event details to send email
+      const { data: eventData } = await supabaseAdmin
+        .from('events')
+        .select('*')
+        .eq('id', eventId)
+        .single();
+
+      if (eventData) {
+        const emailResult = await sendEventRegistrationEmail(email, fullName, eventData);
+        if (!emailResult.success) {
+          console.error('Failed to send event registration email:', emailResult.error);
+        }
+      } else {
+        console.warn(`Could not find event ${eventId} to send confirmation email.`);
+      }
+
+      return NextResponse.json({ status: 'success', reference, registration_id: result.registration_id });
+    }
+
+    // Branch 2: Cohort Admissions
+    console.log(`Processing cohort admissions payment for cohort: ${cohortId}, email: ${email}`);
+
+    // Prevent duplicate processing
     const { data: existingPayment } = await supabaseAdmin
       .from('payments')
       .select('*')
@@ -63,11 +134,11 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (existingPayment) {
-      console.log(`Payment reference ${reference} has already been processed.`);
+      console.log(`Cohort payment reference ${reference} has already been processed.`);
       return NextResponse.json({ status: 'already_processed' }, { status: 200 });
     }
 
-    // 4. Log Payment Attempt in Database
+    // Log Payment Attempt in Database
     const { error: insertError } = await supabaseAdmin
       .from('payments')
       .insert({
@@ -86,7 +157,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Database insert failed' }, { status: 500 });
     }
 
-    // 5. Generate unique access code
+    // Generate unique access code
     const generatedCode = 'SENA-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
 
     // Set expiry date to 30 days from now
@@ -117,7 +188,7 @@ export async function POST(request: NextRequest) {
     
     const cohortName = cohortData?.name || 'Selected Cohort';
 
-    // 6. Trigger SMTP Email containing the access code
+    // Trigger SMTP Email containing the access code
     const emailResult = await sendAccessCodeEmail(email, fullName, generatedCode, cohortName);
 
     if (emailResult.success) {
