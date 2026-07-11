@@ -275,13 +275,13 @@ function EventDetailContent() {
       <div className="max-w-6xl w-full mx-auto px-6 md:px-12 py-10 grid grid-cols-1 lg:grid-cols-3 gap-10 z-10 flex-1">
         {/* Left Side: Event Details */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Cover image / placeholder */}
-          <div className="h-64 sm:h-96 w-full rounded-2xl overflow-hidden relative border border-border-brand bg-bg-surface flex items-center justify-center">
+          {/* Cover image / flyer wrapper (dynamic ratio, object-contain to prevent cropping flyer details) */}
+          <div className={`w-full rounded-2xl overflow-hidden relative border border-border-brand bg-zinc-950/40 flex items-center justify-center ${event.cover_image_url ? 'py-4' : 'h-64 sm:h-96'}`}>
             {event.cover_image_url ? (
               <img
                 src={event.cover_image_url}
                 alt={event.title}
-                className="w-full h-full object-cover"
+                className="w-full h-auto max-h-[550px] object-contain block"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-accent-primary/10 via-bg-surface-hover/20 to-accent-primary/5 flex items-center justify-center relative">
