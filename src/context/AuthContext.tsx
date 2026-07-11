@@ -113,18 +113,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(session.user);
         await loadProfile(session.user.id);
         
-        // Redirect based on role if on landing or auth pages
+        // Redirect based on role if on landing page
         if (event === 'SIGNED_IN') {
-          const { data: prof } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-          
-          if (prof) {
-            if (prof.role === 'admin') router.push('/admin');
-            else if (prof.role === 'facilitator') router.push('/facilitator');
-            else router.push('/student');
+          const isRootPath = typeof window !== 'undefined' && window.location.pathname === '/';
+          if (isRootPath) {
+            const { data: prof } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('id', session.user.id)
+              .single();
+            
+            if (prof) {
+              if (prof.role === 'admin') router.push('/admin');
+              else if (prof.role === 'facilitator') router.push('/facilitator');
+              else router.push('/student');
+            }
           }
         }
       } else {
