@@ -58,19 +58,7 @@
   color-scheme: dark;
 }
 
-/* Local Brand Themes - Events Navy Microsite Specs */
-.events-theme {
-  --bg-canvas: #021736;
-  --bg-surface: rgba(3, 18, 44, 0.7);
-  --bg-surface-hover: #042555;
-  --text-secondary: #94a3b8;
-  --border: rgba(255, 255, 255, 0.08);
-  --accent-primary: #0552fe;
-  --accent-primary-hover: #1e40af;
-  
-  background-color: var(--bg-canvas);
-  color: var(--text-primary);
-}
+
 
 body {
   background-color: var(--bg-canvas);
