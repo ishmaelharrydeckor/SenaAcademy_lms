@@ -85,7 +85,7 @@ export default function AdminPage() {
   const { showToast } = useNotifications();
   
   // Tab states: 'cohorts' | 'archived_cohorts' | 'students' | 'facilitators' | 'modules' | 'codes' | 'payments' | 'resets' | 'announcements' | 'settings'
-  const [activeTab, setActiveTab] = useState<'cohorts' | 'archived_cohorts' | 'students' | 'facilitators' | 'modules' | 'codes' | 'payments' | 'resets' | 'announcements' | 'settings'>('cohorts');
+  const [activeTab, setActiveTab] = useState<'cohorts' | 'archived_cohorts' | 'students' | 'facilitators' | 'modules' | 'codes' | 'payments' | 'resets' | 'announcements' | 'settings' | 'events'>('cohorts');
 
   const [cohorts, setCohorts] = useState<Cohort[]>([]);
   const [students, setStudents] = useState<any[]>([]);
