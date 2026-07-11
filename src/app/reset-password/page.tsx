@@ -18,6 +18,32 @@ export default function ResetPasswordPage() {
   const [validationError, setValidationError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [resetCompleted, setResetCompleted] = useState(false);
+  const [checkingHash, setCheckingHash] = useState(true);
+
+  // Parse URL hash for access token to prevent flashing expired link
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      const searchParams = new URLSearchParams(window.location.search);
+      
+      // If we see an access token in the URL hash, wait up to 1.5 seconds for Supabase Auth to process it
+      if (hash.includes('access_token=') || hash.includes('id_token=')) {
+        const timer = setTimeout(() => {
+          setCheckingHash(false);
+        }, 1500);
+        return () => clearTimeout(timer);
+      }
+      
+      // If there's an error param in query or hash, immediately stop checking
+      if (searchParams.has('error') || hash.includes('error=')) {
+        setCheckingHash(false);
+        return;
+      }
+      
+      // Otherwise immediately stop checking
+      setCheckingHash(false);
+    }
+  }, []);
 
   // Redirect if they finish reset successfully
   useEffect(() => {
@@ -82,7 +108,7 @@ export default function ResetPasswordPage() {
     }
   };
 
-  if (loading) {
+  if (loading || checkingHash) {
     return <LoadingScreen message="Verifying security session..." />;
   }
 

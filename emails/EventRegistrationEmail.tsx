@@ -15,6 +15,8 @@ interface EventRegistrationEmailProps {
   location?: string | null;
   meetingLink?: string | null;
   email: string;
+  googleCalendarUrl?: string;
+  outlookCalendarUrl?: string;
 }
 
 export const EventRegistrationEmail = ({
@@ -25,6 +27,8 @@ export const EventRegistrationEmail = ({
   location = 'Sena Academy Campus, Accra',
   meetingLink = 'https://meet.google.com/abc-defg-hij',
   email = 'builder@example.com',
+  googleCalendarUrl = '',
+  outlookCalendarUrl = '',
 }: EventRegistrationEmailProps) => {
   const isOnline = eventType === 'online';
   
@@ -58,6 +62,25 @@ export const EventRegistrationEmail = ({
           </Text>
         )}
       </Section>
+      
+      {(googleCalendarUrl || outlookCalendarUrl) && (
+        <Section style={calendarLinksContainer}>
+          <Text style={calendarText}>
+            Add to calendar:{' '}
+            {googleCalendarUrl && (
+              <a href={googleCalendarUrl} target="_blank" rel="noopener noreferrer" style={calendarLink}>
+                Google Calendar
+              </a>
+            )}
+            {googleCalendarUrl && outlookCalendarUrl && ' • '}
+            {outlookCalendarUrl && (
+              <a href={outlookCalendarUrl} target="_blank" rel="noopener noreferrer" style={calendarLink}>
+                Outlook / Live
+              </a>
+            )}
+          </Text>
+        </Section>
+      )}
       
       {isOnline && meetingLink && (
         <Section style={buttonContainer}>
@@ -218,4 +241,21 @@ const signoff = {
   color: '#18181B',
   margin: '16px 0 0 0',
   fontWeight: '500',
+};
+
+const calendarLinksContainer = {
+  margin: '0 0 24px 0',
+  textAlign: 'center' as const,
+};
+
+const calendarText = {
+  fontSize: '12px',
+  color: '#64748B',
+  margin: '0',
+};
+
+const calendarLink = {
+  color: '#0552FE',
+  textDecoration: 'underline',
+  fontWeight: '600',
 };

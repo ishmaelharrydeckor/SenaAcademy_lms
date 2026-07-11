@@ -10,7 +10,9 @@ export async function POST(request: NextRequest) {
 
     // Cohort fee is GHS 100 (passed in subunits: 10000 pesewas)
     const amountInPesewas = 100 * 100;
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const host = request.headers.get('host') || '';
+    const protocol = request.headers.get('x-forwarded-proto') || (host.includes('localhost') ? 'http' : 'https');
+    const appUrl = host ? `${protocol}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || 'https://senaacademy.org');
 
     console.log(`Initializing Paystack transaction for: ${email}`);
     

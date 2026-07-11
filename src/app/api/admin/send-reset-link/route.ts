@@ -50,7 +50,9 @@ export async function POST(request: NextRequest) {
     }
 
     const email = resetReq.email;
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const host = request.headers.get('host') || '';
+    const protocol = request.headers.get('x-forwarded-proto') || (host.includes('localhost') ? 'http' : 'https');
+    const appUrl = host ? `${protocol}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || 'https://senaacademy.org');
 
     // 5. Generate secure Supabase Auth recovery action link
     console.log(`Generating password reset recovery link for: ${email}`);

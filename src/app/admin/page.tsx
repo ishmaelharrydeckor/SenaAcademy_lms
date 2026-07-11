@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useNotifications } from '@/context/NotificationContext';
 import { Card, Button, Input } from '@/components/UI';
@@ -31,6 +31,7 @@ import {
   Video,
   ChevronLeft,
   Loader2,
+  Edit,
 } from 'lucide-react';
 
 interface Cohort {
@@ -86,6 +87,28 @@ export default function AdminPage() {
   
   // Tab states: 'cohorts' | 'archived_cohorts' | 'students' | 'facilitators' | 'modules' | 'codes' | 'payments' | 'resets' | 'announcements' | 'settings'
   const [activeTab, setActiveTab] = useState<'cohorts' | 'archived_cohorts' | 'students' | 'facilitators' | 'modules' | 'codes' | 'payments' | 'resets' | 'announcements' | 'settings' | 'events'>('cohorts');
+
+  // Load tab from sessionStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedTab = sessionStorage.getItem('admin_active_tab');
+      if (storedTab) {
+        setActiveTab(storedTab as any);
+      }
+    }
+  }, []);
+
+  // Update sessionStorage when tab changes
+  const isTabMounted = useRef(false);
+  useEffect(() => {
+    if (isTabMounted.current) {
+      if (typeof window !== 'undefined' && activeTab) {
+        sessionStorage.setItem('admin_active_tab', activeTab);
+      }
+    } else {
+      isTabMounted.current = true;
+    }
+  }, [activeTab]);
 
   const [cohorts, setCohorts] = useState<Cohort[]>([]);
   const [students, setStudents] = useState<any[]>([]);
@@ -179,6 +202,7 @@ export default function AdminPage() {
   const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
   const [registrants, setRegistrants] = useState<any[]>([]);
   const [loadingRegistrants, setLoadingRegistrants] = useState(false);
+  const [editingModuleId, setEditingModuleId] = useState<string | null>(null);
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
 
   // Event Form States
@@ -235,6 +259,9 @@ export default function AdminPage() {
 
   const resetEventForm = () => {
     setEditingEventId(null);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('admin_editing_event_id');
+    }
     setEventTitle('');
     setEventSlug('');
     setEventDesc('');
@@ -310,6 +337,9 @@ export default function AdminPage() {
 
   const loadEventForEdit = (ev: any) => {
     setEditingEventId(ev.id);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('admin_editing_event_id', ev.id);
+    }
     setEventTitle(ev.title);
     setEventSlug(ev.slug);
     setEventDesc(ev.description);
@@ -432,6 +462,71 @@ export default function AdminPage() {
         `)
         .order('created_at', { ascending: false });
       if (announceData) setAnnouncements(announceData);
+
+      // Restore sub-view states if saved in sessionStorage
+      if (typeof window !== 'undefined') {
+        const storedEditingEventId = sessionStorage.getItem('admin_editing_event_id');
+        if (storedEditingEventId && eventData) {
+          const found = eventData.find(e => e.id === storedEditingEventId);
+          if (found) {
+            setEditingEventId(found.id);
+            setEventTitle(found.title);
+            setEventSlug(found.slug);
+            setEventDesc(found.description);
+            setEventCoverUrl(found.cover_image_url || '');
+            setEventType(found.event_type);
+            setEventLocation(found.location || '');
+            setEventMeetingLink(found.meeting_link || '');
+            setEventStart(new Date(found.start_time).toISOString().slice(0, 16));
+            setEventEnd(new Date(found.end_time).toISOString().slice(0, 16));
+            setEventIsPaid(found.is_paid);
+            setEventPrice(found.price?.toString() || '');
+            setEventCapacity(found.capacity?.toString() || '');
+            setEventStatus(found.status);
+          }
+        }
+
+        const storedSelectedEventId = sessionStorage.getItem('admin_selected_event_id');
+        if (storedSelectedEventId && eventData) {
+          const found = eventData.find(e => e.id === storedSelectedEventId);
+          if (found) {
+            setSelectedEvent(found);
+            setLoadingRegistrants(true);
+            try {
+              const { data: regData } = await supabase
+                .from('event_registrations')
+                .select('*')
+                .eq('event_id', found.id)
+                .order('created_at', { ascending: false });
+              if (regData) setRegistrants(regData);
+            } catch (err) {
+              console.error('Error fetching registrants:', err);
+            } finally {
+              setLoadingRegistrants(false);
+            }
+          }
+        }
+
+        const storedEditingModuleId = sessionStorage.getItem('admin_editing_module_id');
+        if (storedEditingModuleId && moduleData) {
+          const found = moduleData.find(m => m.id === storedEditingModuleId);
+          if (found) {
+            setEditingModuleId(found.id);
+            setModNum(found.module_number.toString());
+            setModTitle(found.title);
+            setModDesc(found.description);
+            setModObjectivesList(found.objectives || []);
+            setModOutcomesList(found.learning_outcomes || []);
+            setModResourcesList(found.resources || []);
+            setModAssignTitle(found.assignment_title);
+            setModAssignDesc(found.assignment_description);
+            setModAssignDeadline(formatDateForInput(found.assignment_deadline));
+            setModUnlockDate(formatDateForInput(found.unlock_date));
+            setModVisible(found.is_visible);
+            setModRubricList(found.assignment_rubric || []);
+          }
+        }
+      }
 
     } catch (err: any) {
       showToast('Error', 'Failed to retrieve admin details: ' + err.message, 'error');
@@ -675,7 +770,90 @@ export default function AdminPage() {
     }
   };
 
-  // Module creation
+  // Reset Module Form fields
+  const resetModuleForm = () => {
+    setEditingModuleId(null);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('admin_editing_module_id');
+    }
+    setModNum('');
+    setModTitle('');
+    setModDesc('');
+    setModObjective('');
+    setModObjectivesList([]);
+    setModOutcome('');
+    setModOutcomesList([]);
+    setModResName('');
+    setModResUrl('');
+    setModResCategory('slide');
+    setModResourcesList([]);
+    setModAssignTitle('');
+    setModAssignDesc('');
+    setModAssignDeadline('');
+    setModUnlockDate('');
+    setModVisible(false);
+    setRubricCrit('');
+    setRubricMax('25');
+    setModRubricList([]);
+  };
+
+  const formatDateForInput = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    const offset = date.getTimezoneOffset();
+    const localDate = new Date(date.getTime() - offset * 60 * 1000);
+    return localDate.toISOString().slice(0, 16);
+  };
+
+  const handleEditModule = (m: Module) => {
+    setEditingModuleId(m.id);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('admin_editing_module_id', m.id);
+    }
+    setModNum(m.module_number.toString());
+    setModTitle(m.title);
+    setModDesc(m.description);
+    setModObjectivesList(m.objectives || []);
+    setModOutcomesList(m.learning_outcomes || []);
+    setModResourcesList(m.resources || []);
+    setModAssignTitle(m.assignment_title);
+    setModAssignDesc(m.assignment_description);
+    setModAssignDeadline(formatDateForInput(m.assignment_deadline));
+    setModUnlockDate(formatDateForInput(m.unlock_date));
+    setModVisible(m.is_visible);
+    setModRubricList(m.assignment_rubric || []);
+  };
+
+  const handleDeleteModule = async (id: string, moduleNum: number, title: string) => {
+    if (!confirm(`WARNING: Are you sure you want to permanently delete Module ${moduleNum}: "${title}"? This will also delete all student submissions and grading history for this module. This action cannot be undone.`)) {
+      return;
+    }
+
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from('modules')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      showToast('Module Deleted', `Module ${moduleNum} has been permanently deleted.`, 'success');
+      
+      if (editingModuleId === id) {
+        resetModuleForm();
+      }
+
+      await fetchInitialData();
+    } catch (err: any) {
+      showToast('Error', err.message || 'Failed to delete module.', 'error');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // Module creation / modification
   const handleModuleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!modNum || !modTitle || !modDesc || !modAssignTitle || !modAssignDesc || !modAssignDeadline || !modUnlockDate) {
@@ -685,40 +863,50 @@ export default function AdminPage() {
 
     setActionLoading(true);
     try {
-      const { error } = await supabase.from('modules').insert([
-        {
-          module_number: parseInt(modNum),
-          title: modTitle,
-          description: modDesc,
-          learning_outcomes: modOutcomesList,
-          objectives: modObjectivesList,
-          resources: modResourcesList,
-          assignment_title: modAssignTitle,
-          assignment_description: modAssignDesc,
-          assignment_deadline: modAssignDeadline,
-          assignment_rubric: modRubricList,
-          unlock_date: modUnlockDate,
-          is_visible: modVisible,
-        },
-      ]);
+      if (editingModuleId) {
+        const { error } = await supabase
+          .from('modules')
+          .update({
+            module_number: parseInt(modNum),
+            title: modTitle,
+            description: modDesc,
+            learning_outcomes: modOutcomesList,
+            objectives: modObjectivesList,
+            resources: modResourcesList,
+            assignment_title: modAssignTitle,
+            assignment_description: modAssignDesc,
+            assignment_deadline: modAssignDeadline,
+            assignment_rubric: modRubricList,
+            unlock_date: modUnlockDate,
+            is_visible: modVisible,
+          })
+          .eq('id', editingModuleId);
 
-      if (error) throw error;
-      showToast('Module Created', `Curriculum Module ${modNum} published.`, 'success');
+        if (error) throw error;
+        showToast('Module Updated', `Curriculum Module ${modNum} updated successfully.`, 'success');
+      } else {
+        const { error } = await supabase.from('modules').insert([
+          {
+            module_number: parseInt(modNum),
+            title: modTitle,
+            description: modDesc,
+            learning_outcomes: modOutcomesList,
+            objectives: modObjectivesList,
+            resources: modResourcesList,
+            assignment_title: modAssignTitle,
+            assignment_description: modAssignDesc,
+            assignment_deadline: modAssignDeadline,
+            assignment_rubric: modRubricList,
+            unlock_date: modUnlockDate,
+            is_visible: modVisible,
+          },
+        ]);
+
+        if (error) throw error;
+        showToast('Module Created', `Curriculum Module ${modNum} published.`, 'success');
+      }
       
-      // Reset form fields
-      setModNum('');
-      setModTitle('');
-      setModDesc('');
-      setModObjectivesList([]);
-      setModOutcomesList([]);
-      setModResourcesList([]);
-      setModAssignTitle('');
-      setModAssignDesc('');
-      setModAssignDeadline('');
-      setModUnlockDate('');
-      setModVisible(false);
-      setModRubricList([]);
-
+      resetModuleForm();
       await fetchInitialData();
     } catch (err: any) {
       showToast('Error', err.message, 'error');
@@ -1066,6 +1254,9 @@ export default function AdminPage() {
                 setActiveTab(tab.name as any);
                 setSelectedCodes([]);
                 setSelectedEvent(null);
+                if (typeof window !== 'undefined') {
+                  sessionStorage.removeItem('admin_selected_event_id');
+                }
                 resetEventForm();
               }}
               className={`flex items-center gap-2 px-5 py-3 text-xs font-semibold select-none border-b-2 transition-all ${
@@ -1468,10 +1659,12 @@ export default function AdminPage() {
       {/* --- MODULES TAB PANEL --- */}
       {activeTab === 'modules' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
-          {/* Create Form */}
+          {/* Create/Edit Form */}
           <div className="lg:col-span-1">
             <Card className="space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">Create Module</span>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">
+                {editingModuleId ? 'Edit Module' : 'Create Module'}
+              </span>
               <form onSubmit={handleModuleSubmit} className="space-y-4 max-h-[600px] overflow-y-auto pr-1">
                 <Input
                   label="Module Number"
@@ -1568,6 +1761,66 @@ export default function AdminPage() {
                         <button
                           type="button"
                           onClick={() => setModOutcomesList(modOutcomesList.filter((_, idx) => idx !== i))}
+                          className="text-zinc-650 hover:text-red-400"
+                        >
+                          <Trash className="h-3.5 w-3.5" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Resources list builder */}
+                <div className="border-t border-zinc-900 pt-3 space-y-2">
+                  <label className="text-xs font-semibold text-zinc-300">Resource Library</label>
+                  <div className="space-y-2">
+                    <Input
+                      id="m-res-name"
+                      placeholder="Resource Name (e.g. Slide Deck)"
+                      value={modResName}
+                      onChange={(e) => setModResName(e.target.value)}
+                    />
+                    <div className="flex gap-2">
+                      <Input
+                        id="m-res-url"
+                        placeholder="Resource URL (https://...)"
+                        value={modResUrl}
+                        onChange={(e) => setModResUrl(e.target.value)}
+                        className="flex-1"
+                      />
+                      <select
+                        value={modResCategory}
+                        onChange={(e) => setModResCategory(e.target.value)}
+                        className="glass-input text-xs text-zinc-100 rounded-lg px-2 bg-zinc-950 border border-zinc-900 focus:outline-none"
+                      >
+                        <option value="slide">Slide</option>
+                        <option value="video">Video</option>
+                        <option value="doc">Doc</option>
+                        <option value="link">Link</option>
+                      </select>
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          if (modResName && modResUrl) {
+                            setModResourcesList([...modResourcesList, { name: modResName, url: modResUrl, category: modResCategory }]);
+                            setModResName('');
+                            setModResUrl('');
+                            setModResCategory('slide');
+                          }
+                        }}
+                        className="mt-0.5 shrink-0"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <ul className="space-y-1.5 text-xs text-zinc-400">
+                    {modResourcesList.map((res, i) => (
+                      <li key={i} className="flex justify-between items-center bg-zinc-950 p-2 rounded border border-zinc-900">
+                        <span className="truncate max-w-[180px]">{res.name} ({res.category})</span>
+                        <button
+                          type="button"
+                          onClick={() => setModResourcesList(modResourcesList.filter((_, idx) => idx !== i))}
                           className="text-zinc-650 hover:text-red-400"
                         >
                           <Trash className="h-3.5 w-3.5" />
@@ -1680,9 +1933,22 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full text-xs" disabled={actionLoading}>
-                  Publish Module
-                </Button>
+                <div className="flex gap-2">
+                  <Button type="submit" className="flex-1 text-xs" disabled={actionLoading}>
+                    {editingModuleId ? 'Save Changes' : 'Publish Module'}
+                  </Button>
+                  {editingModuleId && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={resetModuleForm}
+                      className="text-xs px-4"
+                      disabled={actionLoading}
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                </div>
               </form>
             </Card>
           </div>
@@ -1692,8 +1958,8 @@ export default function AdminPage() {
             <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Modules Published</h3>
             <div className="grid grid-cols-1 gap-3">
               {modules.map((m) => (
-                <div key={m.id} className="glass-panel p-5 rounded-xl border border-zinc-900 flex justify-between items-center">
-                  <div className="space-y-1">
+                <div key={m.id} className="glass-panel p-5 rounded-xl border border-zinc-900 flex justify-between items-center gap-4">
+                  <div className="space-y-1 min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-mono text-zinc-500 uppercase">Module {m.module_number}</span>
                       <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded uppercase font-semibold ${
@@ -1702,10 +1968,28 @@ export default function AdminPage() {
                         {m.is_visible ? 'Visible' : 'Hidden'}
                       </span>
                     </div>
-                    <h4 className="text-sm font-semibold text-zinc-100">{m.title}</h4>
-                    <p className="text-[10px] text-zinc-500">
+                    <h4 className="text-sm font-semibold text-zinc-100 truncate">{m.title}</h4>
+                    <p className="text-[10px] text-zinc-500 truncate">
                       Rubric Criteria: {m.assignment_rubric.map((r) => r.criteria).join(', ') || 'None'}
                     </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => handleEditModule(m)}
+                      className="text-[10px] px-2.5 py-1"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      onClick={() => handleDeleteModule(m.id, m.module_number, m.title)}
+                      className="text-[10px] px-2.5 py-1"
+                    >
+                      Delete
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -2452,6 +2736,9 @@ export default function AdminPage() {
                                   variant="primary"
                                   onClick={() => {
                                     setSelectedEvent(ev);
+                                    if (typeof window !== 'undefined') {
+                                      sessionStorage.setItem('admin_selected_event_id', ev.id);
+                                    }
                                     fetchRegistrants(ev.id);
                                   }}
                                   className="text-[10px] px-2 py-1"
@@ -2472,7 +2759,12 @@ export default function AdminPage() {
                 {/* Back Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
                   <button
-                    onClick={() => setSelectedEvent(null)}
+                    onClick={() => {
+                      setSelectedEvent(null);
+                      if (typeof window !== 'undefined') {
+                        sessionStorage.removeItem('admin_selected_event_id');
+                      }
+                    }}
                     className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer text-zinc-400 hover:text-white"
                   >
                     <ChevronLeft className="h-4 w-4" /> Back to Events

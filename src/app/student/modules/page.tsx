@@ -73,6 +73,13 @@ export default function StudentModules() {
 
   const [modules, setModules] = useState<Module[]>([]);
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+
+  // Save selected module in sessionStorage when it changes
+  useEffect(() => {
+    if (selectedModule && typeof window !== 'undefined') {
+      sessionStorage.setItem('student_selected_module_id', selectedModule.id);
+    }
+  }, [selectedModule]);
   const [submission, setSubmission] = useState<Submission | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -106,10 +113,16 @@ export default function StudentModules() {
           );
           setModules(unlocked);
 
-          // Select module based on query param, fallback to first
+          // Select module based on query param, fallback to sessionStorage, then first
           const queryId = searchParams.get('id');
+          const storedModuleId = typeof window !== 'undefined' ? sessionStorage.getItem('student_selected_module_id') : null;
+          
           if (queryId) {
             const found = unlocked.find((m) => m.id === queryId);
+            if (found) setSelectedModule(found);
+            else if (unlocked.length > 0) setSelectedModule(unlocked[0]);
+          } else if (storedModuleId) {
+            const found = unlocked.find((m) => m.id === storedModuleId);
             if (found) setSelectedModule(found);
             else if (unlocked.length > 0) setSelectedModule(unlocked[0]);
           } else if (unlocked.length > 0) {

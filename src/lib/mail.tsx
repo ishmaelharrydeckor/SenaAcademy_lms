@@ -168,6 +168,27 @@ export async function sendEventRegistrationEmail(
     const startTime = start.toLocaleTimeString('en-US', optionsTime);
     const endTime = end.toLocaleTimeString('en-US', optionsTime);
     const eventDate = `${formattedDate} from ${startTime} to ${endTime}`;
+    
+    // Construct calendar links
+    const formatGoogleDate = (d: Date) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const calLocation = event.event_type === 'online' 
+      ? (event.meeting_link || 'Online via Google Meet') 
+      : (event.location || 'Sena Academy');
+    const calDetails = `Thank you for registering for ${event.title}! Here are your join details.\n\n${
+      event.event_type === 'online' ? `Online Meeting Link: ${event.meeting_link}` : `Venue Location: ${event.location}`
+    }\n\nWe look forward to having you!`;
+
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+      event.title
+    )}&dates=${formatGoogleDate(start)}/${formatGoogleDate(end)}&details=${encodeURIComponent(
+      calDetails
+    )}&location=${encodeURIComponent(calLocation)}`;
+
+    const outlookCalendarUrl = `https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=${encodeURIComponent(
+      event.title
+    )}&startdt=${start.toISOString()}&enddt=${end.toISOString()}&body=${encodeURIComponent(
+      calDetails
+    )}&location=${encodeURIComponent(calLocation)}`;
 
     const { data, error } = await getResend().emails.send({
       from: getSenderEmail(),
@@ -182,6 +203,8 @@ export async function sendEventRegistrationEmail(
           location={event.location}
           meetingLink={event.meeting_link}
           email={toEmail}
+          googleCalendarUrl={googleCalendarUrl}
+          outlookCalendarUrl={outlookCalendarUrl}
         />
       ),
     });

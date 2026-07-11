@@ -193,7 +193,19 @@ export default function FacilitatorPage() {
 
       if (error) throw error;
       if (data) {
-        setSubmissions(data as unknown as SubmissionData[]);
+        const submissionList = data as unknown as SubmissionData[];
+        setSubmissions(submissionList);
+        
+        // Restore active submission if saved in sessionStorage
+        if (typeof window !== 'undefined') {
+          const storedSubId = sessionStorage.getItem('facilitator_active_submission_id');
+          if (storedSubId) {
+            const found = submissionList.find(s => s.id === storedSubId);
+            if (found) {
+              handleOpenGrade(found);
+            }
+          }
+        }
       }
     } catch (err: any) {
       showToast('Error', 'Failed to load submissions: ' + err.message, 'error');
@@ -206,6 +218,9 @@ export default function FacilitatorPage() {
   const handleOpenGrade = (sub: SubmissionData) => {
     hasUserModified.current = false; // Reset modification flag on load
     setActiveSubmission(sub);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('facilitator_active_submission_id', sub.id);
+    }
     
     if (sub.draft_feedback_json) {
       const draft = sub.draft_feedback_json as any;
@@ -312,6 +327,9 @@ export default function FacilitatorPage() {
 
       showToast('Grade Approved', `Score of ${finalScore}% assigned to ${activeSubmission.profiles.full_name}`, 'success');
       setActiveSubmission(null);
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('facilitator_active_submission_id');
+      }
       await fetchSubmissions();
     } catch (err: any) {
       showToast('Error', 'Failed to approve grade: ' + err.message, 'error');
@@ -363,6 +381,9 @@ export default function FacilitatorPage() {
 
       showToast('Revision Requested', `Notification sent to ${activeSubmission.profiles.full_name}`, 'warning');
       setActiveSubmission(null);
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('facilitator_active_submission_id');
+      }
       await fetchSubmissions();
     } catch (err: any) {
       showToast('Error', 'Resubmission request failed: ' + err.message, 'error');
@@ -393,8 +414,13 @@ export default function FacilitatorPage() {
         <div className="space-y-6 animate-fade-in">
           {/* Back Action Header */}
           <button
-            onClick={() => setActiveSubmission(null)}
-            className="flex items-center gap-2 text-xs font-mono text-zinc-500 hover:text-zinc-300 transition-colors"
+            onClick={() => {
+              setActiveSubmission(null);
+              if (typeof window !== 'undefined') {
+                sessionStorage.removeItem('facilitator_active_submission_id');
+              }
+            }}
+            className="flex items-center gap-2 text-xs font-mono text-zinc-550 hover:text-zinc-300 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Queue
