@@ -107,7 +107,7 @@ export const EventRegistrationEmail = ({
         <Text style={communityText}>
           Want to connect with other builders? Join our WhatsApp Community to stay updated on future meetups, challenges, and academy events.
         </Text>
-        <Button href="https://senaacademy.org/whatsapp" style={secondaryButton}>
+        <Button href="https://chat.whatsapp.com/JsXT6Od90Ms77sqiCy5oHm?s=cl&p=a&ilr=1" style={secondaryButton}>
           Join WhatsApp Community
         </Button>
       </Section>

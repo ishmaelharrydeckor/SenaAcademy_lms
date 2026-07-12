@@ -462,7 +462,7 @@ export default function LandingPage() {
             </div>
             <div className="space-y-3">
               <h4 className="text-xs uppercase tracking-wider text-on-dark font-bold">Community</h4>
-              <a href="https://chat.whatsapp.com/sena" target="_blank" rel="noopener noreferrer" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors inline-flex items-center gap-1">
+              <a href="https://chat.whatsapp.com/JsXT6Od90Ms77sqiCy5oHm?s=cl&p=a&ilr=1" target="_blank" rel="noopener noreferrer" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors inline-flex items-center gap-1">
                 WhatsApp workspace <ExternalLink className="h-3 w-3" />
               </a>
               <a href="/events" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Events</a>
