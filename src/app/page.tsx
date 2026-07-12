@@ -134,8 +134,25 @@ export default function LandingPage() {
 
   // Modal Authentication Overlay State
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authTab, setAuthTab] = useState<'login' | 'redeem_code' | 'redeem_register' | 'forgot_password'>('login');
+  const [authTab, setAuthTab] = useState<'login' | 'redeem_code' | 'redeem_register' | 'forgot_password' | 'enrollment_coming_soon'>('login');
   
+  // Check if we are on staging, preview, or local environments to test enrollment checkout
+  const isStagingOrLocal = typeof window !== 'undefined' && (
+    window.location.hostname.includes('localhost') || 
+    window.location.hostname.includes('staging') ||
+    window.location.hostname.includes('vercel.app')
+  );
+
+  const handleBecomeBuilderClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (isStagingOrLocal) {
+      router.push('/enroll');
+    } else {
+      setAuthTab('enrollment_coming_soon');
+      setShowAuthModal(true);
+    }
+  };
+
   // Roadmap detail step modal state
   const [activeRoadmapStep, setActiveRoadmapStep] = useState<number | null>(null);
 
@@ -330,9 +347,7 @@ export default function LandingPage() {
               Forge the <span className="b">skills</span> of tomorrow, one <span className="u">project</span> at a time
             </h1>
             <div className="flex flex-wrap gap-4">
-              <Link href="/enroll">
-                <Button>Become a Founding Builder</Button>
-              </Link>
+              <Button onClick={handleBecomeBuilderClick}>Become a Founding Builder</Button>
               <a 
                 href="#roadmap" 
                 className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-border-brand text-sm font-semibold text-text-primary hover:bg-bg-surface-hover transition-colors"
@@ -438,7 +453,12 @@ export default function LandingPage() {
               <a href="#roadmap" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Roadmap</a>
               <a href="#" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Curriculum</a>
               <a href="#" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Facilitators</a>
-              <Link href="/enroll" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Founding Builder</Link>
+              <button 
+                onClick={handleBecomeBuilderClick}
+                className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors text-left bg-transparent border-none cursor-pointer"
+              >
+                Founding Builder
+              </button>
             </div>
             <div className="space-y-3">
               <h4 className="text-xs uppercase tracking-wider text-on-dark font-bold">Community</h4>
@@ -647,6 +667,32 @@ export default function LandingPage() {
                   </Button>
                 </div>
               </form>
+            )}
+
+            {authTab === 'enrollment_coming_soon' && (
+              <div className="space-y-5 text-left py-2">
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold tracking-tight text-text-primary">Enrollment Opens Soon</h3>
+                  <p className="serif text-xs text-text-secondary leading-relaxed">
+                    Cohort admissions are currently being finalized. Admissions checkout has not officially started yet.
+                  </p>
+                </div>
+                <div className="bg-bg-canvas/50 border border-border-brand/30 rounded-xl p-4 text-left text-xs text-text-secondary">
+                  <p className="font-semibold text-text-primary mb-1">What you can do right now:</p>
+                  <ul className="list-disc pl-4 space-y-1 opacity-90 text-[11px]">
+                    <li>Secure your spot by registering for our upcoming public meetups on the <strong>Events</strong> page.</li>
+                    <li>Check back here once the cohort opens to complete your checkout and claim your access code.</li>
+                  </ul>
+                </div>
+                <div className="pt-2 flex gap-3">
+                  <Link href="/events" className="flex-1" onClick={() => setShowAuthModal(false)}>
+                    <Button variant="secondary" className="w-full text-xs">Explore Events</Button>
+                  </Link>
+                  <Button onClick={() => setShowAuthModal(false)} className="flex-1 text-xs">
+                    Understood
+                  </Button>
+                </div>
+              </div>
             )}
 
           </Card>
