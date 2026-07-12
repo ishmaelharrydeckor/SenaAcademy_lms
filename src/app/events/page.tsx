@@ -90,11 +90,11 @@ export default function EventsPage() {
     <main className="min-h-screen bg-bg-canvas text-text-primary relative overflow-hidden flex flex-col">
       {/* Navigation Header */}
       <nav className="sticky top-0 border-b border-border-brand py-4 px-6 md:px-12 flex justify-between items-center z-40 bg-bg-canvas">
-        <div className="flex items-center gap-2.5">
-          <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-8 w-8 object-cover shrink-0" />
-          <span className="text-sm font-bold tracking-tight text-white uppercase cursor-pointer" onClick={() => router.push('/')}>
-            Sena Academy
-          </span>
+        <div 
+          onClick={() => router.push('/')}
+          className="bg-white px-3 py-1 rounded-xl border border-border-brand/20 shadow-sm h-11 flex items-center justify-center cursor-pointer select-none hover:opacity-90 transition-opacity"
+        >
+          <img src="/logo_full.png" alt="Sena Academy Logo" className="h-9 object-contain" />
         </div>
         <button
           onClick={() => router.push('/')}
@@ -106,9 +106,6 @@ export default function EventsPage() {
 
       {/* Hero Section */}
       <header className="relative py-12 px-6 md:px-12 max-w-6xl mx-auto flex flex-col items-center text-center z-10 space-y-4">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-primary/10 border border-accent-primary/20 text-accent-primary text-[10px] font-semibold tracking-wider uppercase">
-          <Sparkles className="h-3 w-3 animate-pulse" /> Sena Masterclasses & Meetups
-        </div>
         <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-white">
           Sena Academy Events
         </h1>
