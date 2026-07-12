@@ -116,7 +116,7 @@ export default function ResetPasswordPage() {
   if (!user && !resetCompleted) {
     return (
       <div className="flex min-h-screen w-screen items-center justify-center bg-bg-canvas px-4 py-12">
-        <Card className="max-w-md w-full text-center space-y-6 border border-zinc-800 p-8">
+        <Card className="max-w-md w-full text-center space-y-6 border border-border-brand p-8">
           <div className="flex justify-center">
             <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-full animate-pulse">
               <AlertCircle className="h-8 w-8 text-red-500" />
@@ -138,7 +138,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="flex min-h-screen w-screen items-center justify-center bg-bg-canvas px-4 py-12">
-      <Card className="max-w-md w-full border border-zinc-800 p-8 relative overflow-hidden">
+      <Card className="max-w-md w-full border border-border-brand p-8 relative overflow-hidden">
         {/* Glow effect */}
         <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-accent-primary/50 to-transparent pointer-events-none"></div>
 

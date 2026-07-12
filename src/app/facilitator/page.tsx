@@ -420,7 +420,7 @@ export default function FacilitatorPage() {
         <div className="relative w-10 h-10 flex items-center justify-center bg-white rounded-lg p-1.5 shadow-[0_4px_12px_rgba(5,82,254,0.15)] animate-pulse">
           <img src="/logo_icon.png" alt="Loading" className="h-full w-full object-contain" />
         </div>
-        <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Loading submissions details...</p>
+        <p className="text-[10px] font-mono text-text-secondary uppercase tracking-widest">Loading submissions details...</p>
       </div>
     );
   }
@@ -442,20 +442,20 @@ export default function FacilitatorPage() {
                 sessionStorage.removeItem('facilitator_active_submission_id');
               }
             }}
-            className="flex items-center gap-2 text-xs font-mono text-zinc-550 hover:text-zinc-300 transition-colors"
+            className="flex items-center gap-2 text-xs font-mono text-text-secondary hover:text-text-primary transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Queue
           </button>
 
           {/* Submission and Student summary card */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-zinc-900">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border-brand">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono text-supporting-purple bg-supporting-purple/10 px-2 py-0.5 rounded">
+                <span className="text-xs font-mono text-accent-primary bg-supporting-purple/10 px-2 py-0.5 rounded">
                   Module {activeSubmission.modules.module_number}
                 </span>
-                <span className="text-xs text-zinc-500">Submitted by: {activeSubmission.profiles.full_name}</span>
+                <span className="text-xs text-text-secondary">Submitted by: {activeSubmission.profiles.full_name}</span>
               </div>
               <h2 className="text-xl font-bold tracking-tight text-white mt-1">
                 Grading: {activeSubmission.modules.title}
@@ -475,7 +475,7 @@ export default function FacilitatorPage() {
             {/* Left Col - Student work links and comments */}
             <div className="lg:col-span-1 space-y-6">
               <Card className="space-y-4">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">Workspace Assets</span>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">Workspace Assets</span>
 
                 <div className="space-y-2.5 text-xs">
                   {/* ZIP Archive handling */}
@@ -483,9 +483,9 @@ export default function FacilitatorPage() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleDownload(activeSubmission.zip_file_url!)}
-                        className="flex-1 flex items-center gap-2.5 p-3 rounded-lg border border-zinc-900 bg-zinc-950/40 hover:bg-zinc-900/60 text-zinc-450 hover:text-zinc-200 transition-all text-left cursor-pointer"
+                        className="flex-1 flex items-center gap-2.5 p-3 rounded-lg border border-border-brand bg-bg-canvas/40 hover:bg-bg-surface-hover/60 text-text-secondary hover:text-text-primary transition-all text-left cursor-pointer"
                       >
-                        <Download className="h-4 w-4 text-supporting-purple" />
+                        <Download className="h-4 w-4 text-accent-primary" />
                         <span className="truncate">Download ZIP Archive</span>
                       </button>
                       <button
@@ -498,8 +498,8 @@ export default function FacilitatorPage() {
                       </button>
                     </div>
                   ) : activeSubmission.zip_file_deleted ? (
-                    <div className="p-3 rounded-lg border border-zinc-900 bg-zinc-950/20 text-zinc-650 italic text-[11px] flex items-center gap-2">
-                      <AlertCircle className="h-3.5 w-3.5 text-zinc-600" />
+                    <div className="p-3 rounded-lg border border-border-brand bg-bg-canvas/20 text-text-secondary italic text-[11px] flex items-center gap-2">
+                      <AlertCircle className="h-3.5 w-3.5 text-text-secondary" />
                       ZIP Archive removed to save storage space.
                     </div>
                   ) : null}
@@ -509,9 +509,9 @@ export default function FacilitatorPage() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleDownload(activeSubmission.pdf_file_url!)}
-                        className="flex-1 flex items-center gap-2.5 p-3 rounded-lg border border-zinc-900 bg-zinc-950/40 hover:bg-zinc-900/60 text-zinc-450 hover:text-zinc-200 transition-all text-left cursor-pointer"
+                        className="flex-1 flex items-center gap-2.5 p-3 rounded-lg border border-border-brand bg-bg-canvas/40 hover:bg-bg-surface-hover/60 text-text-secondary hover:text-text-primary transition-all text-left cursor-pointer"
                       >
-                        <FileText className="h-4 w-4 text-supporting-purple" />
+                        <FileText className="h-4 w-4 text-accent-primary" />
                         <span className="truncate">Download PDF Document</span>
                       </button>
                       <button
@@ -524,8 +524,8 @@ export default function FacilitatorPage() {
                       </button>
                     </div>
                   ) : activeSubmission.pdf_file_deleted ? (
-                    <div className="p-3 rounded-lg border border-zinc-900 bg-zinc-950/20 text-zinc-650 italic text-[11px] flex items-center gap-2">
-                      <AlertCircle className="h-3.5 w-3.5 text-zinc-600" />
+                    <div className="p-3 rounded-lg border border-border-brand bg-bg-canvas/20 text-text-secondary italic text-[11px] flex items-center gap-2">
+                      <AlertCircle className="h-3.5 w-3.5 text-text-secondary" />
                       PDF Document removed to save storage space.
                     </div>
                   ) : null}
@@ -535,9 +535,9 @@ export default function FacilitatorPage() {
                       href={activeSubmission.github_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2.5 p-3 rounded-lg border border-zinc-900 bg-zinc-950/40 hover:bg-zinc-900/60 text-zinc-450 hover:text-zinc-200 transition-all"
+                      className="flex items-center gap-2.5 p-3 rounded-lg border border-border-brand bg-bg-canvas/40 hover:bg-bg-surface-hover/60 text-text-secondary hover:text-text-primary transition-all"
                     >
-                      <Code2 className="h-4 w-4 text-supporting-purple" />
+                      <Code2 className="h-4 w-4 text-accent-primary" />
                       <span className="truncate">Open GitHub Repository</span>
                       <ExternalLink className="h-3.5 w-3.5 ml-auto" />
                     </a>
@@ -548,9 +548,9 @@ export default function FacilitatorPage() {
                       href={activeSubmission.vercel_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2.5 p-3 rounded-lg border border-zinc-900 bg-zinc-950/40 hover:bg-zinc-900/60 text-zinc-450 hover:text-zinc-200 transition-all"
+                      className="flex items-center gap-2.5 p-3 rounded-lg border border-border-brand bg-bg-canvas/40 hover:bg-bg-surface-hover/60 text-text-secondary hover:text-text-primary transition-all"
                     >
-                      <Globe className="h-4 w-4 text-supporting-purple" />
+                      <Globe className="h-4 w-4 text-accent-primary" />
                       <span className="truncate">Open Live Deployment</span>
                       <ExternalLink className="h-3.5 w-3.5 ml-auto" />
                     </a>
@@ -561,9 +561,9 @@ export default function FacilitatorPage() {
                       href={activeSubmission.drive_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2.5 p-3 rounded-lg border border-zinc-900 bg-zinc-950/40 hover:bg-zinc-900/60 text-zinc-450 hover:text-zinc-200 transition-all"
+                      className="flex items-center gap-2.5 p-3 rounded-lg border border-border-brand bg-bg-canvas/40 hover:bg-bg-surface-hover/60 text-text-secondary hover:text-text-primary transition-all"
                     >
-                      <FileText className="h-4 w-4 text-supporting-purple" />
+                      <FileText className="h-4 w-4 text-accent-primary" />
                       <span className="truncate">Open Google Drive URL</span>
                       <ExternalLink className="h-3.5 w-3.5 ml-auto" />
                     </a>
@@ -574,15 +574,15 @@ export default function FacilitatorPage() {
                     !activeSubmission.github_url &&
                     !activeSubmission.vercel_url &&
                     !activeSubmission.drive_url && (
-                      <p className="text-zinc-600 italic">No links or files submitted.</p>
+                      <p className="text-text-secondary italic">No links or files submitted.</p>
                     )}
                 </div>
               </Card>
 
               {activeSubmission.comments && (
                 <Card className="space-y-2">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">Student Notes</span>
-                  <p className="text-xs text-zinc-450 leading-relaxed bg-zinc-950 p-3 rounded-lg border border-zinc-900">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">Student Notes</span>
+                  <p className="text-xs text-text-secondary leading-relaxed bg-bg-canvas p-3 rounded-lg border border-border-brand">
                     {activeSubmission.comments}
                   </p>
                 </Card>
@@ -592,7 +592,7 @@ export default function FacilitatorPage() {
             {/* Right Col - Grading sheets and sliders */}
             <div className="lg:col-span-2 space-y-6">
               <Card className="space-y-6">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">Rubric Evaluation</span>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">Rubric Evaluation</span>
 
                 <div className="space-y-5">
                   {activeSubmission.modules.assignment_rubric.map((rub, idx) => {
@@ -600,9 +600,9 @@ export default function FacilitatorPage() {
                     return (
                       <div key={idx} className="space-y-2">
                         <div className="flex justify-between text-xs font-semibold">
-                          <span className="text-zinc-300 capitalize">{rub.criteria}</span>
-                          <span className="text-supporting-purple font-mono">
-                            {currentVal} <span className="text-zinc-500 font-normal">/ {rub.max_points} pts</span>
+                          <span className="text-text-primary capitalize">{rub.criteria}</span>
+                          <span className="text-accent-primary font-mono">
+                            {currentVal} <span className="text-text-secondary font-normal">/ {rub.max_points} pts</span>
                           </span>
                         </div>
                         <input
@@ -611,7 +611,7 @@ export default function FacilitatorPage() {
                           max={rub.max_points}
                           value={currentVal}
                           onChange={(e) => handleRubricScoreChange(rub.criteria, parseInt(e.target.value))}
-                          className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-supporting-purple"
+                          className="w-full h-1.5 bg-bg-surface-hover rounded-lg appearance-none cursor-pointer accent-accent-primary"
                         />
                       </div>
                     );
@@ -621,36 +621,36 @@ export default function FacilitatorPage() {
 
               {/* Written Feedback Form */}
               <Card className="space-y-4">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">Written Feedback</span>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">Written Feedback</span>
 
                 <div className="space-y-3">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-medium text-zinc-400">Strengths</label>
+                    <label className="text-[11px] font-medium text-text-secondary">Strengths</label>
                     <textarea
                       placeholder="What did the student do exceptionally well?"
                       value={strengths}
                       onChange={(e) => { setStrengths(e.target.value); hasUserModified.current = true; }}
-                      className="glass-input text-xs text-zinc-100 rounded-lg p-3 w-full h-20 resize-none placeholder-zinc-650"
+                      className="glass-input text-xs text-text-primary rounded-lg p-3 w-full h-20 resize-none placeholder-text-secondary/50"
                     />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-medium text-zinc-400">Weaknesses</label>
+                    <label className="text-[11px] font-medium text-text-secondary">Weaknesses</label>
                     <textarea
                       placeholder="What requirements were missing or incorrect?"
                       value={weaknesses}
                       onChange={(e) => { setWeaknesses(e.target.value); hasUserModified.current = true; }}
-                      className="glass-input text-xs text-zinc-100 rounded-lg p-3 w-full h-20 resize-none placeholder-zinc-650"
+                      className="glass-input text-xs text-text-primary rounded-lg p-3 w-full h-20 resize-none placeholder-text-secondary/50"
                     />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-medium text-zinc-400">Suggestions / Recommendations</label>
+                    <label className="text-[11px] font-medium text-text-secondary">Suggestions / Recommendations</label>
                     <textarea
                       placeholder="How can they improve their build in the future?"
                       value={suggestions}
                       onChange={(e) => { setSuggestions(e.target.value); hasUserModified.current = true; }}
-                      className="glass-input text-xs text-zinc-100 rounded-lg p-3 w-full h-20 resize-none placeholder-zinc-650"
+                      className="glass-input text-xs text-text-primary rounded-lg p-3 w-full h-20 resize-none placeholder-text-secondary/50"
                     />
                   </div>
                 </div>
@@ -661,13 +661,13 @@ export default function FacilitatorPage() {
       ) : (
         // Main Dashboard queue view
         <div className="space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-zinc-900">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border-brand">
             <div>
               <h2 className="text-xl font-bold tracking-tight text-white">Grading Dashboard</h2>
-              <p className="text-xs text-zinc-500 mt-1">Review student submissions and assign grades according to criteria rubrics.</p>
+              <p className="text-xs text-text-secondary mt-1">Review student submissions and assign grades according to criteria rubrics.</p>
             </div>
-            <div className="flex items-center gap-3 text-xs text-zinc-500 font-mono">
-              <span>Pending Queue: <span className="text-supporting-purple font-bold">{pendingSubmissions.length}</span></span>
+            <div className="flex items-center gap-3 text-xs text-text-secondary font-mono">
+              <span>Pending Queue: <span className="text-accent-primary font-bold">{pendingSubmissions.length}</span></span>
               <span>•</span>
               <span>Graded: <span className="text-success-green font-bold">{gradedSubmissions.length}</span></span>
             </div>
@@ -675,13 +675,13 @@ export default function FacilitatorPage() {
 
           {/* Pending Submissions Queue list */}
           <div className="space-y-4">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Grading Queue ({pendingSubmissions.length})</h3>
+            <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary">Grading Queue ({pendingSubmissions.length})</h3>
 
             {pendingSubmissions.length === 0 ? (
               <Card className="text-center py-16">
                 <CheckCircle className="h-9 w-9 text-success-green/20 stroke-[1.5] mx-auto mb-2" />
-                <p className="text-xs text-zinc-500">All submissions are graded.</p>
-                <p className="text-[10px] text-zinc-650 mt-1">Good work! No items are currently waiting in your queue.</p>
+                <p className="text-xs text-text-secondary">All submissions are graded.</p>
+                <p className="text-[10px] text-text-secondary mt-1">Good work! No items are currently waiting in your queue.</p>
               </Card>
             ) : (
               <div className="grid grid-cols-1 gap-3">
@@ -689,24 +689,24 @@ export default function FacilitatorPage() {
                   <div
                     key={sub.id}
                     onClick={() => handleOpenGrade(sub)}
-                    className="glass-panel p-5 rounded-xl border border-zinc-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-zinc-900/30 hover:border-zinc-800 transition-all group"
+                    className="glass-panel p-5 rounded-xl border border-border-brand flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-bg-surface-hover/40 hover:border-border-brand transition-all group"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-mono text-zinc-500 uppercase">Module {sub.modules.module_number}</span>
+                        <span className="text-[10px] font-mono text-text-secondary uppercase">Module {sub.modules.module_number}</span>
                         <span className="h-1.5 w-1.5 rounded-full bg-supporting-purple"></span>
-                        <span className="text-[10px] font-mono text-zinc-500 truncate max-w-[120px]">{sub.profiles.full_name}</span>
+                        <span className="text-[10px] font-mono text-text-secondary truncate max-w-[120px]">{sub.profiles.full_name}</span>
                       </div>
-                      <h4 className="text-sm font-semibold text-zinc-200 group-hover:text-white transition-colors">
+                      <h4 className="text-sm font-semibold text-text-primary group-hover:text-white transition-colors">
                         {sub.modules.title}
                       </h4>
                     </div>
 
-                    <div className="flex items-center justify-between sm:justify-end gap-6 text-xs text-zinc-500">
+                    <div className="flex items-center justify-between sm:justify-end gap-6 text-xs text-text-secondary">
                       <span className="font-mono">
                         Submitted: {new Date(sub.submission_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </span>
-                      <ChevronRight className="h-4.5 w-4.5 text-zinc-600 group-hover:text-supporting-purple transition-colors" />
+                      <ChevronRight className="h-4.5 w-4.5 text-text-secondary group-hover:text-accent-primary transition-colors" />
                     </div>
                   </div>
                 ))}
@@ -717,29 +717,29 @@ export default function FacilitatorPage() {
           {/* Graded History Queue list */}
           {gradedSubmissions.length > 0 && (
             <div className="space-y-4 pt-4">
-              <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Graded Submissions ({gradedSubmissions.length})</h3>
+              <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary">Graded Submissions ({gradedSubmissions.length})</h3>
               <div className="grid grid-cols-1 gap-3">
                 {gradedSubmissions.map((sub) => (
                   <div
                     key={sub.id}
-                    className="glass-panel p-5 rounded-xl border border-zinc-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    className="glass-panel p-5 rounded-xl border border-border-brand flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-mono text-zinc-500 uppercase">Module {sub.modules.module_number}</span>
+                        <span className="text-[10px] font-mono text-text-secondary uppercase">Module {sub.modules.module_number}</span>
                         <span className="h-1.5 w-1.5 rounded-full bg-success-green"></span>
-                        <span className="text-[10px] font-mono text-zinc-500">{sub.profiles.full_name}</span>
+                        <span className="text-[10px] font-mono text-text-secondary">{sub.profiles.full_name}</span>
                       </div>
-                      <h4 className="text-sm font-semibold text-zinc-300">
+                      <h4 className="text-sm font-semibold text-text-primary">
                         {sub.modules.title}
                       </h4>
                     </div>
 
                     <div className="flex items-center justify-between sm:justify-end gap-6">
-                      <span className="text-[10px] font-mono text-zinc-500">
+                      <span className="text-[10px] font-mono text-text-secondary">
                         Score: <span className="text-success-green font-bold font-sans text-xs">{sub.score}%</span>
                       </span>
-                      <span className="text-[10px] font-mono text-zinc-500">
+                      <span className="text-[10px] font-mono text-text-secondary">
                         Graded: {new Date(sub.submission_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                       </span>
                     </div>
@@ -754,23 +754,23 @@ export default function FacilitatorPage() {
       {/* Delete File Confirmation Modal */}
       {deleteConfirmOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
-          <Card className="w-full max-w-md border border-zinc-800 bg-zinc-950 p-6 relative">
+          <Card className="w-full max-w-md border border-border-brand bg-bg-canvas p-6 relative">
             <div className="space-y-4">
               <div className="flex items-center gap-2.5 text-error-red">
                 <AlertCircle className="h-5 w-5" />
                 <h3 className="text-lg font-bold text-white tracking-tight">Delete File from Storage?</h3>
               </div>
-              <p className="text-xs text-zinc-400 leading-relaxed">
+              <p className="text-xs text-text-secondary leading-relaxed">
                 This permanently deletes the uploaded <strong>{deletingFileType === 'zip' ? 'ZIP Archive' : 'PDF Document'}</strong> from Cloudflare R2 storage. 
                 The submission record, grade, and feedback are kept — only the file itself is removed. 
-                <strong className="text-zinc-300"> This cannot be undone.</strong>
+                <strong className="text-text-primary"> This cannot be undone.</strong>
               </p>
 
               <div className="flex gap-3 justify-end pt-2">
                 <button
                   type="button"
                   onClick={() => setDeleteConfirmOpen(false)}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-zinc-400 hover:text-zinc-200 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 cursor-pointer"
+                  className="px-4 py-2 rounded-lg text-xs font-semibold text-text-secondary hover:text-text-primary bg-bg-surface-hover border border-border-brand hover:bg-bg-surface-hover cursor-pointer"
                   disabled={submittingDelete}
                 >
                   Cancel

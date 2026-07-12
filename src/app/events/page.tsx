@@ -88,12 +88,8 @@ export default function EventsPage() {
 
   return (
     <main className="min-h-screen bg-bg-canvas text-text-primary relative overflow-hidden flex flex-col">
-      {/* Decorative background glows */}
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-accent-primary/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
-      <div className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] bg-accent-primary/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
-
       {/* Navigation Header */}
-      <nav className="sticky top-0 backdrop-blur-md border-b border-border-brand py-4 px-6 md:px-12 flex justify-between items-center z-40 bg-bg-canvas/80">
+      <nav className="sticky top-0 border-b border-border-brand py-4 px-6 md:px-12 flex justify-between items-center z-40 bg-bg-canvas">
         <div className="flex items-center gap-2.5">
           <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-8 w-8 object-cover shrink-0" />
           <span className="text-sm font-bold tracking-tight text-white uppercase cursor-pointer" onClick={() => router.push('/')}>
@@ -113,8 +109,8 @@ export default function EventsPage() {
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-primary/10 border border-accent-primary/20 text-accent-primary text-[10px] font-semibold tracking-wider uppercase">
           <Sparkles className="h-3 w-3 animate-pulse" /> Sena Masterclasses & Meetups
         </div>
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white">
-          Events for Builders
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-white">
+          Sena Academy Events
         </h1>
         <p className="text-sm md:text-base leading-relaxed text-text-secondary max-w-2xl mx-auto">
           Connect with industry experts, collaborate on project builds, and master cutting-edge software stacks in our live workshops.
@@ -180,9 +176,8 @@ export default function EventsPage() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-accent-primary/20 via-bg-surface-hover/20 to-accent-primary/5 flex items-center justify-center relative">
+                      <div className="w-full h-full bg-bg-surface flex items-center justify-center relative">
                         <Calendar className="h-12 w-12 text-accent-primary/40" />
-                        <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px] opacity-5"></div>
                       </div>
                     )}
                     

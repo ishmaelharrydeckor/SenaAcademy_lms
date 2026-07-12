@@ -252,11 +252,8 @@ function EventDetailContent() {
 
   return (
     <main className="min-h-screen bg-bg-canvas text-text-primary relative overflow-hidden flex flex-col">
-      {/* Decorative background glows */}
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-accent-primary/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
-      
       {/* Navigation Header */}
-      <nav className="sticky top-0 backdrop-blur-md border-b border-border-brand py-4 px-6 md:px-12 flex justify-between items-center z-40 bg-bg-canvas/80">
+      <nav className="sticky top-0 border-b border-border-brand py-4 px-6 md:px-12 flex justify-between items-center z-40 bg-bg-canvas">
         <div className="flex items-center gap-2.5">
           <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-8 w-8 object-cover shrink-0" />
           <span className="text-sm font-bold tracking-tight text-white uppercase cursor-pointer" onClick={() => router.push('/')}>
@@ -275,8 +272,7 @@ function EventDetailContent() {
       <div className="max-w-6xl w-full mx-auto px-6 md:px-12 py-10 grid grid-cols-1 lg:grid-cols-3 gap-10 z-10 flex-1">
         {/* Left Side: Event Details */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Cover image / flyer wrapper (dynamic ratio, object-contain to prevent cropping flyer details) */}
-          <div className={`w-full rounded-2xl overflow-hidden relative border border-border-brand bg-zinc-950/40 flex items-center justify-center ${event.cover_image_url ? 'py-4' : 'h-64 sm:h-96'}`}>
+          <div className={`w-full rounded-2xl overflow-hidden relative border border-border-brand bg-bg-canvas/40 flex items-center justify-center ${event.cover_image_url ? 'py-4' : 'h-64 sm:h-96'}`}>
             {event.cover_image_url ? (
               <img
                 src={event.cover_image_url}
@@ -284,14 +280,13 @@ function EventDetailContent() {
                 className="w-full h-auto max-h-[550px] object-contain block"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-accent-primary/10 via-bg-surface-hover/20 to-accent-primary/5 flex items-center justify-center relative">
+              <div className="w-full h-full bg-bg-surface flex items-center justify-center relative">
                 <Calendar className="h-16 w-16 text-accent-primary/20" />
-                <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.03]"></div>
               </div>
             )}
             
             {/* Event Format Badge */}
-            <span className="absolute top-4 right-4 px-3 py-1.5 rounded-lg bg-bg-canvas/90 text-xs font-semibold text-text-primary border border-border-brand flex items-center gap-1.5 shadow-md">
+            <span className="absolute top-4 right-4 px-3 py-1.5 rounded-lg bg-bg-canvas/90 text-xs font-semibold text-text-primary border border-border-brand flex items-center gap-1.5">
               {isOnline ? (
                 <>
                   <Video className="h-3.5 w-3.5 text-accent-primary" /> Online
@@ -315,7 +310,7 @@ function EventDetailContent() {
                 <Calendar className="h-5 w-5 text-accent-primary mt-0.5 shrink-0" />
                 <div>
                   <p className="text-[10px] uppercase font-mono tracking-wider text-text-secondary">Date</p>
-                  <p className="text-xs font-bold text-zinc-100">{formatEventDate(event.start_time)}</p>
+                  <p className="text-xs font-bold text-text-primary">{formatEventDate(event.start_time)}</p>
                 </div>
               </div>
 
@@ -323,7 +318,7 @@ function EventDetailContent() {
                 <Clock className="h-5 w-5 text-accent-primary mt-0.5 shrink-0" />
                 <div>
                   <p className="text-[10px] uppercase font-mono tracking-wider text-text-secondary">Time</p>
-                  <p className="text-xs font-bold text-zinc-100">{formatEventTime(event.start_time, event.end_time)}</p>
+                  <p className="text-xs font-bold text-text-primary">{formatEventTime(event.start_time, event.end_time)}</p>
                 </div>
               </div>
 
@@ -335,7 +330,7 @@ function EventDetailContent() {
                 )}
                 <div className="min-w-0">
                   <p className="text-[10px] uppercase font-mono tracking-wider text-text-secondary">Location</p>
-                  <p className="text-xs font-bold text-zinc-100 truncate">
+                  <p className="text-xs font-bold text-text-primary truncate">
                     {isOnline ? 'Online via Meeting Link' : (event.location || 'Accra, Ghana')}
                   </p>
                 </div>
@@ -345,7 +340,7 @@ function EventDetailContent() {
                 <Users className="h-5 w-5 text-accent-primary mt-0.5 shrink-0" />
                 <div>
                   <p className="text-[10px] uppercase font-mono tracking-wider text-text-secondary">Availability</p>
-                  <p className="text-xs font-bold text-zinc-100">
+                  <p className="text-xs font-bold text-text-primary">
                     {event.capacity === null 
                       ? 'Unlimited spots available' 
                       : `${attendeeCount} / ${event.capacity} spots filled`}
@@ -371,7 +366,7 @@ function EventDetailContent() {
                 onClick={handleCopyLink} 
                 variant="secondary" 
                 size="sm" 
-                className="text-[11px] font-semibold py-1.5 flex items-center gap-1 bg-zinc-900 border border-zinc-800"
+                className="text-[11px] font-semibold py-1.5 flex items-center gap-1 bg-bg-surface-hover border border-border-brand"
               >
                 <Copy className="h-3 w-3" /> {copied ? 'Copied!' : 'Copy Link'}
               </Button>
@@ -379,7 +374,7 @@ function EventDetailContent() {
                 onClick={handleShareWhatsApp} 
                 variant="secondary" 
                 size="sm" 
-                className="text-[11px] font-semibold py-1.5 flex items-center gap-1 bg-zinc-900 border border-zinc-800 hover:bg-green-600/10 hover:border-green-500/30 hover:text-green-400"
+                className="text-[11px] font-semibold py-1.5 flex items-center gap-1 bg-bg-surface-hover border border-border-brand hover:bg-green-600/10 hover:border-green-500/30 hover:text-green-400"
               >
                 Share on WhatsApp
               </Button>
@@ -489,7 +484,7 @@ function EventDetailContent() {
 
               {isFull ? (
                 <div className="space-y-4">
-                  <div className="bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs p-4 rounded-lg text-center font-semibold">
+                  <div className="bg-bg-surface-hover border border-border-brand text-text-secondary text-xs p-4 rounded-lg text-center font-semibold">
                     Event is Full
                   </div>
                   <p className="text-[11px] text-text-secondary text-center">

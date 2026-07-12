@@ -179,7 +179,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
           <div
             key={toast.id}
             onClick={() => dismissToast(toast.id)}
-            className="glass-panel text-zinc-100 p-4 rounded-lg shadow-xl cursor-pointer border border-zinc-800 animate-slide-up flex gap-3 items-start select-none"
+            className="glass-panel text-text-primary p-4 rounded-lg shadow-xl cursor-pointer border border-border-brand animate-slide-up flex gap-3 items-start select-none"
           >
             <div className="mt-0.5">
               {toast.type === 'success' && (
@@ -196,10 +196,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
               )}
             </div>
             <div className="flex-1">
-              <h4 className="text-xs font-semibold text-zinc-200">{toast.title}</h4>
-              <p className="text-xs text-zinc-400 mt-0.5">{toast.message}</p>
+              <h4 className="text-xs font-semibold text-text-primary">{toast.title}</h4>
+              <p className="text-xs text-text-secondary mt-0.5">{toast.message}</p>
             </div>
-            <button className="text-zinc-500 hover:text-zinc-300 text-xs font-bold leading-none">×</button>
+            <button className="text-text-secondary hover:text-text-primary text-xs font-bold leading-none">×</button>
           </div>
         ))}
       </div>

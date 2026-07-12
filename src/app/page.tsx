@@ -44,19 +44,6 @@ export default function LandingPage() {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
 
-  // Mouse position state for dynamic gradient hover
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLSpanElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setMousePos({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setMousePos({ x: 50, y: 50 });
-  };
 
   // Navigation redirect if already logged in
   useEffect(() => {
@@ -240,7 +227,7 @@ export default function LandingPage() {
 
   // Mapped design token styles
   const pageBgClass = 'bg-bg-canvas text-text-primary';
-  const headerClass = 'bg-bg-canvas/80 border-border-brand shadow-sm';
+  const headerClass = 'bg-bg-canvas border-border-brand shadow-sm';
   const textTitleClass = 'text-text-primary';
   const textBodyClass = 'text-text-secondary';
   const cardBgClass = 'bg-bg-surface border-border-brand';
@@ -250,22 +237,9 @@ export default function LandingPage() {
 
   return (
     <div className={`min-h-screen font-sans relative overflow-x-hidden selection:bg-blue-100 selection:text-blue-900 transition-colors duration-250 ${pageBgClass}`}>
-      
-      {/* Decorative Blur Backgrounds (Glows only in dark mode) */}
-      {theme === 'dark' ? (
-        <>
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent-primary/5 rounded-full blur-3xl pointer-events-none z-0"></div>
-          <div className="absolute top-1/2 left-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-3xl pointer-events-none z-0"></div>
-        </>
-      ) : (
-        <>
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100/20 rounded-full blur-3xl pointer-events-none z-0"></div>
-          <div className="absolute top-1/2 left-0 w-[600px] h-[600px] bg-indigo-50/20 rounded-full blur-3xl pointer-events-none z-0"></div>
-        </>
-      )}
 
       {/* TOP NAVIGATION HEADER */}
-      <nav className={`sticky top-0 backdrop-blur-md border-b py-4 px-6 md:px-12 flex justify-between items-center z-40 transition-colors duration-200 ${headerClass}`}>
+      <nav className={`sticky top-0 border-b py-4 px-6 md:px-12 flex justify-between items-center z-40 transition-colors duration-200 ${headerClass}`}>
         <div className="flex items-center gap-2.5">
           {theme === 'dark' ? (
             <>
@@ -299,28 +273,14 @@ export default function LandingPage() {
 
       {/* HERO SECTION */}
       <header className="relative py-20 px-6 md:px-12 max-w-6xl mx-auto flex flex-col items-center text-center z-10 space-y-8">
-        
-        {/* Subtle geometric grid decorator */}
-        <div className={`absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] opacity-40 z-0 ${theme === 'dark' ? 'invert opacity-[0.03]' : ''}`}></div>
 
         <div className="relative z-10 space-y-4 max-w-3xl">
-          <h1 className={`text-4xl md:text-6xl font-extrabold tracking-tight leading-tight transition-colors duration-200 ${textTitleClass}`}>
-            Forge the skills of tomorrow, <span 
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              style={{
-                backgroundImage: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, #3b82f6 0%, var(--accent-primary) 70%, #4f46e5 120%)`,
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                color: 'transparent',
-                transition: 'background-image 0.1s ease-out'
-              }}
-              className="font-extrabold cursor-default select-none"
-            >one project</span> at a time.
+          <h1 className={`text-3xl md:text-4xl font-semibold tracking-tight leading-tight transition-colors duration-200 ${textTitleClass}`}>
+            Sena Academy — Learn to Build with AI
           </h1>
           
-          <p className={`text-base md:text-lg leading-relaxed max-w-2xl mx-auto pt-2 ${textBodyClass}`}>
-            This is where ideas become projects, projects become products, and beginners become builders. Every lesson, challenge, and milestone brings you closer to becoming a confident software developer.
+          <p className={`text-sm md:text-base leading-relaxed max-w-2xl mx-auto pt-2 ${textBodyClass}`}>
+            A structured, project-based curriculum where you learn modern software development alongside AI tools — not despite them. Access resources, submit real projects, and track your progress as you go from beginner to builder.
           </p>
         </div>
 
@@ -343,16 +303,16 @@ export default function LandingPage() {
       </header>
 
       {/* ROADMAP TIMELINE */}
-      <section className="py-24 px-6 md:px-12 max-w-6xl mx-auto space-y-16 z-10 relative">
+      <section className="py-20 px-6 md:px-12 max-w-6xl mx-auto space-y-12 z-10 relative">
         <div className="text-center space-y-2">
           <span className="text-[10px] font-mono tracking-widest uppercase text-text-secondary">Roadmap</span>
-          <h2 className={`text-2xl md:text-3xl font-extrabold ${textTitleClass}`}>Your Journey Starts Here</h2>
+          <h2 className={`text-xl md:text-2xl font-semibold ${textTitleClass}`}>Your Journey Starts Here</h2>
           <p className={`text-xs max-w-md mx-auto ${textBodyClass}`}>Follow our systematic builder pipeline to progress from raw code setup to credentials graduation.</p>
         </div>
 
-        {/* Interactive Horizontal/Vertical Timeline */}
+        {/* Horizontal/Vertical Timeline */}
         <div className="relative pt-6">
-          {/* Desktop Connective line centered vertically */}
+          {/* Connective line */}
           <div className="hidden md:block absolute top-[48px] left-8 right-8 h-0.5 roadmap-line z-0"></div>
           
           <div className="grid grid-cols-1 md:grid-cols-7 gap-8 md:gap-4 relative z-10">
@@ -361,19 +321,19 @@ export default function LandingPage() {
               return (
                 <div key={index} className="flex md:flex-col items-start md:items-center text-left md:text-center group select-none">
                   
-                  {/* Glowing Node with Lucide icons */}
-                  <div className="h-[54px] w-[54px] md:h-12 md:w-12 rounded-full border border-border-brand bg-bg-surface text-accent-primary flex items-center justify-center ring-4 ring-accent-primary/10 z-10 transition-transform group-hover:scale-110 duration-200 shrink-0 p-2.5">
-                    <StepIcon className="h-full w-full stroke-[2]" />
+                  {/* Flat node circle */}
+                  <div className="h-12 w-12 rounded-full border border-border-brand bg-bg-surface text-accent-primary flex items-center justify-center z-10 shrink-0 p-2.5">
+                    <StepIcon className="h-full w-full stroke-[1.5]" />
                   </div>
 
                   <div className="ml-4 md:ml-0 md:mt-4 space-y-1">
-                    <h4 className={`text-sm font-bold tracking-tight group-hover:text-accent-primary transition-colors ${
-                      theme === 'dark' ? 'text-zinc-200' : 'text-zinc-800'
+                    <h4 className={`text-sm font-semibold tracking-tight ${
+                      theme === 'dark' ? 'text-text-primary' : 'text-text-secondary'
                     }`}>
                       {step.label}
                     </h4>
                     <p className={`text-[11px] leading-relaxed md:max-w-[130px] md:mx-auto ${
-                      theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500'
+                      theme === 'dark' ? 'text-text-secondary' : 'text-text-secondary'
                     }`}>
                       {step.desc}
                     </p>
@@ -386,19 +346,21 @@ export default function LandingPage() {
       </section>
 
       {/* WHAT YOU'LL EXPERIENCE */}
-      <section className="py-24 px-6 md:px-12 max-w-6xl mx-auto space-y-16 z-10 relative">
+      <section className="py-20 px-6 md:px-12 max-w-6xl mx-auto space-y-12 z-10 relative">
         <div className="text-center space-y-2">
           <span className="text-[10px] font-mono tracking-widest uppercase text-text-secondary">Core Experience</span>
-          <h2 className={`text-2xl md:text-3xl font-extrabold ${textTitleClass}`}>What You'll Experience</h2>
+          <h2 className={`text-xl md:text-2xl font-semibold ${textTitleClass}`}>What You'll Experience</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           
           {/* Learn Card */}
-          <Card className="p-8 border border-border-brand bg-bg-surface hover:bg-bg-surface-hover hover:border-accent-primary/20 text-text-primary rounded-2xl flex flex-col justify-between group transition-all duration-300">
+          <Card className="p-8 border border-border-brand bg-bg-surface text-text-primary rounded-2xl flex flex-col justify-between group transition-colors duration-150">
             <div className="space-y-4">
-              <div className="h-10 w-10 rounded-xl flex items-center justify-center text-lg shadow-inner group-hover:scale-105 transition-transform bg-bg-surface-hover">📚</div>
-              <h3 className="text-base font-bold text-text-primary">Learn</h3>
+              <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-bg-surface-hover text-text-secondary">
+                <BookOpen className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-semibold text-text-primary">Learn</h3>
               <p className={`text-xs leading-relaxed ${textBodyClass}`}>
                 Attend live interactive sessions led by industry facilitators. Watch and review high-definition class recordings anytime, anywhere.
               </p>
@@ -410,10 +372,12 @@ export default function LandingPage() {
           </Card>
 
           {/* Build Card */}
-          <Card className="p-8 border border-border-brand bg-bg-surface hover:bg-bg-surface-hover hover:border-accent-primary/20 text-text-primary rounded-2xl flex flex-col justify-between group transition-all duration-300">
+          <Card className="p-8 border border-border-brand bg-bg-surface text-text-primary rounded-2xl flex flex-col justify-between group transition-colors duration-150">
             <div className="space-y-4">
-              <div className="h-10 w-10 rounded-xl flex items-center justify-center text-lg shadow-inner group-hover:scale-105 transition-transform bg-bg-surface-hover">🛠</div>
-              <h3 className="text-base font-bold text-text-primary">Build</h3>
+              <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-bg-surface-hover text-text-secondary">
+                <Terminal className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-semibold text-text-primary">Build</h3>
               <p className={`text-xs leading-relaxed ${textBodyClass}`}>
                 Complete practical, hands-on project briefs. Setup repositories, commit code using Git, and deploy your live applications directly.
               </p>
@@ -425,10 +389,12 @@ export default function LandingPage() {
           </Card>
 
           {/* Grow Card */}
-          <Card className="p-8 border border-border-brand bg-bg-surface hover:bg-bg-surface-hover hover:border-accent-primary/20 text-text-primary rounded-2xl flex flex-col justify-between group transition-all duration-300">
+          <Card className="p-8 border border-border-brand bg-bg-surface text-text-primary rounded-2xl flex flex-col justify-between group transition-colors duration-150">
             <div className="space-y-4">
-              <div className="h-10 w-10 rounded-xl flex items-center justify-center text-lg shadow-inner group-hover:scale-105 transition-transform bg-bg-surface-hover">🏆</div>
-              <h3 className="text-base font-bold text-text-primary">Grow</h3>
+              <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-bg-surface-hover text-text-secondary">
+                <Trophy className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-semibold text-text-primary">Grow</h3>
               <p className={`text-xs leading-relaxed ${textBodyClass}`}>
                 Receive personalized video or written reviews from mentors. Monitor your modules progression, and earn your Founding Builder certificate.
               </p>
@@ -443,12 +409,11 @@ export default function LandingPage() {
       </section>
 
       {/* INSIDE THE BUILDER WORKSPACE (SPLIT LAYOUT) */}
-      <section className={`py-24 px-6 md:px-12 border-y z-10 relative transition-colors duration-250 ${quoteSectionClass}`}>
+      <section className={`py-20 px-6 md:px-12 border-y z-10 relative transition-colors duration-250 ${quoteSectionClass}`}>
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left - Workspace Preview Mockup */}
           <div className="lg:col-span-7 relative">
-            <div className="absolute inset-0 bg-accent-primary/5 rounded-2xl blur-xl pointer-events-none z-0"></div>
             
             {/* Branded Web Application Shell Mockup */}
             <div className="relative border border-border-brand bg-bg-surface p-6 rounded-2xl shadow-lg z-10 space-y-6 transition-colors duration-200">
@@ -501,7 +466,7 @@ export default function LandingPage() {
               {/* Bottom activity trace */}
               <div className="p-3 bg-black text-green-400 font-mono text-[9px] rounded-lg shadow-inner space-y-1 border border-border-brand">
                 <p>&gt; git push origin main</p>
-                <p className="text-zinc-500">Enumerating objects: 5, done.</p>
+                <p className="text-text-secondary">Enumerating objects: 5, done.</p>
                 <p>&gt; vercel --prod</p>
                 <p className="text-blue-400">✓ Production build succeeded. Deployment Live!</p>
               </div>
@@ -513,7 +478,7 @@ export default function LandingPage() {
           <div className="lg:col-span-5 space-y-6">
             <div className="space-y-2">
               <span className="text-[10px] font-mono tracking-widest uppercase text-text-secondary">Builder Workspace</span>
-              <h2 className={`text-2xl md:text-3xl font-extrabold leading-tight ${textTitleClass}`}>Inside the Workspace</h2>
+              <h2 className={`text-xl md:text-2xl font-semibold leading-tight ${textTitleClass}`}>Inside the Workspace</h2>
               <p className={`text-xs leading-relaxed ${textBodyClass}`}>
                 Log in to experience a complete, dedicated sandbox environment structured around execution.
               </p>
@@ -530,7 +495,7 @@ export default function LandingPage() {
                 'Credentials & Digital Certificates'
               ].map((feat, index) => (
                 <li key={index} className="flex items-center gap-3.5 text-xs font-semibold text-text-primary">
-                  <span className={`w-2 h-2 inline-block shrink-0 rounded-[1px] shadow-sm ${bulletBgClass}`}></span>
+                  <span className={`w-2 h-2 inline-block shrink-0 rounded-[1px] ${bulletBgClass}`}></span>
                   <span>{feat}</span>
                 </li>
               ))}
@@ -541,7 +506,7 @@ export default function LandingPage() {
       </section>
 
       {/* COMMUNITY & REAL DAY-ONE STATS */}
-      <section className="py-24 px-6 md:px-12 max-w-6xl mx-auto space-y-16 z-10 relative">
+      <section className="py-20 px-6 md:px-12 max-w-6xl mx-auto space-y-12 z-10 relative">
         
         <div className={`grid grid-cols-1 lg:grid-cols-12 gap-8 items-center p-8 md:p-12 border rounded-3xl transition-colors duration-250 ${
           theme === 'dark' ? 'bg-bg-surface border-border-brand' : 'bg-blue-50/20 border-border-brand'
@@ -552,7 +517,7 @@ export default function LandingPage() {
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-650 text-[9px] font-mono uppercase tracking-widest">
                 Founding Cohort
               </div>
-              <h2 className={`text-2xl md:text-4xl font-extrabold leading-tight ${textTitleClass}`}>
+              <h2 className={`text-xl md:text-2xl font-semibold leading-tight ${textTitleClass}`}>
                 You're not learning alone.
               </h2>
             </div>
@@ -567,7 +532,7 @@ export default function LandingPage() {
                 target="_blank" 
                 rel="noopener noreferrer"
               >
-                <Button className="bg-green-600 hover:bg-green-700 text-white font-bold text-xs py-3 px-6 shadow-lg flex items-center gap-2 transition-transform hover:-translate-y-0.5">
+                <Button className="bg-green-600 hover:bg-green-700 text-white font-bold text-xs py-3 px-6 flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" />
                   Join the WhatsApp Workspace
                 </Button>
@@ -575,34 +540,34 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Stats grid reframed for low volume - Option A */}
+          {/* Stats grid reframed for low volume */}
           <div className="lg:col-span-5 grid grid-cols-2 gap-4">
             
             {/* Stat 1: Builders community members */}
             <div className="p-6 rounded-2xl border border-border-brand bg-bg-surface text-center relative overflow-hidden transition-colors duration-200">
               <div className={`w-1.5 h-1.5 absolute top-3 right-3 rounded-[1px] ${bulletBgClass}`}></div>
-              <span className={`text-2xl font-extrabold block ${textTitleClass}`}>{stats.whatsappMemberCount}+</span>
+              <span className={`text-xl font-bold block ${textTitleClass}`}>{stats.whatsappMemberCount}+</span>
               <span className="text-[10px] uppercase font-mono tracking-widest text-text-secondary block mt-1">Builders</span>
             </div>
 
-            {/* Stat 2: Static Reframed - Cohort Admission Status */}
+            {/* Stat 2: Cohort Admission Status */}
             <div className="p-6 rounded-2xl border border-border-brand bg-bg-surface text-center relative overflow-hidden transition-colors duration-200">
               <div className={`w-1.5 h-1.5 absolute top-3 right-3 rounded-[1px] ${bulletBgClass}`}></div>
-              <span className="text-2xl font-extrabold block text-accent-primary">Open</span>
+              <span className="text-xl font-bold block text-accent-primary">Open</span>
               <span className="text-[10px] uppercase font-mono tracking-widest text-text-secondary block mt-1">Cohort Active</span>
             </div>
 
             {/* Stat 3: Completion rate */}
             <div className="p-6 rounded-2xl border border-border-brand bg-bg-surface text-center relative overflow-hidden transition-colors duration-200">
               <div className={`w-1.5 h-1.5 absolute top-3 right-3 rounded-[1px] ${bulletBgClass}`}></div>
-              <span className={`text-2xl font-extrabold block ${textTitleClass}`}>94%</span>
+              <span className={`text-xl font-bold block ${textTitleClass}`}>94%</span>
               <span className="text-[10px] uppercase font-mono tracking-widest text-text-secondary block mt-1">Completion</span>
             </div>
 
             {/* Stat 4: Static Reframed - Practical Projects */}
             <div className="p-6 rounded-2xl border border-border-brand bg-bg-surface text-center relative overflow-hidden transition-colors duration-200">
               <div className={`w-1.5 h-1.5 absolute top-3 right-3 rounded-[1px] ${bulletBgClass}`}></div>
-              <span className={`text-2xl font-extrabold block ${textTitleClass}`}>100%</span>
+              <span className={`text-xl font-bold block ${textTitleClass}`}>100%</span>
               <span className="text-[10px] uppercase font-mono tracking-widest text-text-secondary block mt-1">Practical Labs</span>
             </div>
 
@@ -614,8 +579,8 @@ export default function LandingPage() {
       {/* BUILDER QUOTE */}
       <section className={`py-20 border-y text-center px-6 z-10 relative transition-colors duration-250 ${quoteSectionClass}`}>
         <div className="max-w-2xl mx-auto space-y-4">
-          <blockquote className={`text-xl md:text-2xl font-serif italic font-medium ${
-            theme === 'dark' ? 'text-zinc-205' : 'text-zinc-800'
+          <blockquote className={`text-lg md:text-xl font-serif italic font-medium ${
+            theme === 'dark' ? 'text-text-primary' : 'text-text-secondary'
           }`}>
             "The future belongs to those who build it."
           </blockquote>
@@ -624,29 +589,27 @@ export default function LandingPage() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-24 px-6 md:px-12 max-w-4xl mx-auto text-center z-10 relative">
-        <div className={`rounded-3xl p-8 md:p-16 space-y-8 relative overflow-hidden shadow-2xl transition-colors duration-200 ${
-          theme === 'dark' ? 'bg-bg-surface border border-border-brand' : 'bg-zinc-900 text-white'
+      <section className="py-20 px-6 md:px-12 max-w-4xl mx-auto text-center z-10 relative">
+        <div className={`rounded-3xl p-8 md:p-16 space-y-8 relative overflow-hidden border border-border-brand transition-colors duration-200 ${
+          theme === 'dark' ? 'bg-bg-surface text-text-primary' : 'bg-bg-surface-hover text-white'
         }`}>
-          {/* Subtle background glow */}
-          <div className="absolute -top-40 -left-40 w-96 h-96 bg-accent-primary/10 rounded-full blur-3xl pointer-events-none"></div>
 
           <div className="space-y-3 relative z-10">
-            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">Ready to continue your journey?</h2>
+            <h2 className="text-xl md:text-2xl font-semibold tracking-tight">Ready to continue your journey?</h2>
             <p className="text-xs text-text-secondary max-w-sm mx-auto opacity-95">Access your learning portal workspace to resume submissions and grades tracking.</p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center relative z-10 w-full sm:w-auto">
             <Button 
               onClick={() => openModalAt('login')}
-              className="w-full sm:w-auto font-bold text-xs py-3.5 px-8 shadow-lg"
+              className="w-full sm:w-auto font-bold text-xs py-3.5 px-8"
             >
               Sign In
             </Button>
             <a href="/enroll" className="w-full sm:w-auto">
               <Button 
                 variant="secondary"
-                className="w-full sm:w-auto font-bold text-xs py-3.5 px-8 transition-transform hover:-translate-y-0.5 border"
+                className="w-full sm:w-auto font-bold text-xs py-3.5 px-8 border"
               >
                 Enroll Now
               </Button>
@@ -708,7 +671,7 @@ export default function LandingPage() {
       {/* AUTHENTICATION OVERLAY MODALS */}
       {/* ================================================================= */}
       {showAuthModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className="rounded-2xl border border-border-brand bg-bg-surface text-text-primary shadow-2xl max-w-md w-full relative overflow-hidden animate-slide-up transition-colors duration-200">
             
             {/* Modal Header */}
@@ -737,7 +700,7 @@ export default function LandingPage() {
               {authTab === 'login' && (
                 <form onSubmit={handleLoginSubmit} className="space-y-5">
                   <div className="space-y-1">
-                    <h3 className="text-lg font-extrabold leading-tight text-text-primary">Welcome back</h3>
+                    <h3 className="text-lg font-semibold leading-tight text-text-primary">Welcome back</h3>
                     <p className="text-[11px] text-text-secondary leading-relaxed">Enter your credentials to claim access to your workspace.</p>
                   </div>
 
@@ -802,7 +765,7 @@ export default function LandingPage() {
               {authTab === 'redeem_code' && (
                 <form onSubmit={handleVerifyCodeSubmit} className="space-y-5">
                   <div className="space-y-1">
-                    <h3 className="text-lg font-extrabold leading-tight text-text-primary">Redeem Access Code</h3>
+                    <h3 className="text-lg font-semibold leading-tight text-text-primary">Redeem Access Code</h3>
                     <p className="text-[11px] text-text-secondary leading-relaxed">
                       Enter the alphanumeric reference code received via email to activate your account.
                     </p>
@@ -846,7 +809,7 @@ export default function LandingPage() {
               {authTab === 'redeem_register' && (
                 <form onSubmit={handleRedeemRegisterSubmit} className="space-y-5">
                   <div className="space-y-1">
-                    <h3 className="text-lg font-extrabold leading-tight text-text-primary">Claim Your Account</h3>
+                    <h3 className="text-lg font-semibold leading-tight text-text-primary">Claim Your Account</h3>
                     <p className="text-[11px] text-text-secondary leading-relaxed">
                       Access verified for <span className="font-semibold text-accent-primary">{validatedCodeData?.email}</span>. Configure your details below.
                     </p>
@@ -896,7 +859,7 @@ export default function LandingPage() {
               {authTab === 'forgot_password' && (
                 <form onSubmit={handleResetSubmit} className="space-y-5">
                   <div className="space-y-1">
-                    <h3 className="text-lg font-extrabold leading-tight text-text-primary">Request Password Reset</h3>
+                    <h3 className="text-lg font-semibold leading-tight text-text-primary">Request Password Reset</h3>
                     <p className="text-[11px] text-text-secondary leading-relaxed">
                       Admins will review your account reset ticket and email you a password recovery link.
                     </p>

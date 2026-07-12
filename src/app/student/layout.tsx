@@ -89,10 +89,6 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className={`min-h-screen flex ${bgClass} ${theme} relative transition-colors duration-250`}>
-      {/* Background radial highlights (only in dark mode for premium look) */}
-      {theme === 'dark' && (
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-accent-primary/5 rounded-full blur-3xl pointer-events-none"></div>
-      )}
 
       {/* Desktop Sidebar */}
       <aside className={`hidden md:flex flex-col w-64 border-r ${sidebarClass} p-6 justify-between shrink-0 transition-colors duration-250`}>
@@ -221,7 +217,7 @@ function StudentLayoutContent({ children }: { children: React.ReactNode }) {
       {/* Main Workspace Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         {/* Top bar header */}
-        <header className={`h-16 border-b flex items-center justify-between px-6 backdrop-blur sticky top-0 z-30 ${headerClass} transition-colors duration-250`}>
+        <header className={`h-16 border-b flex items-center justify-between px-6 sticky top-0 z-30 ${headerClass} transition-colors duration-250`}>
           <div className="flex items-center gap-4">
             <button
               onClick={() => setMobileMenuOpen(true)}

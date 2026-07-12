@@ -53,10 +53,6 @@ function FacilitatorLayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className={`min-h-screen flex bg-bg-canvas text-text-primary relative transition-colors duration-250 ${theme}`}>
-      {/* Radial glow */}
-      {theme === 'dark' && (
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-supporting-purple/5 rounded-full blur-3xl pointer-events-none"></div>
-      )}
 
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 border-r border-border-brand bg-bg-surface p-6 justify-between shrink-0">
@@ -185,7 +181,7 @@ function FacilitatorLayoutContent({ children }: { children: React.ReactNode }) {
       )}
 
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <header className="h-16 border-b border-border-brand flex items-center justify-between px-6 bg-bg-canvas/80 backdrop-blur sticky top-0 z-30">
+        <header className="h-16 border-b border-border-brand flex items-center justify-between px-6 bg-bg-canvas sticky top-0 z-30">
           <div className="flex items-center gap-4">
             <button
               onClick={() => setMobileMenuOpen(true)}

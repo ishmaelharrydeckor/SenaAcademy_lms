@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-// Premium Glass Card Component
+// Premium Flat Card Component
 export function Card({
   children,
   className = '',
@@ -17,18 +17,16 @@ export function Card({
   return (
     <div
       onClick={onClick}
-      className={`glass-panel rounded-xl p-6 transition-all duration-300 relative overflow-hidden group ${
-        hoverable ? 'hover:bg-bg-surface-hover hover:border-accent-primary/25 cursor-pointer hover:-translate-y-0.5 shadow-md hover:shadow-lg' : ''
+      className={`glass-panel rounded-xl p-6 transition-colors duration-150 relative overflow-hidden group ${
+        hoverable ? 'hover:bg-bg-surface-hover cursor-pointer' : ''
       } ${className}`}
     >
-      {/* Decorative inner top light edge */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none"></div>
       {children}
     </div>
   );
 }
 
-// Glowing Accent Border Card
+// Flat Accent Border Card
 export function AccentCard({
   children,
   className = '',
@@ -39,21 +37,20 @@ export function AccentCard({
   accent?: 'blue' | 'purple' | 'green' | 'orange';
 }) {
   const accentBorder = {
-    blue: 'border-l-2 border-l-accent-primary shadow-[inset_4px_0_12px_rgba(5,82,254,0.03)]',
-    purple: 'border-l-2 border-l-supporting-purple shadow-[inset_4px_0_12px_rgba(124,58,237,0.03)]',
-    green: 'border-l-2 border-l-success-green shadow-[inset_4px_0_12px_rgba(34,197,94,0.03)]',
-    orange: 'border-l-2 border-l-warning-orange shadow-[inset_4px_0_12px_rgba(245,158,11,0.03)]',
+    blue: 'border-l-2 border-l-accent-primary',
+    purple: 'border-l-2 border-l-indigo-500',
+    green: 'border-l-2 border-l-success-brand',
+    orange: 'border-l-2 border-l-warning-brand',
   }[accent];
 
   return (
     <div className={`glass-panel rounded-xl p-6 relative overflow-hidden ${accentBorder} ${className}`}>
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/3 to-transparent pointer-events-none"></div>
       {children}
     </div>
   );
 }
 
-// Custom Glass Styled Button
+// Flat Styled Button
 export function Button({
   children,
   type = 'button',
@@ -71,7 +68,7 @@ export function Button({
   disabled?: boolean;
   className?: string;
 }) {
-  const baseStyle = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 outline-none select-none active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 border border-transparent';
+  const baseStyle = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-150 outline-none select-none disabled:opacity-50 disabled:pointer-events-none border border-transparent';
   
   const sizeStyle = {
     sm: 'px-3 py-1.5 text-xs',
@@ -80,9 +77,9 @@ export function Button({
   }[size];
 
   const variantStyle = {
-    primary: 'bg-accent-primary hover:bg-accent-primary-hover text-white shadow-[0_4px_12px_rgba(5,82,254,0.15)] hover:shadow-[0_4px_16px_rgba(5,82,254,0.25)] border-accent-primary/20',
+    primary: 'bg-accent-primary hover:bg-accent-primary-hover text-white border-accent-primary/20',
     secondary: 'bg-bg-surface hover:bg-bg-surface-hover text-text-primary border-border-brand',
-    success: 'bg-success-green hover:bg-green-600 text-white shadow-[0_4px_12px_rgba(34,197,94,0.15)] border-green-500/20',
+    success: 'bg-success-brand hover:bg-success-brand/90 text-white border-success-brand/20',
     danger: 'bg-red-600 hover:bg-red-700 text-white border-red-500/20',
     ghost: 'hover:bg-bg-surface-hover text-text-secondary hover:text-text-primary',
   }[variant];
@@ -99,7 +96,7 @@ export function Button({
   );
 }
 
-// Styled Glass Input Field
+// Styled Input Field
 export function Input({
   label,
   id,
@@ -145,18 +142,16 @@ export function Input({
   );
 }
 
-// Fullscreen Loading Spinner
+// Flat Loading Spinner
 export function LoadingScreen({ message = 'Loading workspace...' }: { message?: string }) {
   return (
-    <div className="fixed inset-0 bg-zinc-950 flex flex-col items-center justify-center z-50 animate-fade-in">
+    <div className="fixed inset-0 bg-bg-canvas flex flex-col items-center justify-center z-50 animate-fade-in">
       <div className="relative flex items-center justify-center">
-        {/* Glow core */}
-        <div className="absolute w-12 h-12 rounded-full bg-primary-blue/10 blur-xl"></div>
         {/* Spinner rings */}
-        <div className="w-10 h-10 border-2 border-zinc-800 rounded-full"></div>
-        <div className="absolute w-10 h-10 border-2 border-t-primary-blue border-r-supporting-purple rounded-full animate-spin"></div>
+        <div className="w-10 h-10 border-2 border-border-brand rounded-full"></div>
+        <div className="absolute w-10 h-10 border-2 border-t-accent-primary border-r-transparent rounded-full animate-spin"></div>
       </div>
-      <p className="text-xs text-zinc-500 font-medium tracking-wide mt-4 uppercase animate-pulse">
+      <p className="text-xs text-text-secondary font-medium tracking-wide mt-4 uppercase animate-pulse">
         {message}
       </p>
     </div>
@@ -168,7 +163,7 @@ export function CircularProgress({
   percentage,
   size = 60,
   strokeWidth = 5,
-  colorClass = 'text-primary-blue',
+  colorClass = 'text-accent-primary',
 }: {
   percentage: number;
   size?: number;
@@ -183,7 +178,7 @@ export function CircularProgress({
     <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
       <svg className="transform -rotate-90" width={size} height={size}>
         <circle
-          className="text-zinc-800"
+          className="text-border-brand/40"
           strokeWidth={strokeWidth}
           stroke="currentColor"
           fill="transparent"
@@ -204,7 +199,8 @@ export function CircularProgress({
           cy={size / 2}
         />
       </svg>
-      <span className="absolute text-[11px] font-semibold text-zinc-200">{Math.round(percentage)}%</span>
+      <span className="absolute text-[11px] font-semibold text-text-primary">{Math.round(percentage)}%</span>
     </div>
   );
 }
+

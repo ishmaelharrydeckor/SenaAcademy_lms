@@ -128,7 +128,7 @@ export default function StudentDashboard() {
         <div className="relative w-10 h-10 flex items-center justify-center bg-white rounded-lg p-1.5 shadow-[0_4px_12px_rgba(5,82,254,0.15)] animate-pulse">
           <img src="/logo_icon.png" alt="Loading" className="h-full w-full object-contain" />
         </div>
-        <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Loading Dashboard details...</p>
+        <p className="text-[10px] font-mono text-text-secondary uppercase tracking-widest">Loading Dashboard details...</p>
       </div>
     );
   }
@@ -210,10 +210,7 @@ export default function StudentDashboard() {
       <div className="space-y-8 animate-fade-in">
         
         {/* Onboarding Welcome Header Card */}
-        <div className={`p-8 md:p-12 rounded-3xl relative overflow-hidden shadow-xl border border-border-brand bg-bg-surface`}>
-          {theme === 'dark' && (
-            <div className="absolute -top-40 -left-40 w-96 h-96 bg-accent-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-          )}
+        <div className={`p-8 md:p-12 rounded-3xl relative overflow-hidden border border-border-brand bg-bg-surface`}>
           
           <div className="max-w-2xl space-y-6 relative z-10">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-primary/10 border border-accent-primary/20 text-accent-primary text-[10px] font-bold tracking-widest uppercase">
@@ -221,8 +218,8 @@ export default function StudentDashboard() {
               <span>Founding Cohort Onboarding</span>
             </div>
 
-            <h2 className={`text-3xl md:text-5xl font-extrabold tracking-tight leading-tight ${titleClass}`}>
-              Welcome to Sena Academy, <span className="bg-gradient-to-r from-accent-primary to-indigo-500 bg-clip-text text-transparent">Founding Builder</span>.
+            <h2 className={`text-2xl md:text-3xl font-semibold tracking-tight leading-tight ${titleClass}`}>
+              Welcome to Sena Academy, Founding Builder.
             </h2>
 
             <p className={`text-sm md:text-base leading-relaxed ${descClass}`}>
@@ -231,7 +228,7 @@ export default function StudentDashboard() {
 
             <div className="pt-4">
               <Link href="/student/modules">
-                <Button className="bg-accent-primary hover:bg-accent-primary-hover text-white font-bold py-3.5 px-8 shadow-lg flex items-center gap-2">
+                <Button className="bg-accent-primary hover:bg-accent-primary-hover text-white font-bold py-3.5 px-8 flex items-center gap-2">
                   <Play className="h-4 w-4 fill-white" />
                   Start Module 1
                 </Button>
@@ -283,22 +280,19 @@ export default function StudentDashboard() {
       
       {/* 1. HERO GREETING PANEL */}
       <div className={`p-8 md:p-12 rounded-3xl relative overflow-hidden border border-border-brand bg-bg-surface`}>
-        {theme === 'dark' && (
-          <div className="absolute -top-40 -left-40 w-96 h-96 bg-accent-primary/5 rounded-full blur-3xl pointer-events-none"></div>
-        )}
         
         <div className="max-w-2xl space-y-4 relative z-10">
-          <h2 className={`text-3xl md:text-5xl font-extrabold tracking-tight ${titleClass}`}>
-            {getGreeting()}, {profile?.full_name?.split(' ')[0] || 'Builder'} 👋
+          <h2 className={`text-2xl md:text-3xl font-semibold tracking-tight ${titleClass}`}>
+            Welcome, {profile?.full_name?.split(' ')[0] || 'Builder'}
           </h2>
-          <p className="text-base font-bold text-text-secondary">Continue building the future.</p>
+          <p className="text-base font-semibold text-text-secondary">Continue building the future.</p>
           <p className={`text-xs md:text-sm leading-relaxed max-w-lg ${descClass}`}>
             Every project you complete brings you one step closer to becoming a professional AI Software Developer.
           </p>
 
           <div className="flex gap-4 pt-4">
             <Link href="/student/modules">
-              <Button className="bg-accent-primary hover:bg-accent-primary-hover text-white font-bold text-xs py-3 px-6 shadow-md">
+              <Button className="bg-accent-primary hover:bg-accent-primary-hover text-white font-bold text-xs py-3 px-6">
                 ▶ Continue Learning
               </Button>
             </Link>
@@ -496,13 +490,13 @@ export default function StudentDashboard() {
           {achievementBadges.map((badge, idx) => (
             <Card 
               key={idx} 
-              className={`p-6 text-center flex flex-col items-center justify-center gap-3 transition-transform hover:-translate-y-1 duration-300 ${cardClass} ${
-                !badge.unlocked ? 'opacity-40 grayscale' : 'shadow-md border-accent-primary/20'
+              className={`p-6 text-center flex flex-col items-center justify-center gap-3 border ${cardClass} ${
+                !badge.unlocked ? 'opacity-40 grayscale' : 'border-accent-primary/30'
               }`}
             >
-              <span className="text-3xl block">{badge.icon}</span>
+              <span className="text-2xl block">{badge.icon}</span>
               <div className="space-y-0.5">
-                <h5 className="text-xs font-bold text-text-primary">{badge.title}</h5>
+                <h5 className="text-xs font-semibold text-text-primary">{badge.title}</h5>
                 <span className="text-[9px] text-text-secondary block font-mono">{badge.desc}</span>
               </div>
             </Card>

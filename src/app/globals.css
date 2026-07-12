@@ -13,18 +13,8 @@
   --color-warning-brand: var(--warning);
   --color-primary-blue: #0552fe;
   
-  --animate-glow: glow 2s ease-in-out infinite alternate;
   --animate-fade-in: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-slide-up: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes glow {
-  from {
-    box-shadow: 0 0 4px rgba(5, 82, 254, 0.2), 0 0 10px rgba(5, 82, 254, 0.1);
-  }
-  to {
-    box-shadow: 0 0 8px rgba(5, 82, 254, 0.4), 0 0 20px rgba(5, 82, 254, 0.2);
-  }
 }
 
 @keyframes fadeIn {
@@ -43,22 +33,20 @@
   }
 }
 
-/* Master Design Tokens - Premium Black/Zinc-Slate Dark Spec */
+/* Master Design Tokens - Calm Institutional Portal Navy Spec */
 :root {
-  --bg-canvas: #09090b;
-  --bg-surface: rgba(24, 24, 27, 0.7);
-  --bg-surface-hover: #222226;
-  --text-primary: #f4f4f5;
-  --text-secondary: #a1a1aa;
-  --border: rgba(255, 255, 255, 0.05);
-  --accent-primary: #2563eb;
-  --accent-primary-hover: #3b82f6;
-  --success: #22c55e;
-  --warning: #f59e0b;
+  --bg-canvas: #021736;
+  --bg-surface: #0A1F42;
+  --bg-surface-hover: #0F2650;    /* subtle, not glowing — a small, flat shift */
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --border: rgba(255, 255, 255, 0.12);   /* more visible than before — real borders, not a faint glass edge */
+  --accent-primary: #0552FE;
+  --accent-primary-hover: #2E6BFF;
+  --success: #22C55E;
+  --warning: #F59E0B;
   color-scheme: dark;
 }
-
-
 
 body {
   background-color: var(--bg-canvas);
@@ -87,14 +75,12 @@ body {
   background: var(--bg-surface-hover);
 }
 
-/* Glassmorphism panel using semantic variables with premium soft shadows */
+/* Flat panel using semantic variables with solid borders */
 .glass-panel {
   background-color: var(--bg-surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
-  box-shadow: 0 4px 30px rgba(15, 23, 42, 0.02);
-  transition: background-color 0.25s ease-in-out, border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+  box-shadow: none;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
 }
 
 /* Glass styled form inputs */
@@ -111,7 +97,8 @@ body {
   outline: none;
 }
 
-/* Roadmap line gradient background */
+/* Roadmap line flat color */
 .roadmap-line {
-  background: linear-gradient(90deg, #22c55e 0%, var(--accent-primary) 50%, var(--bg-surface-hover) 100%);
+  background: var(--border);
 }
+

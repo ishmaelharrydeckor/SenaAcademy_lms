@@ -1220,7 +1220,7 @@ export default function AdminPage() {
         <div className="relative w-10 h-10 flex items-center justify-center bg-white rounded-lg p-1.5 shadow-[0_4px_12px_rgba(5,82,254,0.15)] animate-pulse">
           <img src="/logo_icon.png" alt="Loading" className="h-full w-full object-contain" />
         </div>
-        <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Loading control panels...</p>
+        <p className="text-[10px] font-mono text-text-secondary uppercase tracking-widest">Loading control panels...</p>
       </div>
     );
   }
@@ -1242,15 +1242,15 @@ export default function AdminPage() {
   return (
     <div className="space-y-8">
       {/* Admin header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-zinc-900">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border-brand">
         <div>
           <h2 className="text-xl font-bold tracking-tight text-white">Admin Control Center</h2>
-          <p className="text-xs text-zinc-500 mt-1">Manage cohorts, curriculum modules, student access keys, and system alerts.</p>
+          <p className="text-xs text-text-secondary mt-1">Manage cohorts, curriculum modules, student access keys, and system alerts.</p>
         </div>
       </div>
 
       {/* Settings tab bar */}
-      <div className="flex border-b border-zinc-900 gap-1 pb-[1px] overflow-x-auto">
+      <div className="flex border-b border-border-brand gap-1 pb-[1px] overflow-x-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const active = activeTab === tab.name;
@@ -1268,8 +1268,8 @@ export default function AdminPage() {
               }}
               className={`flex items-center gap-2 px-5 py-3 text-xs font-semibold select-none border-b-2 transition-all ${
                 active
-                  ? 'border-primary-blue text-white bg-zinc-900/10'
-                  : 'border-transparent text-zinc-550 hover:text-zinc-300'
+                  ? 'border-primary-blue text-white bg-bg-surface-hover/20'
+                  : 'border-transparent text-text-secondary hover:text-text-primary'
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -1285,7 +1285,7 @@ export default function AdminPage() {
           {/* Create Form */}
           <div className="lg:col-span-1">
             <Card className="space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">Initialize Cohort</span>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">Initialize Cohort</span>
               <form onSubmit={handleCohortSubmit} className="space-y-4">
                 <Input
                   label="Cohort Name"
@@ -1321,11 +1321,11 @@ export default function AdminPage() {
                 />
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-zinc-400">Initial Status</label>
+                  <label className="text-xs font-medium text-text-secondary">Initial Status</label>
                   <select
                     value={cohortStatus}
                     onChange={(e: any) => setCohortStatus(e.target.value)}
-                    className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950"
+                    className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas"
                   >
                     <option value="upcoming">Upcoming</option>
                     <option value="active">Active</option>
@@ -1342,13 +1342,13 @@ export default function AdminPage() {
 
           {/* List panel */}
           <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Registry</h3>
+            <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary">Registry</h3>
             <div className="grid grid-cols-1 gap-3">
               {cohorts.filter(c => !c.is_archived).map((c) => (
-                <div key={c.id} className="glass-panel p-5 rounded-xl border border-zinc-900 flex justify-between items-center">
+                <div key={c.id} className="glass-panel p-5 rounded-xl border border-border-brand flex justify-between items-center">
                   <div className="space-y-1">
-                    <h4 className="text-sm font-semibold text-zinc-100">{c.name}</h4>
-                    <p className="text-[10px] text-zinc-500 font-mono">
+                    <h4 className="text-sm font-semibold text-text-primary">{c.name}</h4>
+                    <p className="text-[10px] text-text-secondary font-mono">
                       Capacity: {c.max_students} Students • {new Date(c.start_date).toLocaleDateString()} - {new Date(c.end_date).toLocaleDateString()}
                     </p>
                   </div>
@@ -1357,7 +1357,7 @@ export default function AdminPage() {
                       c.status === 'active'
                         ? 'bg-success-green/10 text-success-green'
                         : c.status === 'completed'
-                        ? 'bg-zinc-800 text-zinc-400'
+                        ? 'bg-bg-surface-hover text-text-secondary'
                         : 'bg-primary-blue/10 text-primary-blue'
                     }`}>
                       {c.status}
@@ -1366,7 +1366,7 @@ export default function AdminPage() {
                       type="button"
                       onClick={() => handleArchiveCohort(c.id)}
                       disabled={archiveLoadingCohortId === c.id}
-                      className="px-2.5 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:border-zinc-700 text-zinc-450 hover:text-zinc-200 transition-all cursor-pointer flex items-center gap-1.5 text-[10px] font-semibold"
+                      className="px-2.5 py-1.5 rounded-lg border border-border-brand bg-bg-surface-hover/50 hover:bg-bg-surface-hover hover:border-border-brand text-text-secondary hover:text-text-primary transition-all cursor-pointer flex items-center gap-1.5 text-[10px] font-semibold"
                     >
                       <Archive className="h-3 w-3" />
                       {archiveLoadingCohortId === c.id ? 'Archiving...' : 'Archive'}
@@ -1375,7 +1375,7 @@ export default function AdminPage() {
                 </div>
               ))}
               {cohorts.filter(c => !c.is_archived).length === 0 && (
-                <p className="text-xs text-zinc-600 italic py-6 text-center">No active cohorts found.</p>
+                <p className="text-xs text-text-secondary italic py-6 text-center">No active cohorts found.</p>
               )}
             </div>
           </div>
@@ -1385,19 +1385,19 @@ export default function AdminPage() {
       {/* --- ARCHIVED COHORTS TAB PANEL --- */}
       {activeTab === 'archived_cohorts' && (
         <div className="space-y-6 animate-fade-in">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4 border-b border-zinc-900">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4 border-b border-border-brand">
             <div>
               <h3 className="text-sm font-semibold text-white">Archived Cohorts</h3>
-              <p className="text-xs text-zinc-500 mt-1">Cohorts in this list are hidden from normal view. You can restore them or trigger a permanent, transaction-safe hard-delete.</p>
+              <p className="text-xs text-text-secondary mt-1">Cohorts in this list are hidden from normal view. You can restore them or trigger a permanent, transaction-safe hard-delete.</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             {cohorts.filter(c => c.is_archived).map((c) => (
-              <div key={c.id} className="glass-panel p-5 rounded-xl border border-zinc-900 flex justify-between items-center">
+              <div key={c.id} className="glass-panel p-5 rounded-xl border border-border-brand flex justify-between items-center">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-semibold text-zinc-200">{c.name}</h4>
-                  <p className="text-[10px] text-zinc-500 font-mono">
+                  <h4 className="text-sm font-semibold text-text-primary">{c.name}</h4>
+                  <p className="text-[10px] text-text-secondary font-mono">
                     Capacity: {c.max_students} Students • {new Date(c.start_date).toLocaleDateString()} - {new Date(c.end_date).toLocaleDateString()}
                   </p>
                 </div>
@@ -1421,7 +1421,7 @@ export default function AdminPage() {
                       }
                     }}
                     disabled={archiveLoadingCohortId === c.id}
-                    className="px-2.5 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-450 hover:text-zinc-200 transition-all cursor-pointer text-[10px] font-semibold"
+                    className="px-2.5 py-1.5 rounded-lg border border-border-brand bg-bg-surface-hover/50 hover:bg-bg-surface-hover text-text-secondary hover:text-text-primary transition-all cursor-pointer text-[10px] font-semibold"
                   >
                     Restore
                   </button>
@@ -1440,7 +1440,7 @@ export default function AdminPage() {
               </div>
             ))}
             {cohorts.filter(c => c.is_archived).length === 0 && (
-              <p className="text-xs text-zinc-650 italic py-12 text-center">No archived cohorts found.</p>
+              <p className="text-xs text-text-secondary italic py-12 text-center">No archived cohorts found.</p>
             )}
           </div>
         </div>
@@ -1449,7 +1449,7 @@ export default function AdminPage() {
       {/* Cascade Hard-Delete Cohort Safety Confirmation Modal */}
       {showDeleteConfirm && cohortToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in">
-          <Card className="w-full max-w-md border border-red-900 bg-zinc-950 p-6 relative">
+          <Card className="w-full max-w-md border border-red-900 bg-bg-canvas p-6 relative">
             <div className="space-y-4">
               <div className="flex items-center gap-2.5 text-error-red">
                 <AlertCircle className="h-5 w-5 animate-pulse" />
@@ -1472,8 +1472,8 @@ export default function AdminPage() {
               </div>
 
               <div className="space-y-3">
-                <label className="block text-xs font-semibold text-zinc-400">
-                  To confirm, type the exact name of the cohort (<span className="text-white font-mono select-all bg-zinc-900 px-1 py-0.5 rounded">{cohortToDelete.name}</span>) below:
+                <label className="block text-xs font-semibold text-text-secondary">
+                  To confirm, type the exact name of the cohort (<span className="text-white font-mono select-all bg-bg-surface-hover px-1 py-0.5 rounded">{cohortToDelete.name}</span>) below:
                 </label>
                 <Input
                   id="confirm-cohort-name"
@@ -1493,7 +1493,7 @@ export default function AdminPage() {
                     setCohortToDelete(null);
                     setConfirmNameInput('');
                   }}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-zinc-450 hover:text-zinc-200 bg-zinc-950 border border-zinc-800 hover:bg-zinc-900 cursor-pointer"
+                  className="px-4 py-2 rounded-lg text-xs font-semibold text-text-secondary hover:text-text-primary bg-bg-canvas border border-border-brand hover:bg-bg-surface-hover cursor-pointer"
                   disabled={deletingCohort}
                 >
                   Cancel
@@ -1515,7 +1515,7 @@ export default function AdminPage() {
       {activeTab === 'students' && (
         <div className="space-y-6 animate-fade-in">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500 self-start md:self-auto">Student Directory</h3>
+            <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary self-start md:self-auto">Student Directory</h3>
             
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               <input
@@ -1523,13 +1523,13 @@ export default function AdminPage() {
                 placeholder="Search by name or email..."
                 value={studentSearch}
                 onChange={(e) => setStudentSearch(e.target.value)}
-                className="glass-input text-xs text-zinc-100 rounded-lg px-4 py-2 w-full sm:w-64 bg-zinc-950/60"
+                className="glass-input text-xs text-text-primary rounded-lg px-4 py-2 w-full sm:w-64 bg-bg-canvas/60"
               />
 
               <select
                 value={studentCohortFilter}
                 onChange={(e) => setStudentCohortFilter(e.target.value)}
-                className="glass-input text-xs text-zinc-100 rounded-lg px-3 py-2 w-full sm:w-48 bg-zinc-950"
+                className="glass-input text-xs text-text-primary rounded-lg px-3 py-2 w-full sm:w-48 bg-bg-canvas"
               >
                 <option value="">All Cohorts</option>
                 {cohorts.map((c) => (
@@ -1553,30 +1553,30 @@ export default function AdminPage() {
             if (filtered.length === 0) {
               return (
                 <Card className="text-center py-16">
-                  <Users className="h-9 w-9 text-zinc-800 stroke-[1.5] mx-auto mb-2" />
-                  <p className="text-xs text-zinc-500">No students found matching your filters.</p>
+                  <Users className="h-9 w-9 text-text-secondary stroke-[1.5] mx-auto mb-2" />
+                  <p className="text-xs text-text-secondary">No students found matching your filters.</p>
                 </Card>
               );
             }
 
             return (
-              <div className="glass-panel rounded-xl border border-zinc-900 overflow-hidden">
+              <div className="glass-panel rounded-xl border border-border-brand overflow-hidden">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-zinc-900 bg-zinc-950/40 text-zinc-500 font-mono">
+                    <tr className="border-b border-border-brand bg-bg-canvas/40 text-text-secondary font-mono">
                       <th className="p-4">Full Name</th>
                       <th className="p-4">Email Address</th>
                       <th className="p-4">Cohort</th>
                       <th className="p-4">Joined Date</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-900/60">
+                  <tbody className="divide-y divide-border-brand">
                     {filtered.map((student) => (
-                      <tr key={student.id} className="hover:bg-zinc-900/20 transition-colors">
-                        <td className="p-4 font-semibold text-zinc-200">{student.full_name}</td>
-                        <td className="p-4 text-zinc-400 font-mono">{student.email}</td>
-                        <td className="p-4 text-zinc-400">{student.cohorts?.name || 'Unassigned'}</td>
-                        <td className="p-4 text-zinc-500">
+                      <tr key={student.id} className="hover:bg-bg-surface-hover/30 transition-colors">
+                        <td className="p-4 font-semibold text-text-primary">{student.full_name}</td>
+                        <td className="p-4 text-text-secondary font-mono">{student.email}</td>
+                        <td className="p-4 text-text-secondary">{student.cohorts?.name || 'Unassigned'}</td>
+                        <td className="p-4 text-text-secondary">
                           {new Date(student.created_at).toLocaleDateString()}
                         </td>
                       </tr>
@@ -1594,8 +1594,8 @@ export default function AdminPage() {
           {/* Onboard Facilitator Form */}
           <div className="lg:col-span-1">
             <Card className="space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block font-semibold">Onboard Facilitator</span>
-              <p className="text-xs text-zinc-500 leading-relaxed">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block font-semibold">Onboard Facilitator</span>
+              <p className="text-xs text-text-secondary leading-relaxed">
                 Onboard a new mentor or facilitator. They will be sent an automated activation email to set up their password.
               </p>
               
@@ -1628,30 +1628,30 @@ export default function AdminPage() {
 
           {/* Facilitators Directory List */}
           <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500 block">Facilitators Directory</h3>
+            <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary block">Facilitators Directory</h3>
             
-            <div className="border border-zinc-900 bg-zinc-950/30 rounded-xl overflow-hidden backdrop-blur-md">
-              <table className="w-full text-left text-xs text-zinc-400 border-collapse">
+            <div className="border border-border-brand bg-bg-canvas/30 rounded-xl overflow-hidden backdrop-blur-md">
+              <table className="w-full text-left text-xs text-text-secondary border-collapse">
                 <thead>
-                  <tr className="border-b border-zinc-900 bg-zinc-900/10 text-zinc-300 font-semibold">
+                  <tr className="border-b border-border-brand bg-bg-surface-hover/20 text-text-primary font-semibold">
                     <th className="p-4">Name</th>
                     <th className="p-4">Email</th>
                     <th className="p-4">Created Date</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-900/60">
+                <tbody className="divide-y divide-border-brand">
                   {facilitators.map((fac) => (
-                    <tr key={fac.id} className="hover:bg-zinc-900/20 transition-colors">
-                      <td className="p-4 font-semibold text-zinc-200">{fac.full_name}</td>
-                      <td className="p-4 text-zinc-450 font-mono">{fac.email}</td>
-                      <td className="p-4 text-zinc-550">
+                    <tr key={fac.id} className="hover:bg-bg-surface-hover/30 transition-colors">
+                      <td className="p-4 font-semibold text-text-primary">{fac.full_name}</td>
+                      <td className="p-4 text-text-secondary font-mono">{fac.email}</td>
+                      <td className="p-4 text-text-secondary">
                         {new Date(fac.created_at).toLocaleDateString()}
                       </td>
                     </tr>
                   ))}
                   {facilitators.length === 0 && (
                     <tr>
-                      <td colSpan={3} className="p-8 text-center text-zinc-650 italic">
+                      <td colSpan={3} className="p-8 text-center text-text-secondary italic">
                         No facilitator accounts registered yet.
                       </td>
                     </tr>
@@ -1669,7 +1669,7 @@ export default function AdminPage() {
           {/* Create/Edit Form */}
           <div className="lg:col-span-1">
             <Card className="space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">
                 {editingModuleId ? 'Edit Module' : 'Create Module'}
               </span>
               <form onSubmit={handleModuleSubmit} className="space-y-4 max-h-[600px] overflow-y-auto pr-1">
@@ -1700,8 +1700,8 @@ export default function AdminPage() {
                 />
 
                 {/* Objectives list builder */}
-                <div className="border-t border-zinc-900 pt-3 space-y-2">
-                  <label className="text-xs font-semibold text-zinc-300">Objectives list</label>
+                <div className="border-t border-border-brand pt-3 space-y-2">
+                  <label className="text-xs font-semibold text-text-primary">Objectives list</label>
                   <div className="flex gap-2">
                     <Input
                       id="m-obj-add"
@@ -1722,14 +1722,14 @@ export default function AdminPage() {
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
-                  <ul className="space-y-1.5 text-xs text-zinc-400">
+                  <ul className="space-y-1.5 text-xs text-text-secondary">
                     {modObjectivesList.map((obj, i) => (
-                      <li key={i} className="flex justify-between items-center bg-zinc-950 p-2 rounded border border-zinc-900">
+                      <li key={i} className="flex justify-between items-center bg-bg-canvas p-2 rounded border border-border-brand">
                         <span className="truncate max-w-[200px]">{obj}</span>
                         <button
                           type="button"
                           onClick={() => setModObjectivesList(modObjectivesList.filter((_, idx) => idx !== i))}
-                          className="text-zinc-650 hover:text-red-400"
+                          className="text-text-secondary hover:text-red-400"
                         >
                           <Trash className="h-3.5 w-3.5" />
                         </button>
@@ -1739,8 +1739,8 @@ export default function AdminPage() {
                 </div>
 
                 {/* Outcomes list builder */}
-                <div className="border-t border-zinc-900 pt-3 space-y-2">
-                  <label className="text-xs font-semibold text-zinc-300">Outcomes list</label>
+                <div className="border-t border-border-brand pt-3 space-y-2">
+                  <label className="text-xs font-semibold text-text-primary">Outcomes list</label>
                   <div className="flex gap-2">
                     <Input
                       id="m-out-add"
@@ -1761,14 +1761,14 @@ export default function AdminPage() {
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
-                  <ul className="space-y-1.5 text-xs text-zinc-400">
+                  <ul className="space-y-1.5 text-xs text-text-secondary">
                     {modOutcomesList.map((out, i) => (
-                      <li key={i} className="flex justify-between items-center bg-zinc-950 p-2 rounded border border-zinc-900">
+                      <li key={i} className="flex justify-between items-center bg-bg-canvas p-2 rounded border border-border-brand">
                         <span className="truncate max-w-[200px]">{out}</span>
                         <button
                           type="button"
                           onClick={() => setModOutcomesList(modOutcomesList.filter((_, idx) => idx !== i))}
-                          className="text-zinc-650 hover:text-red-400"
+                          className="text-text-secondary hover:text-red-400"
                         >
                           <Trash className="h-3.5 w-3.5" />
                         </button>
@@ -1778,8 +1778,8 @@ export default function AdminPage() {
                 </div>
 
                 {/* Resources list builder */}
-                <div className="border-t border-zinc-900 pt-3 space-y-2">
-                  <label className="text-xs font-semibold text-zinc-300">Resource Library</label>
+                <div className="border-t border-border-brand pt-3 space-y-2">
+                  <label className="text-xs font-semibold text-text-primary">Resource Library</label>
                   <div className="space-y-2">
                     <Input
                       id="m-res-name"
@@ -1798,7 +1798,7 @@ export default function AdminPage() {
                       <select
                         value={modResCategory}
                         onChange={(e) => setModResCategory(e.target.value)}
-                        className="glass-input text-xs text-zinc-100 rounded-lg px-2 bg-zinc-950 border border-zinc-900 focus:outline-none"
+                        className="glass-input text-xs text-text-primary rounded-lg px-2 bg-bg-canvas border border-border-brand focus:outline-none"
                       >
                         <option value="slide">Slide</option>
                         <option value="video">Video</option>
@@ -1821,14 +1821,14 @@ export default function AdminPage() {
                       </Button>
                     </div>
                   </div>
-                  <ul className="space-y-1.5 text-xs text-zinc-400">
+                  <ul className="space-y-1.5 text-xs text-text-secondary">
                     {modResourcesList.map((res, i) => (
-                      <li key={i} className="flex justify-between items-center bg-zinc-950 p-2 rounded border border-zinc-900">
+                      <li key={i} className="flex justify-between items-center bg-bg-canvas p-2 rounded border border-border-brand">
                         <span className="truncate max-w-[180px]">{res.name} ({res.category})</span>
                         <button
                           type="button"
                           onClick={() => setModResourcesList(modResourcesList.filter((_, idx) => idx !== i))}
-                          className="text-zinc-650 hover:text-red-400"
+                          className="text-text-secondary hover:text-red-400"
                         >
                           <Trash className="h-3.5 w-3.5" />
                         </button>
@@ -1838,8 +1838,8 @@ export default function AdminPage() {
                 </div>
 
                 {/* Rubric builder */}
-                <div className="border-t border-zinc-900 pt-3 space-y-2">
-                  <label className="text-xs font-semibold text-zinc-300">Grading Rubric criteria</label>
+                <div className="border-t border-border-brand pt-3 space-y-2">
+                  <label className="text-xs font-semibold text-text-primary">Grading Rubric criteria</label>
                   <div className="flex gap-2 items-end">
                     <Input
                       id="r-crit"
@@ -1869,14 +1869,14 @@ export default function AdminPage() {
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
-                  <ul className="space-y-1.5 text-xs text-zinc-400">
+                  <ul className="space-y-1.5 text-xs text-text-secondary">
                     {modRubricList.map((rub, i) => (
-                      <li key={i} className="flex justify-between items-center bg-zinc-950 p-2 rounded border border-zinc-900">
+                      <li key={i} className="flex justify-between items-center bg-bg-canvas p-2 rounded border border-border-brand">
                         <span>{rub.criteria} ({rub.max_points} pts)</span>
                         <button
                           type="button"
                           onClick={() => setModRubricList(modRubricList.filter((_, idx) => idx !== i))}
-                          className="text-zinc-650 hover:text-red-400"
+                          className="text-text-secondary hover:text-red-400"
                         >
                           <Trash className="h-3.5 w-3.5" />
                         </button>
@@ -1886,8 +1886,8 @@ export default function AdminPage() {
                 </div>
 
                 {/* Assignment settings */}
-                <div className="border-t border-zinc-900 pt-3 space-y-4">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">Assignment details</span>
+                <div className="border-t border-border-brand pt-3 space-y-4">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">Assignment details</span>
                   <Input
                     label="Assignment Name"
                     id="m-a-title"
@@ -1915,7 +1915,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Unlock date & Visibility */}
-                <div className="border-t border-zinc-900 pt-3 space-y-4">
+                <div className="border-t border-border-brand pt-3 space-y-4">
                   <Input
                     label="Unlock date"
                     id="m-unlock"
@@ -1925,16 +1925,16 @@ export default function AdminPage() {
                     required
                   />
 
-                  <div className="flex items-center gap-2.5 select-none cursor-pointer text-xs font-semibold text-zinc-300">
+                  <div className="flex items-center gap-2.5 select-none cursor-pointer text-xs font-semibold text-text-primary">
                     <input
                       type="checkbox"
                       id="m-vis"
                       checked={modVisible}
                       onChange={(e) => setModVisible(e.target.checked)}
-                      className="rounded bg-zinc-900 border-zinc-800 text-primary-blue focus:ring-primary-blue"
+                      className="rounded bg-bg-surface-hover border-border-brand text-primary-blue focus:ring-primary-blue"
                     />
                     <label htmlFor="m-vis" className="flex items-center gap-1.5 cursor-pointer">
-                      {modVisible ? <Eye className="h-4 w-4 text-primary-blue" /> : <EyeOff className="h-4 w-4 text-zinc-600" />}
+                      {modVisible ? <Eye className="h-4 w-4 text-primary-blue" /> : <EyeOff className="h-4 w-4 text-text-secondary" />}
                       Visibility Enabled
                     </label>
                   </div>
@@ -1962,21 +1962,21 @@ export default function AdminPage() {
 
           {/* List panel */}
           <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Modules Published</h3>
+            <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary">Modules Published</h3>
             <div className="grid grid-cols-1 gap-3">
               {modules.map((m) => (
-                <div key={m.id} className="glass-panel p-5 rounded-xl border border-zinc-900 flex justify-between items-center gap-4">
+                <div key={m.id} className="glass-panel p-5 rounded-xl border border-border-brand flex justify-between items-center gap-4">
                   <div className="space-y-1 min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-zinc-500 uppercase">Module {m.module_number}</span>
+                      <span className="text-[10px] font-mono text-text-secondary uppercase">Module {m.module_number}</span>
                       <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded uppercase font-semibold ${
-                        m.is_visible ? 'bg-primary-blue/10 text-primary-blue' : 'bg-zinc-800 text-zinc-500'
+                        m.is_visible ? 'bg-primary-blue/10 text-primary-blue' : 'bg-bg-surface-hover text-text-secondary'
                       }`}>
                         {m.is_visible ? 'Visible' : 'Hidden'}
                       </span>
                     </div>
-                    <h4 className="text-sm font-semibold text-zinc-100 truncate">{m.title}</h4>
-                    <p className="text-[10px] text-zinc-500 truncate">
+                    <h4 className="text-sm font-semibold text-text-primary truncate">{m.title}</h4>
+                    <p className="text-[10px] text-text-secondary truncate">
                       Rubric Criteria: {m.assignment_rubric.map((r) => r.criteria).join(', ') || 'None'}
                     </p>
                   </div>
@@ -2011,7 +2011,7 @@ export default function AdminPage() {
           {/* Create Form */}
           <div className="lg:col-span-1">
             <Card className="space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">Generate Access Code</span>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">Generate Access Code</span>
               <form onSubmit={handleCodeSubmit} className="space-y-4">
                 <Input
                   label="Student Email Address"
@@ -2024,12 +2024,12 @@ export default function AdminPage() {
                 />
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-zinc-400">Target Cohort</label>
+                  <label className="text-xs font-medium text-text-secondary">Target Cohort</label>
                   <select
                     value={codeCohortId}
                     onChange={(e) => setCodeCohortId(e.target.value)}
                     required
-                    className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950"
+                    className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas"
                   >
                     <option value="">Select Cohort...</option>
                     {cohorts.filter(c => !c.is_archived).map((c) => (
@@ -2056,17 +2056,17 @@ export default function AdminPage() {
             </Card>
 
             <Card className="space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">CSV Bulk Import Codes</span>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">CSV Bulk Import Codes</span>
               <div className="space-y-3">
-                <p className="text-[10px] text-zinc-500 leading-relaxed">
+                <p className="text-[10px] text-text-secondary leading-relaxed">
                   Paste CSV rows matching format:<br />
-                  <code className="text-zinc-400 font-mono text-[9px]">name, email, cohort_name_or_uuid</code>
+                  <code className="text-text-secondary font-mono text-[9px]">name, email, cohort_name_or_uuid</code>
                 </p>
                 <textarea
                   placeholder="John Doe, john@domain.com, Founding Cohort"
                   value={bulkCsv}
                   onChange={(e) => setBulkCsv(e.target.value)}
-                  className="glass-input text-xs text-zinc-100 rounded-lg p-3 w-full h-28 resize-none placeholder-zinc-650"
+                  className="glass-input text-xs text-text-primary rounded-lg p-3 w-full h-28 resize-none placeholder-text-secondary/50"
                 />
                 <Button
                   onClick={() => handleBulkCodesSubmit(bulkCsv, codeCohortId, codeExpiry)}
@@ -2082,7 +2082,7 @@ export default function AdminPage() {
           {/* List panel */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Access Key Registry</h3>
+              <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary">Access Key Registry</h3>
               <div className="flex items-center gap-3">
                 {selectedCodes.length > 0 && (
                   <Button
@@ -2106,10 +2106,10 @@ export default function AdminPage() {
                 </Button>
               </div>
             </div>
-            <div className="overflow-x-auto glass-panel rounded-xl border border-zinc-900 font-sans">
+            <div className="overflow-x-auto glass-panel rounded-xl border border-border-brand font-sans">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-zinc-900 bg-zinc-950/40 text-zinc-500 font-mono">
+                  <tr className="border-b border-border-brand bg-bg-canvas/40 text-text-secondary font-mono">
                     <th className="p-4 w-10">
                       <input
                         type="checkbox"
@@ -2121,7 +2121,7 @@ export default function AdminPage() {
                             setSelectedCodes([]);
                           }
                         }}
-                        className="rounded border-zinc-800 bg-zinc-950 text-accent-primary focus:ring-accent-primary/30 h-3.5 w-3.5 cursor-pointer"
+                        className="rounded border-border-brand bg-bg-canvas text-accent-primary focus:ring-accent-primary/30 h-3.5 w-3.5 cursor-pointer"
                       />
                     </th>
                     <th className="p-4">Key Code</th>
@@ -2131,9 +2131,9 @@ export default function AdminPage() {
                     <th className="p-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-900">
+                <tbody className="divide-y divide-border-brand">
                   {codes.map((k) => (
-                    <tr key={k.code} className="hover:bg-zinc-900/10">
+                    <tr key={k.code} className="hover:bg-bg-surface-hover/20">
                       <td className="p-4 w-10">
                         <input
                           type="checkbox"
@@ -2145,19 +2145,19 @@ export default function AdminPage() {
                               setSelectedCodes((prev) => prev.filter((c) => c !== k.code));
                             }
                           }}
-                          className="rounded border-zinc-800 bg-zinc-950 text-accent-primary focus:ring-accent-primary/30 h-3.5 w-3.5 cursor-pointer"
+                          className="rounded border-border-brand bg-bg-canvas text-accent-primary focus:ring-accent-primary/30 h-3.5 w-3.5 cursor-pointer"
                         />
                       </td>
-                      <td className="p-4 font-mono font-bold text-zinc-100 select-all">{k.code}</td>
-                      <td className="p-4 font-mono text-zinc-400">{k.assigned_email}</td>
-                      <td className="p-4 text-zinc-550">{new Date(k.expires_at).toLocaleDateString()}</td>
+                      <td className="p-4 font-mono font-bold text-text-primary select-all">{k.code}</td>
+                      <td className="p-4 font-mono text-text-secondary">{k.assigned_email}</td>
+                      <td className="p-4 text-text-secondary">{new Date(k.expires_at).toLocaleDateString()}</td>
                       <td className="p-4">
                         <span className={`inline-flex items-center gap-1 font-semibold uppercase px-1.5 py-0.5 rounded text-[9px] ${
                           k.status === 'unused'
                             ? 'bg-primary-blue/10 text-primary-blue'
                             : k.status === 'redeemed'
                             ? 'bg-success-green/10 text-success-green'
-                            : 'bg-zinc-800 text-zinc-500'
+                            : 'bg-bg-surface-hover text-text-secondary'
                         }`}>
                           {k.status}
                         </span>
@@ -2185,7 +2185,7 @@ export default function AdminPage() {
                   ))}
                   {codes.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-zinc-500 italic">No access codes generated.</td>
+                      <td colSpan={6} className="p-8 text-center text-text-secondary italic">No access codes generated.</td>
                     </tr>
                   )}
                 </tbody>
@@ -2201,8 +2201,8 @@ export default function AdminPage() {
           {/* Fallback Manual Verification Card */}
           <div className="lg:col-span-1">
             <Card className="space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">Verify Paystack Reference</span>
-              <p className="text-[10px] text-zinc-500 leading-relaxed">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">Verify Paystack Reference</span>
+              <p className="text-[10px] text-text-secondary leading-relaxed">
                 If a student has completed their payment but the webhook failed to trigger, enter the Paystack transaction reference string below to manually verify and deliver the access code.
               </p>
               
@@ -2227,12 +2227,12 @@ export default function AdminPage() {
           {/* Payments list log */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex justify-between items-center pb-2">
-              <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Transaction History Log ({payments.length})</h3>
+              <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary">Transaction History Log ({payments.length})</h3>
               <button
                 type="button"
                 onClick={() => handleExportTable('payments')}
                 disabled={exportLoading}
-                className="px-2.5 py-1.5 rounded-lg border border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 hover:border-zinc-700 text-zinc-450 hover:text-zinc-200 transition-all cursor-pointer flex items-center gap-1.5 text-[10px] font-semibold"
+                className="px-2.5 py-1.5 rounded-lg border border-border-brand bg-bg-surface-hover/50 hover:bg-bg-surface-hover hover:border-border-brand text-text-secondary hover:text-text-primary transition-all cursor-pointer flex items-center gap-1.5 text-[10px] font-semibold"
               >
                 <FileSpreadsheet className="h-3.5 w-3.5 text-success-green" />
                 {exportLoading ? 'Exporting...' : 'Export Payments (CSV)'}
@@ -2241,15 +2241,15 @@ export default function AdminPage() {
             
             {payments.length === 0 ? (
               <Card className="text-center py-16">
-                <CreditCard className="h-9 w-9 text-zinc-800 stroke-[1.5] mx-auto mb-2" />
-                <p className="text-xs text-zinc-500">No Paystack transaction records logged yet.</p>
+                <CreditCard className="h-9 w-9 text-text-secondary stroke-[1.5] mx-auto mb-2" />
+                <p className="text-xs text-text-secondary">No Paystack transaction records logged yet.</p>
               </Card>
             ) : (
-              <div className="glass-panel rounded-xl border border-zinc-900 overflow-hidden">
+              <div className="glass-panel rounded-xl border border-border-brand overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-zinc-900 bg-zinc-950/40 text-zinc-550 font-mono">
+                      <tr className="border-b border-border-brand bg-bg-canvas/40 text-text-secondary font-mono">
                         <th className="p-4">Reference</th>
                         <th className="p-4">Student</th>
                         <th className="p-4">Cohort</th>
@@ -2259,13 +2259,13 @@ export default function AdminPage() {
                         <th className="p-4 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-900/60">
+                    <tbody className="divide-y divide-border-brand">
                       {payments.map((p) => {
                         const isDuplicate = payments.filter((item) => item.paystack_reference === p.paystack_reference).length > 1;
                         
                         return (
-                          <tr key={p.id} className="hover:bg-zinc-900/10 transition-colors">
-                            <td className="p-4 font-mono font-semibold text-zinc-300">
+                          <tr key={p.id} className="hover:bg-bg-surface-hover/20 transition-colors">
+                            <td className="p-4 font-mono font-semibold text-text-primary">
                               <div className="flex items-center gap-1.5">
                                 <span className="truncate max-w-[100px]">{p.paystack_reference}</span>
                                 {isDuplicate && (
@@ -2277,12 +2277,12 @@ export default function AdminPage() {
                             </td>
                             <td className="p-4">
                               <div className="space-y-0.5">
-                                <p className="font-semibold text-zinc-200">{p.full_name}</p>
-                                <p className="text-[10px] text-zinc-500 font-mono">{p.email}</p>
+                                <p className="font-semibold text-text-primary">{p.full_name}</p>
+                                <p className="text-[10px] text-text-secondary font-mono">{p.email}</p>
                               </div>
                             </td>
-                            <td className="p-4 text-zinc-400">{p.cohorts?.name || 'Selected Cohort'}</td>
-                            <td className="p-4 font-mono text-zinc-300">
+                            <td className="p-4 text-text-secondary">{p.cohorts?.name || 'Selected Cohort'}</td>
+                            <td className="p-4 font-mono text-text-primary">
                               {p.currency} {parseFloat(p.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                             </td>
                             <td className="p-4">
@@ -2294,7 +2294,7 @@ export default function AdminPage() {
                             </td>
                             <td className="p-4 text-center">
                               <span className={`text-[10px] font-mono px-2 py-0.5 rounded uppercase font-semibold ${
-                                p.access_code_generated ? 'bg-zinc-800 text-zinc-400' : 'bg-yellow-500/10 text-yellow-500'
+                                p.access_code_generated ? 'bg-bg-surface-hover text-text-secondary' : 'bg-yellow-500/10 text-yellow-500'
                               }`}>
                                 {p.access_code_generated ? 'Completed' : 'Pending'}
                               </span>
@@ -2323,20 +2323,20 @@ export default function AdminPage() {
       {/* --- PASSWORD RESETS TAB PANEL --- */}
       {activeTab === 'resets' && (
         <div className="space-y-6 animate-fade-in">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4 border-b border-zinc-900">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-4 border-b border-border-brand">
             <div>
               <h3 className="text-sm font-semibold text-white">Password Reset Requests</h3>
-              <p className="text-xs text-zinc-500 mt-1">Review student reset requests, generate secure recovery links, and dispatch them automatically via Gmail SMTP.</p>
+              <p className="text-xs text-text-secondary mt-1">Review student reset requests, generate secure recovery links, and dispatch them automatically via Gmail SMTP.</p>
             </div>
-            <div className="flex items-center gap-3 text-xs text-zinc-500 font-mono">
+            <div className="flex items-center gap-3 text-xs text-text-secondary font-mono">
               <span>Pending Requests: <span className="text-yellow-500 font-bold">{resetRequests.filter(r => r.status === 'pending').length}</span></span>
             </div>
           </div>
 
-          <div className="border border-zinc-900 bg-zinc-950/30 rounded-xl overflow-hidden backdrop-blur-md">
-            <table className="w-full text-left text-xs text-zinc-400 border-collapse">
+          <div className="border border-border-brand bg-bg-canvas/30 rounded-xl overflow-hidden backdrop-blur-md">
+            <table className="w-full text-left text-xs text-text-secondary border-collapse">
               <thead>
-                <tr className="border-b border-zinc-900 bg-zinc-900/10 text-zinc-300 font-semibold">
+                <tr className="border-b border-border-brand bg-bg-surface-hover/20 text-text-primary font-semibold">
                   <th className="p-4">Student Email</th>
                   <th className="p-4">Student Context / Notes</th>
                   <th className="p-4">Request Date</th>
@@ -2344,20 +2344,20 @@ export default function AdminPage() {
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-900/60">
+              <tbody className="divide-y divide-border-brand">
                 {resetRequests.map((req) => (
-                  <tr key={req.id} className="hover:bg-zinc-900/20 transition-colors">
-                    <td className="p-4 font-semibold text-zinc-200">{req.email}</td>
-                    <td className="p-4 text-zinc-450 max-w-xs truncate" title={req.message || ''}>
-                      {req.message || <span className="text-zinc-650 italic">No notes provided</span>}
+                  <tr key={req.id} className="hover:bg-bg-surface-hover/30 transition-colors">
+                    <td className="p-4 font-semibold text-text-primary">{req.email}</td>
+                    <td className="p-4 text-text-secondary max-w-xs truncate" title={req.message || ''}>
+                      {req.message || <span className="text-text-secondary italic">No notes provided</span>}
                     </td>
-                    <td className="p-4 text-zinc-550 font-mono">
+                    <td className="p-4 text-text-secondary font-mono">
                       {new Date(req.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </td>
                     <td className="p-4">
                       <span className={`text-[10px] font-mono px-2 py-0.5 rounded uppercase font-semibold ${
                         req.status === 'resolved'
-                          ? 'bg-zinc-800 text-zinc-400'
+                          ? 'bg-bg-surface-hover text-text-secondary'
                           : 'bg-yellow-500/10 text-yellow-500'
                       }`}>
                         {req.status}
@@ -2369,14 +2369,14 @@ export default function AdminPage() {
                           type="button"
                           onClick={() => handleSendResetLink(req.id)}
                           disabled={resolvingReqId === req.id}
-                          className="px-2.5 py-1.5 rounded-lg border border-zinc-850 bg-zinc-900/50 hover:bg-zinc-850 text-primary-blue hover:text-blue-400 transition-all cursor-pointer inline-flex items-center gap-1.5 text-[10px] font-semibold"
+                          className="px-2.5 py-1.5 rounded-lg border border-border-brand bg-bg-surface-hover/50 hover:bg-bg-surface-hover text-primary-blue hover:text-blue-400 transition-all cursor-pointer inline-flex items-center gap-1.5 text-[10px] font-semibold"
                         >
                           <Mail className="h-3 w-3" />
                           {resolvingReqId === req.id ? 'Sending...' : 'Send Reset Link'}
                         </button>
                       ) : (
-                        <span className="text-[10px] text-zinc-550 flex items-center justify-end gap-1 font-mono">
-                          <CheckCircle className="h-3 w-3 text-zinc-500" />
+                        <span className="text-[10px] text-text-secondary flex items-center justify-end gap-1 font-mono">
+                          <CheckCircle className="h-3 w-3 text-text-secondary" />
                           Resolved
                         </span>
                       )}
@@ -2385,7 +2385,7 @@ export default function AdminPage() {
                 ))}
                 {resetRequests.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-zinc-650 italic">
+                    <td colSpan={5} className="p-8 text-center text-text-secondary italic">
                       No password reset requests logged yet.
                     </td>
                   </tr>
@@ -2402,7 +2402,7 @@ export default function AdminPage() {
           {/* Create Form */}
           <div className="lg:col-span-1">
             <Card className="space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 block">Broadcast Alert</span>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">Broadcast Alert</span>
               <form onSubmit={handleAnnouncementSubmit} className="space-y-4">
                 <Input
                   label="Announcement Title"
@@ -2414,22 +2414,22 @@ export default function AdminPage() {
                 />
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-medium text-zinc-400">Content / Message</label>
+                  <label className="text-[11px] font-medium text-text-secondary">Content / Message</label>
                   <textarea
                     placeholder="Write details of this cohort notification..."
                     value={announceContent}
                     onChange={(e) => setAnnounceContent(e.target.value)}
                     required
-                    className="glass-input text-xs text-zinc-100 rounded-lg p-3 w-full h-32 resize-none placeholder-zinc-650"
+                    className="glass-input text-xs text-text-primary rounded-lg p-3 w-full h-32 resize-none placeholder-text-secondary/50"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-zinc-400">Broadcast Target</label>
+                  <label className="text-xs font-medium text-text-secondary">Broadcast Target</label>
                   <select
                     value={announceCohortId}
                     onChange={(e) => setAnnounceCohortId(e.target.value)}
-                    className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950"
+                    className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas"
                   >
                     <option value="">Global Broadcast (All Cohorts)</option>
                     {cohorts.map((c) => (
@@ -2449,11 +2449,11 @@ export default function AdminPage() {
 
           {/* List panel */}
           <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">History Log ({announcements.length})</h3>
-            <div className="overflow-x-auto glass-panel rounded-xl border border-zinc-900">
+            <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary">History Log ({announcements.length})</h3>
+            <div className="overflow-x-auto glass-panel rounded-xl border border-border-brand">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-zinc-900 bg-zinc-950/40 text-zinc-500 font-mono">
+                  <tr className="border-b border-border-brand bg-bg-canvas/40 text-text-secondary font-mono">
                     <th className="p-4">Title</th>
                     <th className="p-4">Content</th>
                     <th className="p-4">Cohort</th>
@@ -2461,24 +2461,24 @@ export default function AdminPage() {
                     <th className="p-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-900">
+                <tbody className="divide-y divide-border-brand">
                   {announcements.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="p-8 text-center text-zinc-500">
+                      <td colSpan={5} className="p-8 text-center text-text-secondary">
                         No announcements published yet.
                       </td>
                     </tr>
                   ) : (
                     announcements.map((ann) => (
-                      <tr key={ann.id} className="hover:bg-zinc-900/10">
-                        <td className="p-4 font-bold text-zinc-100">{ann.title}</td>
-                        <td className="p-4 text-zinc-400 max-w-[200px] truncate" title={ann.content}>
+                      <tr key={ann.id} className="hover:bg-bg-surface-hover/20">
+                        <td className="p-4 font-bold text-text-primary">{ann.title}</td>
+                        <td className="p-4 text-text-secondary max-w-[200px] truncate" title={ann.content}>
                           {ann.content}
                         </td>
-                        <td className="p-4 font-mono text-zinc-500">
+                        <td className="p-4 font-mono text-text-secondary">
                           {ann.cohorts?.name || 'Global (All Cohorts)'}
                         </td>
-                        <td className="p-4 text-zinc-550">
+                        <td className="p-4 text-text-secondary">
                           {new Date(ann.created_at).toLocaleDateString()}
                         </td>
                         <td className="p-4 text-right">
@@ -2508,7 +2508,7 @@ export default function AdminPage() {
           {/* Left Column: Create/Edit Form */}
           <div className="lg:col-span-1">
             <Card className="space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-550 block">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">
                 {editingEventId ? 'Modify Event Details' : 'Publish New Event'}
               </span>
               <form onSubmit={handleEventFormSubmit} className="space-y-4">
@@ -2531,23 +2531,23 @@ export default function AdminPage() {
                 />
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-zinc-400">Description</label>
+                  <label className="text-xs font-medium text-text-secondary">Description</label>
                   <textarea
                     rows={4}
                     placeholder="Provide a detailed description of the event..."
                     value={eventDesc}
                     onChange={(e) => setEventDesc(e.target.value)}
-                    className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950/80 border border-zinc-900 focus:outline-none focus:ring-1 focus:ring-primary-blue min-h-[100px]"
+                    className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas/80 border border-border-brand focus:outline-none focus:ring-1 focus:ring-primary-blue min-h-[100px]"
                     required
                   />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-zinc-400">Event Format</label>
+                  <label className="text-xs font-medium text-text-secondary">Event Format</label>
                   <select
                     value={eventType}
                     onChange={(e: any) => setEventType(e.target.value)}
-                    className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950/80 border border-zinc-900 focus:outline-none focus:ring-1 focus:ring-primary-blue"
+                    className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas/80 border border-border-brand focus:outline-none focus:ring-1 focus:ring-primary-blue"
                   >
                     <option value="online">Online Webinar</option>
                     <option value="in_person">In-Person Meetup</option>
@@ -2601,13 +2601,13 @@ export default function AdminPage() {
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-2 rounded bg-zinc-950/50 border border-zinc-900">
-                  <span className="text-xs font-medium text-zinc-400">Is Paid Event?</span>
+                <div className="flex items-center justify-between p-2 rounded bg-bg-canvas/50 border border-border-brand">
+                  <span className="text-xs font-medium text-text-secondary">Is Paid Event?</span>
                   <input
                     type="checkbox"
                     checked={eventIsPaid}
                     onChange={(e) => setEventIsPaid(e.target.checked)}
-                    className="h-4 w-4 rounded border-zinc-900 text-primary-blue focus:ring-primary-blue"
+                    className="h-4 w-4 rounded border-border-brand text-primary-blue focus:ring-primary-blue"
                   />
                 </div>
 
@@ -2633,11 +2633,11 @@ export default function AdminPage() {
                 />
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-medium text-zinc-400">Publishing Status</label>
+                  <label className="text-xs font-medium text-text-secondary">Publishing Status</label>
                   <select
                     value={eventStatus}
                     onChange={(e: any) => setEventStatus(e.target.value)}
-                    className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950/80 border border-zinc-900 focus:outline-none focus:ring-1 focus:ring-primary-blue"
+                    className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas/80 border border-border-brand focus:outline-none focus:ring-1 focus:ring-primary-blue"
                   >
                     <option value="draft">Draft (Private)</option>
                     <option value="published">Published (Public)</option>
@@ -2672,16 +2672,16 @@ export default function AdminPage() {
           <div className="lg:col-span-2">
             {!selectedEvent ? (
               <div className="space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
-                  <span className="text-xs font-mono uppercase tracking-widest text-zinc-550">
+                <div className="flex items-center justify-between pb-3 border-b border-border-brand">
+                  <span className="text-xs font-mono uppercase tracking-widest text-text-secondary">
                     Active Academy Events ({eventsList.length})
                   </span>
                 </div>
-                <div className="glass-panel rounded-xl overflow-hidden border border-zinc-900 bg-zinc-950/50">
+                <div className="glass-panel rounded-xl overflow-hidden border border-border-brand bg-bg-canvas/50">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
-                        <tr className="border-b border-zinc-900 bg-zinc-900/40 text-zinc-500 font-mono uppercase tracking-wider text-[10px]">
+                        <tr className="border-b border-border-brand bg-bg-surface-hover/40 text-text-secondary font-mono uppercase tracking-wider text-[10px]">
                           <th className="p-4">Title</th>
                           <th className="p-4">Format</th>
                           <th className="p-4">Date</th>
@@ -2690,21 +2690,21 @@ export default function AdminPage() {
                           <th className="p-4 text-right">Actions</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-zinc-900 text-zinc-300">
+                      <tbody className="divide-y divide-border-brand text-text-primary">
                         {eventsList.length === 0 ? (
                           <tr>
-                            <td colSpan={6} className="p-8 text-center text-zinc-500 italic">
+                            <td colSpan={6} className="p-8 text-center text-text-secondary italic">
                               No events created on the platform yet.
                             </td>
                           </tr>
                         ) : (
                           eventsList.map((ev) => (
-                            <tr key={ev.id} className="hover:bg-zinc-900/20">
-                              <td className="p-4 font-semibold text-zinc-100 truncate max-w-[150px]" title={ev.title}>
+                            <tr key={ev.id} className="hover:bg-bg-surface-hover/30">
+                              <td className="p-4 font-semibold text-text-primary truncate max-w-[150px]" title={ev.title}>
                                 {ev.title}
                               </td>
                               <td className="p-4 capitalize">{ev.event_type.replace('_', ' ')}</td>
-                              <td className="p-4 text-zinc-400">
+                              <td className="p-4 text-text-secondary">
                                 {new Date(ev.start_time).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                               </td>
                               <td className="p-4">
@@ -2716,7 +2716,7 @@ export default function AdminPage() {
                                     ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
                                     : ev.status === 'cancelled'
                                     ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-                                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                                    : 'bg-bg-surface-hover text-text-secondary border border-border-brand'
                                 }`}>
                                   {ev.status}
                                 </span>
@@ -2734,7 +2734,7 @@ export default function AdminPage() {
                                   href={`/events/${ev.slug}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center justify-center text-[10px] px-2 py-1 bg-zinc-900 text-zinc-300 border border-zinc-800 rounded-md hover:bg-zinc-800 hover:text-white transition-colors"
+                                  className="inline-flex items-center justify-center text-[10px] px-2 py-1 bg-bg-surface-hover text-text-primary border border-border-brand rounded-md hover:bg-bg-surface-hover hover:text-white transition-colors"
                                 >
                                   View
                                 </a>
@@ -2764,7 +2764,7 @@ export default function AdminPage() {
             ) : (
               <div className="space-y-4">
                 {/* Back Header */}
-                <div className="flex items-center justify-between pb-3 border-b border-zinc-900">
+                <div className="flex items-center justify-between pb-3 border-b border-border-brand">
                   <button
                     onClick={() => {
                       setSelectedEvent(null);
@@ -2772,13 +2772,13 @@ export default function AdminPage() {
                         sessionStorage.removeItem('admin_selected_event_id');
                       }
                     }}
-                    className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer text-zinc-400 hover:text-white"
+                    className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider transition-colors cursor-pointer text-text-secondary hover:text-white"
                   >
                     <ChevronLeft className="h-4 w-4" /> Back to Events
                   </button>
                   <Button
                     onClick={() => handleExportTable('event_registrations', selectedEvent.id)}
-                    className="text-[10px] px-3 py-1.5 flex items-center gap-1.5 bg-zinc-900 border border-zinc-800"
+                    className="text-[10px] px-3 py-1.5 flex items-center gap-1.5 bg-bg-surface-hover border border-border-brand"
                     disabled={exportLoading}
                   >
                     <FileSpreadsheet className="h-3.5 w-3.5 text-primary-blue" />
@@ -2787,19 +2787,19 @@ export default function AdminPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-base font-bold text-zinc-100">{selectedEvent.title} RSVP Registry</h3>
-                  <p className="text-[11px] text-zinc-500">
-                    Format: <span className="capitalize text-zinc-400">{selectedEvent.event_type}</span> | 
-                    Price: <span className="text-zinc-400">{selectedEvent.is_paid ? `GHS ${selectedEvent.price}` : 'Free'}</span> |
-                    Capacity: <span className="text-zinc-400">{selectedEvent.capacity ? `${registrants.length} / ${selectedEvent.capacity} filled` : `${registrants.length} registered`}</span>
+                  <h3 className="text-base font-bold text-text-primary">{selectedEvent.title} RSVP Registry</h3>
+                  <p className="text-[11px] text-text-secondary">
+                    Format: <span className="capitalize text-text-secondary">{selectedEvent.event_type}</span> | 
+                    Price: <span className="text-text-secondary">{selectedEvent.is_paid ? `GHS ${selectedEvent.price}` : 'Free'}</span> |
+                    Capacity: <span className="text-text-secondary">{selectedEvent.capacity ? `${registrants.length} / ${selectedEvent.capacity} filled` : `${registrants.length} registered`}</span>
                   </p>
                 </div>
 
-                <div className="glass-panel rounded-xl overflow-hidden border border-zinc-900 bg-zinc-950/50">
+                <div className="glass-panel rounded-xl overflow-hidden border border-border-brand bg-bg-canvas/50">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
-                        <tr className="border-b border-zinc-900 bg-zinc-900/40 text-zinc-500 font-mono uppercase tracking-wider text-[10px]">
+                        <tr className="border-b border-border-brand bg-bg-surface-hover/40 text-text-secondary font-mono uppercase tracking-wider text-[10px]">
                           <th className="p-4">Name</th>
                           <th className="p-4">Email</th>
                           <th className="p-4">Payment</th>
@@ -2807,10 +2807,10 @@ export default function AdminPage() {
                           <th className="p-4 text-right">Registered At</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-zinc-900 text-zinc-300">
+                      <tbody className="divide-y divide-border-brand text-text-primary">
                         {loadingRegistrants ? (
                           <tr>
-                            <td colSpan={5} className="p-8 text-center text-zinc-500">
+                            <td colSpan={5} className="p-8 text-center text-text-secondary">
                               <span className="flex items-center gap-2 justify-center">
                                 <Loader2 className="h-4 w-4 animate-spin text-primary-blue" />
                                 Retrieving registrants list...
@@ -2819,22 +2819,22 @@ export default function AdminPage() {
                           </tr>
                         ) : registrants.length === 0 ? (
                           <tr>
-                            <td colSpan={5} className="p-8 text-center text-zinc-500 italic">
+                            <td colSpan={5} className="p-8 text-center text-text-secondary italic">
                               No attendees registered for this event yet.
                             </td>
                           </tr>
                         ) : (
                           registrants.map((reg) => (
-                            <tr key={reg.id} className="hover:bg-zinc-900/20">
-                              <td className="p-4 font-semibold text-zinc-100">{reg.full_name}</td>
-                              <td className="p-4 text-zinc-400">{reg.email}</td>
+                            <tr key={reg.id} className="hover:bg-bg-surface-hover/30">
+                              <td className="p-4 font-semibold text-text-primary">{reg.full_name}</td>
+                              <td className="p-4 text-text-secondary">{reg.email}</td>
                               <td className="p-4">
                                 <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
                                   reg.payment_status === 'paid' 
                                     ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
                                     : reg.payment_status === 'pending'
                                     ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                                    : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                                    : 'bg-bg-surface-hover text-text-secondary border border-border-brand'
                                 }`}>
                                   {reg.payment_status.replace('_', ' ')}
                                 </span>
@@ -2844,10 +2844,10 @@ export default function AdminPage() {
                                   type="checkbox"
                                   checked={reg.checked_in}
                                   onChange={() => handleToggleCheckIn(reg.id, reg.checked_in)}
-                                  className="h-4 w-4 rounded border-zinc-900 text-primary-blue focus:ring-primary-blue cursor-pointer"
+                                  className="h-4 w-4 rounded border-border-brand text-primary-blue focus:ring-primary-blue cursor-pointer"
                                 />
                               </td>
-                              <td className="p-4 text-right text-zinc-500">
+                              <td className="p-4 text-right text-text-secondary">
                                 {new Date(reg.created_at).toLocaleDateString()}
                               </td>
                             </tr>
@@ -2866,27 +2866,27 @@ export default function AdminPage() {
       {/* --- SETTINGS TAB PANEL --- */}
       {activeTab === 'settings' && (
         <div className="max-w-2xl space-y-6 animate-fade-in">
-          <div className="pb-4 border-b border-zinc-900">
+          <div className="pb-4 border-b border-border-brand">
             <h3 className="text-sm font-semibold text-white">System Settings & Data Backups</h3>
-            <p className="text-xs text-zinc-500 mt-1">Perform administrative tasks, manage platform exports, and clean up system storage.</p>
+            <p className="text-xs text-text-secondary mt-1">Perform administrative tasks, manage platform exports, and clean up system storage.</p>
           </div>
 
           <Card className="space-y-4">
             <div className="flex items-center gap-2.5">
               <FileSpreadsheet className="h-5 w-5 text-primary-blue" />
               <div>
-                <h4 className="text-sm font-bold text-zinc-200">Data Export Manager</h4>
-                <p className="text-[11px] text-zinc-500 mt-0.5">Select any system registry database table to dump and download as an RFC 4180 compliant CSV file.</p>
+                <h4 className="text-sm font-bold text-text-primary">Data Export Manager</h4>
+                <p className="text-[11px] text-text-secondary mt-0.5">Select any system registry database table to dump and download as an RFC 4180 compliant CSV file.</p>
               </div>
             </div>
 
             <div className="space-y-4 pt-2">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-zinc-400">Select Database Table</label>
+                <label className="text-xs font-semibold text-text-secondary">Select Database Table</label>
                 <select
                   value={exportTable}
                   onChange={(e) => setExportTable(e.target.value)}
-                  className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950/80 border border-zinc-900 focus:outline-none focus:ring-1 focus:ring-primary-blue"
+                  className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas/80 border border-border-brand focus:outline-none focus:ring-1 focus:ring-primary-blue"
                 >
                   <option value="payments">Payments Log (payments)</option>
                   <option value="profiles">Student / Facilitator Profiles (profiles)</option>
@@ -2919,16 +2919,16 @@ export default function AdminPage() {
 
           <Card className="space-y-4">
             <div className="flex items-center gap-2.5">
-              <Megaphone className="h-5 w-5 text-supporting-purple" />
+              <Megaphone className="h-5 w-5 text-accent-primary" />
               <div>
-                <h4 className="text-sm font-bold text-zinc-200">WhatsApp Community Settings</h4>
-                <p className="text-[11px] text-zinc-500 mt-0.5">Configure the manually-declared WhatsApp group member count displayed on the public landing page.</p>
+                <h4 className="text-sm font-bold text-text-primary">WhatsApp Community Settings</h4>
+                <p className="text-[11px] text-text-secondary mt-0.5">Configure the manually-declared WhatsApp group member count displayed on the public landing page.</p>
               </div>
             </div>
 
             <form onSubmit={handleSaveSettings} className="space-y-4 pt-2">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-zinc-400" htmlFor="whatsapp-member-count-input">
+                <label className="text-xs font-semibold text-text-secondary" htmlFor="whatsapp-member-count-input">
                   WhatsApp Member Count (Display Value)
                 </label>
                 <input
@@ -2937,7 +2937,7 @@ export default function AdminPage() {
                   placeholder="e.g. 238"
                   value={whatsappMemberCountInput}
                   onChange={(e) => setWhatsappMemberCountInput(e.target.value)}
-                  className="glass-input text-xs text-zinc-100 rounded-lg p-2.5 w-full bg-zinc-950/80 border border-zinc-900 focus:outline-none focus:ring-1 focus:ring-primary-blue"
+                  className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas/80 border border-border-brand focus:outline-none focus:ring-1 focus:ring-primary-blue"
                 />
               </div>
 

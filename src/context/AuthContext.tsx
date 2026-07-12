@@ -290,10 +290,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       {/* Session Timeout Warning Modal */}
       {sessionWarningOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="glass-panel max-w-sm w-full p-6 rounded-xl border border-zinc-800 text-center space-y-4 relative overflow-hidden">
+          <div className="glass-panel max-w-sm w-full p-6 rounded-xl border border-border-brand text-center space-y-4 relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-            <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-wider">Session Expiring</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">
+            <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">Session Expiring</h3>
+            <p className="text-xs text-text-secondary leading-relaxed">
               Your security session will expire in <span className="text-primary-blue font-mono font-bold">{secondsRemaining}</span> seconds due to inactivity.
             </p>
             <div className="flex gap-3 pt-2">
@@ -302,7 +302,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                   setSessionWarningOpen(false);
                   signOut();
                 }}
-                className="flex-1 px-4 py-2 text-xs font-semibold rounded-lg bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 cursor-pointer"
+                className="flex-1 px-4 py-2 text-xs font-semibold rounded-lg bg-bg-surface-hover border border-border-brand hover:bg-bg-surface-hover text-text-secondary hover:text-text-primary cursor-pointer"
               >
                 Log Out
               </button>

@@ -198,7 +198,7 @@ function EnrollForm() {
                   disabled={submitting}
                 >
                   {cohorts.map((c) => (
-                    <option key={c.id} value={c.id} className="text-zinc-800">
+                    <option key={c.id} value={c.id} className="text-text-secondary">
                       {c.name}
                     </option>
                   ))}
