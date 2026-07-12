@@ -106,7 +106,7 @@ export default function EventsPage() {
 
       {/* Hero Section */}
       <header className="relative py-12 px-6 md:px-12 max-w-6xl mx-auto flex flex-col items-center text-center z-10 space-y-4">
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-white">
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">
           Sena Academy Events
         </h1>
         <p className="text-sm md:text-base leading-relaxed text-text-secondary max-w-2xl mx-auto">
