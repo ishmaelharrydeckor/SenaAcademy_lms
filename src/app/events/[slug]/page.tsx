@@ -357,27 +357,11 @@ function EventDetailContent() {
               </p>
             </div>
 
-            {/* Social Share section */}
-            <div className="pt-6 border-t border-border-brand/40 flex items-center gap-3 flex-wrap">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-text-secondary flex items-center gap-1">
-                <Share2 className="h-3.5 w-3.5" /> Share Event:
-              </span>
-              <Button 
-                onClick={handleCopyLink} 
-                variant="secondary" 
-                size="sm" 
-                className="text-[11px] font-semibold py-1.5 flex items-center gap-1 bg-bg-surface-hover border border-border-brand"
-              >
-                <Copy className="h-3 w-3" /> {copied ? 'Copied!' : 'Copy Link'}
-              </Button>
-              <Button 
-                onClick={handleShareWhatsApp} 
-                variant="secondary" 
-                size="sm" 
-                className="text-[11px] font-semibold py-1.5 flex items-center gap-1 bg-bg-surface-hover border border-border-brand hover:bg-green-600/10 hover:border-green-500/30 hover:text-green-400"
-              >
-                Share on WhatsApp
-              </Button>
+            {/* Mobile Scroll Guide: Guide user to RSVP below on mobile/tablet screens */}
+            <div className="lg:hidden mt-6 p-4 rounded-xl bg-accent-primary/10 border border-accent-primary/20 text-center space-y-1.5 animate-pulse">
+              <p className="text-xs font-bold text-text-primary">Ready to attend?</p>
+              <p className="text-[11px] text-text-secondary leading-relaxed">Scroll down to fill out the RSVP Registration form below to reserve your seat!</p>
+              <div className="text-accent-primary text-xs font-bold font-mono">↓↓↓</div>
             </div>
           </div>
         </div>
@@ -532,6 +516,31 @@ function EventDetailContent() {
               )}
             </Card>
           )}
+
+          {/* Social Share section */}
+          <Card className="border-border-brand p-5 space-y-4">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary flex items-center gap-1.5">
+              <Share2 className="h-4 w-4 text-accent-primary" /> Share Event
+            </span>
+            <div className="flex gap-2.5">
+              <Button 
+                onClick={handleCopyLink} 
+                variant="secondary" 
+                size="sm" 
+                className="flex-1 text-[11px] font-semibold py-2 flex items-center justify-center gap-1.5 bg-bg-surface-hover border border-border-brand"
+              >
+                <Copy className="h-3.5 w-3.5" /> {copied ? 'Copied!' : 'Copy Link'}
+              </Button>
+              <Button 
+                onClick={handleShareWhatsApp} 
+                variant="secondary" 
+                size="sm" 
+                className="flex-1 text-[11px] font-semibold py-2 flex items-center justify-center gap-1.5 bg-bg-surface-hover border border-border-brand hover:bg-green-600/10 hover:border-green-500/30 hover:text-green-400"
+              >
+                WhatsApp
+              </Button>
+            </div>
+          </Card>
         </div>
       </div>
     </main>
