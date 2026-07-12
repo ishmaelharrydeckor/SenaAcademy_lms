@@ -330,7 +330,9 @@ export default function LandingPage() {
               Forge the <span className="b">skills</span> of tomorrow, one <span className="u">project</span> at a time
             </h1>
             <div className="flex flex-wrap gap-4">
-              <Button onClick={() => openModalAt('redeem_code')}>Become a Founding Builder</Button>
+              <Link href="/enroll">
+                <Button>Become a Founding Builder</Button>
+              </Link>
               <a 
                 href="#roadmap" 
                 className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-border-brand text-sm font-semibold text-text-primary hover:bg-bg-surface-hover transition-colors"
@@ -436,7 +438,7 @@ export default function LandingPage() {
               <a href="#roadmap" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Roadmap</a>
               <a href="#" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Curriculum</a>
               <a href="#" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Facilitators</a>
-              <a href="#" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Founding Builder</a>
+              <Link href="/enroll" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Founding Builder</Link>
             </div>
             <div className="space-y-3">
               <h4 className="text-xs uppercase tracking-wider text-on-dark font-bold">Community</h4>
