@@ -293,15 +293,34 @@ export default function LandingPage() {
       {/* 2. HERO SECTION */}
       <section className="hero max-w-6xl mx-auto px-6 md:px-12 pt-16 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-14 items-start">
-          <h1 className="headline text-4xl md:text-5xl lg:text-6xl font-black font-archivo tracking-tight leading-none text-text-primary">
-            Forge the <span className="b">skills</span> of tomorrow, one <span className="u">project</span> at a time
-          </h1>
-          <p className="serif text-lg leading-relaxed text-text-secondary pt-2">
-            This is where ideas become projects, projects become products, and beginners become builders. Every lesson, challenge, and milestone brings you closer to shipping as a confident software developer.
-          </p>
+          <div className="space-y-8 text-left">
+            <h1 className="headline text-4xl md:text-5xl lg:text-6xl font-black font-archivo tracking-tight leading-none text-text-primary">
+              Forge the <span className="b">skills</span> of tomorrow, one <span className="u">project</span> at a time
+            </h1>
+            <div className="flex flex-wrap gap-4">
+              <Button onClick={() => openModalAt('redeem_code')}>Become a Founding Builder</Button>
+              <a 
+                href="#roadmap" 
+                className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-border-brand text-sm font-semibold text-text-primary hover:bg-bg-surface-hover transition-colors"
+              >
+                Explore the Roadmap
+              </a>
+            </div>
+          </div>
+          <div className="pt-2 md:pt-4">
+            <p className="serif text-[15px] md:text-base leading-relaxed text-text-secondary/70 max-w-md">
+              This is where ideas become projects, projects become products, and beginners become builders. Every lesson, challenge, and milestone brings you closer to shipping as a confident software developer.
+            </p>
+          </div>
         </div>
 
-        <div className="mb-20">
+        {/* Visual Bridge */}
+        <div className="flex flex-col items-center justify-center gap-2 mb-8">
+          <span className="text-[10px] font-mono tracking-widest uppercase text-text-secondary/60">See it in action</span>
+          <div className="h-8 w-px bg-border-brand/30"></div>
+        </div>
+
+        <div className="mb-14">
           <BuildLogCard 
             title="builder.senaacademy.org"
             status="connected"
@@ -318,15 +337,19 @@ export default function LandingPage() {
       </section>
 
       {/* 3. MISSION BANNER */}
-      <section className="bg-ink dark:bg-[#0F1012] text-on-dark py-24 text-center w-full">
+      <section className="bg-ink dark:bg-[#0F1012] text-on-dark py-16 text-center w-full">
         <div className="max-w-4xl mx-auto px-6">
-          <h2 className="serif text-3xl md:text-4xl font-medium max-w-2xl mx-auto mb-6 leading-tight">
+          <span className="text-[10px] font-mono tracking-widest uppercase text-on-dark-soft/80 block mb-4">MISSION</span>
+          <h2 className="serif text-4xl md:text-5xl font-medium max-w-xl mx-auto mb-6 leading-tight">
             Sena Academy is built on real, shipped work.
           </h2>
           <p className="serif text-base text-on-dark-soft max-w-md mx-auto mb-8 leading-relaxed">
             See how the roadmap takes you from your first commit to a live, deployed product with a facilitator's name on the review.
           </p>
-          <a href="#roadmap" className="inline-flex items-center gap-2 bg-bg-canvas text-text-primary hover:opacity-90 px-6 py-3 rounded-full text-sm font-semibold transition-opacity border border-border-brand/10">
+          <a 
+            href="#roadmap" 
+            className="inline-flex items-center gap-2 bg-on-dark/10 hover:bg-on-dark/20 text-on-dark border border-on-dark/20 px-8 py-3.5 rounded-full text-sm font-semibold transition-all"
+          >
             See the roadmap →
           </a>
         </div>
