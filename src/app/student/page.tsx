@@ -290,9 +290,9 @@ export default function StudentDashboard() {
 
             <div className="pt-4">
               <Link href="/student/modules">
-                <Button className="bg-accent-primary hover:bg-accent-primary-hover text-white font-bold py-3.5 px-8 flex items-center gap-2">
-                  <Play className="h-4 w-4 fill-white" />
-                  Start Module 1
+                <Button className="flex items-center gap-2 transition-all duration-200 hover:bg-accent-primary hover:text-white group py-3.5 px-8">
+                  <Play className="h-4 w-4 fill-current" />
+                  <span>Start Module 1</span>
                 </Button>
               </Link>
             </div>
