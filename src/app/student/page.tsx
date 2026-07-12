@@ -509,7 +509,7 @@ export default function StudentDashboard() {
           <div className="space-y-4">
             <h4 className="text-[10px] font-mono uppercase tracking-widest text-text-secondary pl-1">Activity Log</h4>
             <BuildLogCard 
-              title="builder.senaacademy.org"
+              title="senaacademy.org"
               status="connected"
               lines={getBuildLogLines()}
               reviewLabel={getBuildLogReview().label}

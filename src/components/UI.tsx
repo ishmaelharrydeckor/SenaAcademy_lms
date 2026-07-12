@@ -223,7 +223,7 @@ export interface LogLine {
 }
 
 export function BuildLogCard({
-  title = 'builder.senaacademy.org',
+  title = 'senaacademy.org',
   status = 'connected',
   lines = [],
   reviewLabel = 'Facilitator review —',
@@ -236,16 +236,16 @@ export function BuildLogCard({
   reviewText?: string;
 }) {
   return (
-    <div className="bg-ink border border-border-brand/20 dark:bg-[#0F1012] rounded-2xl p-6 text-left text-on-dark font-sans shadow-sm select-none">
-      <div className="flex items-center justify-between border-b border-line-dark pb-4 mb-4 text-xs text-on-dark-soft">
+    <div className="bg-[#0B0C0E] border border-border-brand/40 rounded-2xl p-6 text-left text-on-dark font-sans shadow-xl select-none">
+      <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-4 text-xs text-on-dark-soft">
         <div className="flex gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-on-dark-soft/20"></span>
-          <span className="w-2 h-2 rounded-full bg-on-dark-soft/20"></span>
-          <span className="w-2 h-2 rounded-full bg-on-dark-soft/20"></span>
+          <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F56] opacity-95"></span>
+          <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] opacity-95"></span>
+          <span className="w-2.5 h-2.5 rounded-full bg-[#27C93F] opacity-95"></span>
         </div>
-        <div className="font-mono text-[11px] tracking-wide">{title}</div>
-        <div className="flex items-center gap-1.5 text-success-brand font-semibold text-[11px] uppercase tracking-wide">
-          <span className="w-1.5 h-1.5 rounded-full bg-success-brand inline-block animate-pulse"></span>
+        <div className="font-mono text-[11px] tracking-wide text-on-dark/80">{title}</div>
+        <div className="flex items-center gap-1.5 text-[#27C93F] font-bold text-[10px] uppercase tracking-wide font-mono bg-[#27C93F]/10 px-2 py-0.5 rounded">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#27C93F] inline-block animate-pulse"></span>
           {status}
         </div>
       </div>
@@ -253,14 +253,14 @@ export function BuildLogCard({
         {lines.map((line, idx) => (
           <div key={idx}>
             {line.isPrompt && <span className="text-accent-primary select-none mr-1.5">$</span>}
-            <span className={line.isSuccess ? 'text-success-brand' : line.isDim ? 'text-on-dark-soft/70' : 'text-on-dark'}>
+            <span className={line.isSuccess ? 'text-[#27C93F]' : line.isDim ? 'text-on-dark-soft/50' : 'text-on-dark'}>
               {line.text}
             </span>
           </div>
         ))}
       </div>
       {(reviewLabel || reviewText) && (
-        <div className="border-t border-line-dark pt-4 mt-4 text-[13px] text-on-dark-soft leading-normal">
+        <div className="border-t border-white/5 pt-4 mt-4 text-[13px] text-on-dark-soft leading-normal">
           <span className="font-semibold text-on-dark mr-1">{reviewLabel}</span>
           <span>{reviewText}</span>
         </div>

@@ -21,6 +21,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/context/ThemeContext';
+import Link from 'next/link';
 
 interface PublicStats {
   studentsCount: number;
@@ -137,6 +138,32 @@ export default function LandingPage() {
   
   // Roadmap detail step modal state
   const [activeRoadmapStep, setActiveRoadmapStep] = useState<number | null>(null);
+
+  // FAQ accordion state
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+
+  const FAQ_ITEMS = [
+    {
+      q: "How do I get an access code?",
+      a: "Access codes are issued upon successful enrollment. If you are sponsored or registered by an administrator, your unique access code will be sent to your email."
+    },
+    {
+      q: "What technologies will I build with?",
+      a: "You will configure, build, and deploy production systems using React, Next.js, Tailwind CSS, PostgreSQL, and Git/GitHub command-line tools."
+    },
+    {
+      q: "Is the schedule flexible?",
+      a: "Yes. While live sessions run weekly, all recordings and project briefs are accessible asynchronously. You can commit code and submit assignments on your own schedule."
+    },
+    {
+      q: "Who reviews my module submissions?",
+      a: "Submissions are reviewed asynchronously by expert facilitators. You receive functional feedback, commit reviews, and grade scores directly in your student dashboard."
+    },
+    {
+      q: "How do I access WhatsApp debug channels?",
+      a: "Once signed in, your student dashboard contains active links to the cohort WhatsApp workspace, where you can ask facilitators and fellow builders debug questions."
+    }
+  ];
 
   // Submit loading triggers
   const [submitting, setSubmitting] = useState(false);
@@ -268,7 +295,9 @@ export default function LandingPage() {
             SENA<span className="text-accent-primary font-black">\</span>ACADEMY
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#roadmap" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Roadmap</a>
+            <a href="#roadmap" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Curriculum</a>
+            <Link href="/events" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Events</Link>
+            <a href="#faq" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">FAQ</a>
             <a href="#community" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Community</a>
           </div>
           <div className="flex items-center gap-[18px]">
@@ -322,7 +351,7 @@ export default function LandingPage() {
 
         <div className="mb-14">
           <BuildLogCard 
-            title="builder.senaacademy.org"
+            title="senaacademy.org"
             status="connected"
             lines={[
               { text: 'git push origin main', isPrompt: true },
@@ -371,6 +400,35 @@ export default function LandingPage() {
               <span className="text-xs text-text-secondary font-mono tracking-wider">Step {step.step}</span>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* 6. FAQ SECTION */}
+      <section className="py-24 max-w-4xl mx-auto px-6 md:px-12 w-full border-t border-border-brand/40" id="faq">
+        <h2 className="text-2xl md:text-3xl font-black font-archivo mb-12 tracking-tight text-text-primary text-center">Frequently Asked Questions</h2>
+        <div className="space-y-4">
+          {FAQ_ITEMS.map((item, idx) => {
+            const isOpen = openFaqIndex === idx;
+            return (
+              <div 
+                key={idx} 
+                className="border border-border-brand/60 rounded-xl overflow-hidden bg-bg-surface transition-all duration-200"
+              >
+                <button
+                  onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                  className="w-full py-5 px-6 flex items-center justify-between text-left font-archivo font-bold text-sm md:text-base text-text-primary hover:bg-bg-surface-hover/30 transition-colors cursor-pointer"
+                >
+                  <span>{item.q}</span>
+                  <span className="text-accent-primary font-mono text-lg">{isOpen ? '−' : '+'}</span>
+                </button>
+                {isOpen && (
+                  <div className="px-6 pb-6 pt-1 text-sm text-text-secondary serif leading-relaxed border-t border-border-brand/20 bg-bg-canvas/20">
+                    {item.a}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </section>
 
