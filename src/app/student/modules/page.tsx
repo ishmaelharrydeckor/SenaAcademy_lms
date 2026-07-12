@@ -408,13 +408,13 @@ export default function StudentModules() {
                       href={res.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-between p-2.5 rounded-lg border border-border-brand bg-bg-canvas/50 hover:bg-bg-surface-hover hover:border-accent-primary/20 transition-all text-xs group cursor-pointer"
+                      className="flex items-center justify-between p-2.5 rounded-lg border border-border-brand bg-bg-canvas/50 hover:bg-bg-surface-hover hover:border-accent-primary/20 transition-all text-xs group cursor-pointer gap-4"
                     >
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-text-secondary group-hover:text-text-primary transition-colors" />
-                        <span className="text-text-primary font-semibold truncate max-w-[150px]">{res.name}</span>
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <FileText className="h-4 w-4 text-text-secondary group-hover:text-text-primary transition-colors shrink-0" />
+                        <span className="text-text-primary font-semibold truncate flex-1">{res.name}</span>
                       </div>
-                      <span className="text-[9px] uppercase font-mono text-text-secondary group-hover:text-accent-primary transition-colors flex items-center gap-1">
+                      <span className="text-[9px] uppercase font-mono text-text-secondary group-hover:text-accent-primary transition-colors flex items-center gap-1 shrink-0">
                         {res.category || 'Link'}
                         <ExternalLink className="h-3 w-3" />
                       </span>
@@ -541,44 +541,35 @@ export default function StudentModules() {
 
                 {/* URL inputs */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="relative">
-                    <Code2 className="absolute left-3.5 top-[38px] h-4 w-4 text-text-secondary" />
-                    <Input
-                      label="GitHub Repo Link"
-                      id="github-link"
-                      type="url"
-                      placeholder="https://github.com/..."
-                      value={githubUrl}
-                      onChange={(e) => setGithubUrl(e.target.value)}
-                      className="pl-7"
-                    />
-                  </div>
+                  <Input
+                    label="GitHub Repo Link"
+                    id="github-link"
+                    type="url"
+                    placeholder="https://github.com/..."
+                    value={githubUrl}
+                    onChange={(e) => setGithubUrl(e.target.value)}
+                    icon={<Code2 className="h-4 w-4" />}
+                  />
 
-                  <div className="relative">
-                    <Globe className="absolute left-3.5 top-[38px] h-4 w-4 text-text-secondary" />
-                    <Input
-                      label="Vercel Deploy Link"
-                      id="vercel-link"
-                      type="url"
-                      placeholder="https://...vercel.app"
-                      value={vercelUrl}
-                      onChange={(e) => setVercelUrl(e.target.value)}
-                      className="pl-7"
-                    />
-                  </div>
+                  <Input
+                    label="Vercel Deploy Link"
+                    id="vercel-link"
+                    type="url"
+                    placeholder="https://...vercel.app"
+                    value={vercelUrl}
+                    onChange={(e) => setVercelUrl(e.target.value)}
+                    icon={<Globe className="h-4 w-4" />}
+                  />
 
-                  <div className="relative">
-                    <FileText className="absolute left-3.5 top-[38px] h-4 w-4 text-text-secondary" />
-                    <Input
-                      label="Google Drive Link"
-                      id="drive-link"
-                      type="url"
-                      placeholder="https://drive.google.com/..."
-                      value={driveUrl}
-                      onChange={(e) => setDriveUrl(e.target.value)}
-                      className="pl-7"
-                    />
-                  </div>
+                  <Input
+                    label="Google Drive Link"
+                    id="drive-link"
+                    type="url"
+                    placeholder="https://drive.google.com/..."
+                    value={driveUrl}
+                    onChange={(e) => setDriveUrl(e.target.value)}
+                    icon={<FileText className="h-4 w-4" />}
+                  />
                 </div>
 
                 <Input

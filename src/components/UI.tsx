@@ -108,6 +108,7 @@ export function Input({
   className = '',
   error,
   disabled = false,
+  icon,
 }: {
   label?: string;
   id: string;
@@ -119,6 +120,7 @@ export function Input({
   className?: string;
   error?: string;
   disabled?: boolean;
+  icon?: React.ReactNode;
 }) {
   return (
     <div className={`flex flex-col gap-1.5 w-full ${className}`}>
@@ -127,16 +129,25 @@ export function Input({
           {label}
         </label>
       )}
-      <input
-        type={type}
-        id={id}
-        required={required}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        className="glass-input text-sm text-text-primary rounded-full px-4 py-2.5 w-full placeholder-text-secondary/40 disabled:opacity-50 disabled:cursor-not-allowed"
-      />
+      <div className="relative w-full">
+        {icon && (
+          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none text-text-secondary">
+            {icon}
+          </div>
+        )}
+        <input
+          type={type}
+          id={id}
+          required={required}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          className={`glass-input text-sm text-text-primary rounded-full py-2.5 w-full placeholder-text-secondary/40 disabled:opacity-50 disabled:cursor-not-allowed ${
+            icon ? 'pl-10 pr-4' : 'px-4'
+          }`}
+        />
+      </div>
       {error && <span className="text-[11px] text-red-400 select-none">{error}</span>}
     </div>
   );

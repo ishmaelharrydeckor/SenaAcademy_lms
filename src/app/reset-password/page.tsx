@@ -178,35 +178,29 @@ export default function ResetPasswordPage() {
             )}
 
             <div className="space-y-4">
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-[38px] h-4 w-4 text-text-secondary/60 z-10" />
-                <Input
-                  label="New Password"
-                  id="new-password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="pl-7"
-                  disabled={submitting}
-                />
-              </div>
+              <Input
+                label="New Password"
+                id="new-password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={submitting}
+                icon={<Lock className="h-4 w-4" />}
+              />
 
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-[38px] h-4 w-4 text-text-secondary/60 z-10" />
-                <Input
-                  label="Confirm New Password"
-                  id="confirm-password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  className="pl-7"
-                  disabled={submitting}
-                />
-              </div>
+              <Input
+                label="Confirm New Password"
+                id="confirm-password"
+                type="password"
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                disabled={submitting}
+                icon={<Lock className="h-4 w-4" />}
+              />
             </div>
 
             <Button
