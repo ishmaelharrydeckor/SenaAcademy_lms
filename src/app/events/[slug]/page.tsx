@@ -157,7 +157,7 @@ function EventDetailContent() {
     return (
       <main className="min-h-screen bg-bg-canvas text-text-primary flex flex-col justify-center items-center p-6 text-center">
         <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-        <h2 className="text-xl font-bold text-white">Event Not Found</h2>
+        <h2 className="text-xl font-bold text-text-primary">Event Not Found</h2>
         <p className="text-xs text-text-secondary mt-1">This event may have been cancelled, set to draft, or does not exist.</p>
         <Button onClick={() => router.push('/events')} className="mt-6 text-xs font-semibold">
           Back to Events
@@ -300,7 +300,7 @@ function EventDetailContent() {
           </div>
 
           <div className="space-y-4">
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h1 className="text-2xl sm:text-4xl font-extrabold text-text-primary tracking-tight">
               {event.title}
             </h1>
 
@@ -351,7 +351,7 @@ function EventDetailContent() {
             
             {/* Description */}
             <div className="prose prose-invert max-w-none pt-4">
-              <h3 className="text-lg font-bold text-white mb-2">About this event</h3>
+              <h3 className="text-lg font-bold text-text-primary mb-2">About this event</h3>
               <p className="text-xs leading-relaxed text-text-secondary whitespace-pre-line font-normal">
                 {event.description}
               </p>
@@ -391,7 +391,7 @@ function EventDetailContent() {
                 <Loader2 className="h-8 w-8 text-accent-primary animate-spin" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-base font-bold text-white">Verifying payment...</h3>
+                <h3 className="text-base font-bold text-text-primary">Verifying payment...</h3>
                 <p className="text-xs text-text-secondary leading-relaxed">
                   We are checking your transaction status. This will take just a few seconds...
                 </p>
@@ -412,7 +412,7 @@ function EventDetailContent() {
               </div>
 
               <div className="space-y-2 text-center">
-                <h2 className="text-lg font-bold text-white">Registration Confirmed!</h2>
+                <h2 className="text-lg font-bold text-text-primary">Registration Confirmed!</h2>
                 <p className="text-xs text-text-secondary">
                   Hi {registrationDetails?.full_name || fullName}, you are locked in for the event.
                 </p>
@@ -421,7 +421,7 @@ function EventDetailContent() {
               {/* Event information summary */}
               <div className="bg-bg-surface-hover/30 border border-border-brand rounded-lg p-4 space-y-3">
                 <div className="text-xs">
-                  <p className="font-semibold text-white">{event.title}</p>
+                  <p className="font-semibold text-text-primary">{event.title}</p>
                   <p className="text-text-secondary mt-0.5">{formatEventDate(event.start_time)}</p>
                   <p className="text-text-secondary">{formatEventTime(event.start_time, event.end_time)}</p>
                 </div>
@@ -467,7 +467,7 @@ function EventDetailContent() {
                 <span className="text-[10px] font-mono uppercase tracking-widest text-accent-primary font-semibold">
                   Secure Your Spot
                 </span>
-                <h2 className="text-lg font-bold text-white">RSVP Registration</h2>
+                <h2 className="text-lg font-bold text-text-primary">RSVP Registration</h2>
                 <p className="text-xs text-text-secondary leading-relaxed">
                   {event.is_paid 
                     ? `Paid workshop. Seat admission is GHS ${event.price}.` 
