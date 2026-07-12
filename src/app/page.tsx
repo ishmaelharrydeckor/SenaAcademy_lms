@@ -29,6 +29,58 @@ interface PublicStats {
   whatsappMemberCount: number;
 }
 
+const ROADMAP_STEPS = [
+  {
+    step: 1,
+    title: 'Discover Stage',
+    subtitle: 'Discover — find your spark and explore modern developer tools',
+    desc: 'Explore the modern tools of software engineering. Learn to configure AI coding assistants, read repository structures, and navigate local terminals to find your spark.',
+    verbs: ['Explore', 'Configure', 'Navigate']
+  },
+  {
+    step: 2,
+    title: 'Learn Stage',
+    subtitle: 'Learn — attend live sessions, review recordings',
+    desc: 'Attend structured live interactive sessions led by industry facilitators. Access class recordings, review technical notes, and build foundation concepts.',
+    verbs: ['Attend', 'Access', 'Review']
+  },
+  {
+    step: 3,
+    title: 'Build Stage',
+    subtitle: 'Build — complete challenges matching real workflows',
+    desc: 'Execute practical hands-on briefs matching real-world developer requirements. Set up environment variables, design styling systems, and write clean codebase solutions.',
+    verbs: ['Execute', 'Configure', 'Code']
+  },
+  {
+    step: 4,
+    title: 'Submit Stage',
+    subtitle: 'Submit — push to GitHub, deploy live to Vercel',
+    desc: 'Stage and commit your codebase using Git. Push changes directly to GitHub repositories, run production tests, and deploy live workspaces to Vercel.',
+    verbs: ['Commit', 'Push', 'Deploy']
+  },
+  {
+    step: 5,
+    title: 'Review Stage',
+    subtitle: 'Receive feedback — get async code review from facilitators',
+    desc: 'Receive async code reviews from facilitators. Inspect inline comments, refine implementation details, and refactor codebases based on mentor feedback.',
+    verbs: ['Inspect', 'Refactor', 'Improve']
+  },
+  {
+    step: 6,
+    title: 'Graduate Stage',
+    subtitle: 'Graduate — earn your course credentials',
+    desc: 'Earn course credentials and unlock builder status. Finalize submission modules, calculate scores, and receive the digital completion cert.',
+    verbs: ['Finalize', 'Verify', 'Unlock']
+  },
+  {
+    step: 7,
+    title: 'Launch Stage',
+    subtitle: 'Become a Founding Builder — join the alumni network',
+    desc: 'Join the alumni builders network. Leverage WhatsApp debug workspaces, participate in mastermind meetups, and deploy production projects in teams.',
+    verbs: ['Connect', 'Network', 'Launch']
+  }
+];
+
 export default function LandingPage() {
   const { signIn, redeemCode, user, profile, loading } = useAuth();
   const { showToast } = useNotifications();
@@ -83,6 +135,9 @@ export default function LandingPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authTab, setAuthTab] = useState<'login' | 'redeem_code' | 'redeem_register' | 'forgot_password'>('login');
   
+  // Roadmap detail step modal state
+  const [activeRoadmapStep, setActiveRoadmapStep] = useState<number | null>(null);
+
   // Submit loading triggers
   const [submitting, setSubmitting] = useState(false);
   const [submittingReset, setSubmittingReset] = useState(false);
@@ -344,13 +399,16 @@ export default function LandingPage() {
       <section className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-12 py-24 max-w-6xl mx-auto px-6 md:px-12 w-full" id="roadmap">
         <h2 className="text-2xl md:text-3xl font-black font-archivo leading-tight text-text-primary">Your journey starts here.</h2>
         <div className="flex flex-col">
-          <div className="list-row"><span className="font-semibold text-sm md:text-base text-text-primary">Discover — find your spark and explore modern developer tools</span><span className="text-xs text-text-secondary font-mono tracking-wider">Step 1</span></div>
-          <div className="list-row"><span className="font-semibold text-sm md:text-base text-text-primary">Learn — attend live sessions, review recordings</span><span className="text-xs text-text-secondary font-mono tracking-wider">Step 2</span></div>
-          <div className="list-row"><span className="font-semibold text-sm md:text-base text-text-primary">Build — complete challenges matching real workflows</span><span className="text-xs text-text-secondary font-mono tracking-wider">Step 3</span></div>
-          <div className="list-row"><span className="font-semibold text-sm md:text-base text-text-primary">Submit — push to GitHub, deploy live to Vercel</span><span className="text-xs text-text-secondary font-mono tracking-wider">Step 4</span></div>
-          <div className="list-row"><span className="font-semibold text-sm md:text-base text-text-primary">Receive feedback — get async code review from facilitators</span><span className="text-xs text-text-secondary font-mono tracking-wider">Step 5</span></div>
-          <div className="list-row"><span className="font-semibold text-sm md:text-base text-text-primary">Graduate — earn your course credentials</span><span className="text-xs text-text-secondary font-mono tracking-wider">Step 6</span></div>
-          <div className="list-row"><span className="font-semibold text-sm md:text-base text-text-primary">Become a Founding Builder — join the alumni network</span><span className="text-xs text-text-secondary font-mono tracking-wider">Step 7</span></div>
+          {ROADMAP_STEPS.map((step, idx) => (
+            <div 
+              key={idx} 
+              onClick={() => setActiveRoadmapStep(idx)}
+              className="list-row hover:bg-bg-surface-hover/50 cursor-pointer transition-colors px-4 -mx-4 rounded-xl"
+            >
+              <span className="font-semibold text-sm md:text-base text-text-primary">{step.subtitle}</span>
+              <span className="text-xs text-text-secondary font-mono tracking-wider">Step {step.step}</span>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -582,6 +640,50 @@ export default function LandingPage() {
               </form>
             )}
 
+          </Card>
+        </div>
+      )}
+
+      {/* 8. ROADMAP STEP EXPLANATION MODAL */}
+      {activeRoadmapStep !== null && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 backdrop-blur-none transition-opacity">
+          <Card className="max-w-md w-full p-8 border border-border-brand bg-bg-surface relative rounded-2xl shadow-xl space-y-6 text-left">
+            <button
+              onClick={() => setActiveRoadmapStep(null)}
+              className="absolute top-4 right-4 text-text-secondary hover:text-text-primary cursor-pointer p-1 animate-fade-in"
+            >
+              <X className="h-4.5 w-4.5" />
+            </button>
+
+            <div className="space-y-1">
+              <span className="text-[10px] font-mono tracking-wider text-text-secondary uppercase">Step {ROADMAP_STEPS[activeRoadmapStep].step} Stage</span>
+              <h3 className="text-xl font-bold font-archivo text-text-primary">{ROADMAP_STEPS[activeRoadmapStep].title}</h3>
+            </div>
+
+            <p className="serif text-sm leading-relaxed text-text-secondary">
+              {ROADMAP_STEPS[activeRoadmapStep].desc}
+            </p>
+
+            <div className="space-y-2 border-t border-border-brand/40 pt-4">
+              <span className="text-[10px] font-mono tracking-wider text-text-secondary uppercase">Associated Actions</span>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {ROADMAP_STEPS[activeRoadmapStep].verbs.map((verb, vIdx) => (
+                  <span 
+                    key={vIdx}
+                    className="px-3 py-1 rounded-full border border-border-brand text-xs font-semibold text-text-primary bg-bg-canvas"
+                  >
+                    {verb}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <Button 
+              className="w-full" 
+              onClick={() => setActiveRoadmapStep(null)}
+            >
+              Dismiss
+            </Button>
           </Card>
         </div>
       )}
