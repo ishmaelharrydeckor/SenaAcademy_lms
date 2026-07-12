@@ -121,7 +121,7 @@ export default function EventsPage() {
             onClick={() => setActiveTab('upcoming')}
             className={`px-5 py-3 text-xs font-semibold select-none border-b-2 transition-all cursor-pointer ${
               activeTab === 'upcoming'
-                ? 'border-accent-primary text-white bg-bg-surface/20'
+                ? 'border-accent-primary text-text-primary bg-bg-surface/20'
                 : 'border-transparent text-text-secondary hover:text-text-primary'
             }`}
           >
@@ -131,7 +131,7 @@ export default function EventsPage() {
             onClick={() => setActiveTab('past')}
             className={`px-5 py-3 text-xs font-semibold select-none border-b-2 transition-all cursor-pointer ${
               activeTab === 'past'
-                ? 'border-accent-primary text-white bg-bg-surface/20'
+                ? 'border-accent-primary text-text-primary bg-bg-surface/20'
                 : 'border-transparent text-text-secondary hover:text-text-primary'
             }`}
           >
