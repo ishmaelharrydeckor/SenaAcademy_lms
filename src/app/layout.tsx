@@ -7,6 +7,9 @@ import { RootThemeProviders } from "@/components/RootThemeProviders";
 export const metadata: Metadata = {
   title: "Sena Academy Learning Portal",
   description: "Premium LMS portal for trainees, facilitators, and administrators.",
+  icons: {
+    icon: "/logo_icon.png",
+  },
 };
 
 export default function RootLayout({
