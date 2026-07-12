@@ -268,7 +268,6 @@ export default function LandingPage() {
             SENA<span className="text-accent-primary font-black">\</span>ACADEMY
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#experience" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Experience</a>
             <a href="#roadmap" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Roadmap</a>
             <a href="#community" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Community</a>
           </div>
@@ -333,67 +332,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 4. WHAT YOU'LL EXPERIENCE */}
-      <section className="py-24 max-w-6xl mx-auto px-6 md:px-12 w-full" id="experience">
-        <h2 className="text-2xl md:text-3xl font-black font-archivo mb-10 tracking-tight text-text-primary">What you'll experience</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          <Card className="bg-bg-surface border border-border-brand rounded-2xl p-8 flex flex-col justify-between min-h-[340px]">
-            <div>
-              <h3 className="text-xl font-bold font-archivo mb-3 text-text-primary">Live, then on your time</h3>
-              <p className="serif text-sm text-text-secondary leading-relaxed">
-                Attend interactive sessions led by industry facilitators. Watch and review high-definition class recordings whenever it suits you.
-              </p>
-            </div>
-            <div>
-              <div className="border-t border-border-brand/40 mt-6 pt-2">
-                <MetaRow label="Format" value="Live + recorded" />
-                <MetaRow label="Category" value="Learn" />
-              </div>
-              <a href="#" className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent-primary mt-4 hover:underline">
-                Flexible learning →
-              </a>
-            </div>
-          </Card>
 
-          <Card className="bg-bg-surface border border-border-brand rounded-2xl p-8 flex flex-col justify-between min-h-[340px]">
-            <div>
-              <h3 className="text-xl font-bold font-archivo mb-3 text-text-primary">Ship real projects</h3>
-              <p className="serif text-sm text-text-secondary leading-relaxed">
-                Complete practical, hands-on project briefs. Set up repositories, commit code with Git, and deploy your live applications directly.
-              </p>
-            </div>
-            <div>
-              <div className="border-t border-border-brand/40 mt-6 pt-2">
-                <MetaRow label="Format" value="Project briefs" />
-                <MetaRow label="Category" value="Build" />
-              </div>
-              <a href="#" className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent-primary mt-4 hover:underline">
-                Project portfolio →
-              </a>
-            </div>
-          </Card>
-
-          <Card className="bg-bg-surface border border-border-brand rounded-2xl p-8 flex flex-col justify-between min-h-[340px]">
-            <div>
-              <h3 className="text-xl font-bold font-archivo mb-3 text-text-primary">Feedback that compounds</h3>
-              <p className="serif text-sm text-text-secondary leading-relaxed">
-                Receive personalized video or written reviews from mentors. Track your module progression and earn your Founding Builder credential.
-              </p>
-            </div>
-            <div>
-              <div className="border-t border-border-brand/40 mt-6 pt-2">
-                <MetaRow label="Format" value="Async review" />
-                <MetaRow label="Category" value="Grow" />
-              </div>
-              <a href="#" className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent-primary mt-4 hover:underline">
-                Track progress →
-              </a>
-            </div>
-          </Card>
-
-        </div>
-      </section>
 
       {/* 5. ROADMAP TIMELINE */}
       <section className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-12 py-24 max-w-6xl mx-auto px-6 md:px-12 w-full" id="roadmap">
@@ -419,9 +358,7 @@ export default function LandingPage() {
             <div className="logo font-archivo font-black text-xl tracking-tight text-on-dark">
               SENA<span className="text-accent-primary font-black">\</span>ACADEMY
             </div>
-            <div className="text-xs text-on-dark-soft max-w-sm text-left md:text-right font-sans font-medium tracking-wide">
-              {stats.studentsCount > 0 ? `${stats.studentsCount}` : '238'}+ builders · open cohort · join the WhatsApp workspace for debug support and networking.
-            </div>
+
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="space-y-3">
