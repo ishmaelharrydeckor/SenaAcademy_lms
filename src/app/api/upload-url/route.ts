@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { supabase } from '@/lib/supabase';
-import { isRateLimited } from '@/lib/rateLimit';
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 
 // Initialize S3 Client for Cloudflare R2
 const s3 = new S3Client({
@@ -17,8 +17,8 @@ const s3 = new S3Client({
 export async function POST(request: NextRequest) {
   try {
     // 1. Get client IP for rate limiting
-    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
-    const limitCheck = isRateLimited(ip, 10, 5 * 60 * 1000); // 10 uploads per 5 mins
+    const ip = getClientIp(request);
+    const limitCheck = await checkRateLimit(ip, 10, 5 * 60 * 1000); // 10 uploads per 5 mins
     if (limitCheck.limited) {
       return NextResponse.json(
         { error: 'Too many upload requests. Please wait a few minutes before trying again.' },

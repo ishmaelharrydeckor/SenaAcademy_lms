@@ -41,30 +41,46 @@ export async function POST(request: NextRequest) {
     console.log(`Admin ${user.email} generating and sending ${items.length} access codes.`);
 
     const generatedResults = [];
+    const failedResults = [];
 
     // Loop through each code request
     for (const item of items) {
       const { email, cohortId, expiry } = item;
       if (!email || !cohortId) continue;
 
-      // Generate a unique access code
-      const generatedCode = 'SENA-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-      const expiresAt = expiry || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      let success = false;
+      let generatedCode = '';
+      let codeErrorMsg = '';
 
-      // Insert access code record
-      const { error: codeError } = await supabaseAdmin
-        .from('access_codes')
-        .insert({
-          code: generatedCode,
-          assigned_email: email,
-          cohort_id: cohortId,
-          role: 'student',
-          status: 'unused',
-          expires_at: expiresAt,
-        });
+      for (let attempt = 1; attempt <= 5; attempt++) {
+        // Generate a unique access code
+        generatedCode = 'SENA-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+        const expiresAt = expiry || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
-      if (codeError) {
-        console.error(`Failed to generate code for ${email}:`, codeError.message);
+        // Insert access code record
+        const { error: codeError } = await supabaseAdmin
+          .from('access_codes')
+          .insert({
+            code: generatedCode,
+            assigned_email: email,
+            cohort_id: cohortId,
+            role: 'student',
+            status: 'unused',
+            expires_at: expiresAt,
+          });
+
+        if (!codeError) {
+          success = true;
+          break;
+        } else {
+          codeErrorMsg = codeError.message;
+          console.warn(`Collision or error on attempt ${attempt} for ${email}: ${codeError.message}. Retrying...`);
+        }
+      }
+
+      if (!success) {
+        console.error(`Failed to generate code for ${email} after 5 attempts:`, codeErrorMsg);
+        failedResults.push({ email, cohortId, error: codeErrorMsg });
         continue;
       }
 
@@ -88,8 +104,9 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({
-      message: `Successfully processed ${generatedResults.length} access codes.`,
+      message: `Processed access codes: ${generatedResults.length} succeeded, ${failedResults.length} failed.`,
       results: generatedResults,
+      failed: failedResults,
     });
 
   } catch (err: any) {

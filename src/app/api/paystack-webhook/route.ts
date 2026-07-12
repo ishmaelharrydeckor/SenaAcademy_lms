@@ -133,50 +133,66 @@ export async function POST(request: NextRequest) {
       .eq('paystack_reference', reference)
       .single();
 
-    if (existingPayment) {
-      console.log(`Cohort payment reference ${reference} has already been processed.`);
+    if (existingPayment && existingPayment.access_code_generated) {
+      console.log(`Cohort payment reference ${reference} has already been fully processed.`);
       return NextResponse.json({ status: 'already_processed' }, { status: 200 });
     }
 
-    // Log Payment Attempt in Database
-    const { error: insertError } = await supabaseAdmin
-      .from('payments')
-      .insert({
-        email,
-        full_name: fullName,
-        cohort_id: cohortId,
-        paystack_reference: reference,
-        amount,
-        currency,
-        status: 'success',
-        access_code_generated: false,
-      });
+    let generatedCode = '';
 
-    if (insertError) {
-      console.error('Failed to log payment transaction:', insertError.message);
-      return NextResponse.json({ error: 'Database insert failed' }, { status: 500 });
+    if (!existingPayment) {
+      // Log Payment Attempt in Database
+      const { error: insertError } = await supabaseAdmin
+        .from('payments')
+        .insert({
+          email,
+          full_name: fullName,
+          cohort_id: cohortId,
+          paystack_reference: reference,
+          amount,
+          currency,
+          status: 'success',
+          access_code_generated: false,
+        });
+
+      if (insertError) {
+        console.error('Failed to log payment transaction:', insertError.message);
+        return NextResponse.json({ error: 'Database insert failed' }, { status: 500 });
+      }
     }
 
-    // Generate unique access code
-    const generatedCode = 'SENA-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-
-    // Set expiry date to 30 days from now
-    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-
-    const { error: codeError } = await supabaseAdmin
+    // Check if an access code was already generated for this cohort and email in unused status
+    const { data: existingCode } = await supabaseAdmin
       .from('access_codes')
-      .insert({
-        code: generatedCode,
-        assigned_email: email,
-        cohort_id: cohortId,
-        role: 'student',
-        status: 'unused',
-        expires_at: expiresAt,
-      });
+      .select('code')
+      .eq('assigned_email', email)
+      .eq('cohort_id', cohortId)
+      .eq('status', 'unused')
+      .maybeSingle();
 
-    if (codeError) {
-      console.error('Failed to insert access code:', codeError.message);
-      return NextResponse.json({ error: 'Database access code generation failed' }, { status: 500 });
+    if (existingCode) {
+      generatedCode = existingCode.code;
+      console.log(`Retrieved existing unused access code: ${generatedCode}`);
+    } else {
+      // Generate unique access code
+      generatedCode = 'SENA-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+      const { error: codeError } = await supabaseAdmin
+        .from('access_codes')
+        .insert({
+          code: generatedCode,
+          assigned_email: email,
+          cohort_id: cohortId,
+          role: 'student',
+          status: 'unused',
+          expires_at: expiresAt,
+        });
+
+      if (codeError) {
+        console.error('Failed to insert access code:', codeError.message);
+        return NextResponse.json({ error: 'Database access code generation failed' }, { status: 500 });
+      }
     }
 
     // Get Cohort details to include in email
@@ -197,11 +213,12 @@ export async function POST(request: NextRequest) {
         .from('payments')
         .update({ access_code_generated: true })
         .eq('paystack_reference', reference);
+      
+      return NextResponse.json({ status: 'success', reference, code: generatedCode });
     } else {
-      console.error('Failed to automatically email access code to student.');
+      console.error('Failed to automatically email access code to student. Propagating error to trigger retry.');
+      return NextResponse.json({ error: 'Failed to send confirmation email. Webhook will retry.' }, { status: 500 });
     }
-
-    return NextResponse.json({ status: 'success', reference, code: generatedCode });
 
   } catch (err: any) {
     console.error('Exception in Paystack webhook handler:', err);

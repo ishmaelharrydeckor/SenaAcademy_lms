@@ -231,11 +231,22 @@ export default function StudentModules() {
         const ext = selectedFile.name.split('.').pop()?.toLowerCase();
         const fileName = `${user.id}/${selectedModule.id}_${Date.now()}.${ext}`;
 
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token;
+        if (!token) throw new Error('Authorization token not found. Please log in again.');
+
         // Get Cloudflare R2 Presigned Upload URL
         const res = await fetch('/api/upload-url', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileName, contentType: selectedFile.type })
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ 
+            fileName, 
+            contentType: selectedFile.type,
+            declaredSize: selectedFile.size
+          })
         });
         const urlData = await res.json();
         if (!res.ok) throw new Error(urlData.error || 'Failed to initialize R2 bucket upload');
@@ -249,17 +260,22 @@ export default function StudentModules() {
         if (!uploadRes.ok) throw new Error('Cloudflare upload rejected file stream');
 
         // Confirm upload completion
-        await fetch('/api/confirm-upload', {
+        const confirmRes = await fetch('/api/confirm-upload', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ filePath: urlData.filePath })
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ objectKey: urlData.objectKey })
         });
+        const confirmData = await confirmRes.json();
+        if (!confirmRes.ok) throw new Error(confirmData.error || 'Failed to confirm upload with server');
 
         if (ext === 'zip') {
-          zip_file_url = urlData.filePath;
+          zip_file_url = urlData.objectKey;
           pdf_file_url = null; // Clear opposite if re-uploading
         } else {
-          pdf_file_url = urlData.filePath;
+          pdf_file_url = urlData.objectKey;
           zip_file_url = null;
         }
       }

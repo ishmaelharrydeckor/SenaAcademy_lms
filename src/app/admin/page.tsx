@@ -1025,7 +1025,14 @@ export default function AdminPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to bulk generate codes.');
 
-      showToast('Import Success', `Successfully generated and emailed ${codesToInsert.length} access codes!`, 'success');
+      const failedCount = data.failed ? data.failed.length : 0;
+      const succeededCount = data.results ? data.results.length : codesToInsert.length;
+
+      if (failedCount > 0) {
+        showToast('Import Warning', `Bulk generation finished: ${succeededCount} codes succeeded, ${failedCount} failed.`, 'warning');
+      } else {
+        showToast('Import Success', `Successfully generated and emailed all ${succeededCount} access codes!`, 'success');
+      }
       setBulkCsv('');
       await fetchInitialData();
     } catch (err: any) {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, HeadObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { supabase } from '@/lib/supabase';
-import { isRateLimited } from '@/lib/rateLimit';
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 
 const s3 = new S3Client({
   region: 'auto',
@@ -15,8 +15,8 @@ const s3 = new S3Client({
 export async function POST(request: NextRequest) {
   try {
     // 1. Get client IP for rate limiting
-    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
-    const limitCheck = isRateLimited(ip, 15, 5 * 60 * 1000); // 15 calls per 5 mins
+    const ip = getClientIp(request);
+    const limitCheck = await checkRateLimit(ip, 15, 5 * 60 * 1000); // 15 calls per 5 mins
     if (limitCheck.limited) {
       return NextResponse.json(
         { error: 'Too many requests. Please wait a few minutes before trying again.' },

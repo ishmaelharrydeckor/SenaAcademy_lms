@@ -14,6 +14,8 @@
     "@aws-sdk/s3-request-presigner": "^3.1079.0",
     "@react-email/components": "^1.0.12",
     "@supabase/supabase-js": "^2.110.0",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "lucide-react": "^1.23.0",
     "next": "16.2.10",
     "nodemailer": "^9.0.3",

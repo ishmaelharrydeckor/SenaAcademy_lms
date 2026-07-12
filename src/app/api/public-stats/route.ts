@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { isRateLimited } from '@/lib/rateLimit';
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 
 // Initialize Supabase Admin Client to bypass RLS for counts
 const supabaseAdmin = createClient(
@@ -25,8 +25,8 @@ const CACHE_TTL = 15 * 60 * 1000; // 15 mins
 export async function GET(request: NextRequest) {
   try {
     // 1. Rate Limiting check
-    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
-    const limitCheck = isRateLimited(ip, 30, 60 * 1000); // 30 requests per minute
+    const ip = getClientIp(request);
+    const limitCheck = await checkRateLimit(ip, 30, 60 * 1000); // 30 requests per minute
     if (limitCheck.limited) {
       return NextResponse.json(
         { error: 'Too many requests. Please wait a minute.' },

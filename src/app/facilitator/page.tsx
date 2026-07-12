@@ -125,6 +125,7 @@ export default function FacilitatorPage() {
 
   // Autosave draft references & hook
   const hasUserModified = useRef(false);
+  const lastLoadedUpdatedAt = useRef<string | null>(null);
 
   useEffect(() => {
     if (!activeSubmission || !hasUserModified.current) return;
@@ -150,13 +151,32 @@ export default function FacilitatorPage() {
       };
 
       try {
-        const { error } = await supabase
+        let query = supabase
           .from('submissions')
           .update({ draft_feedback_json: draftPayload })
           .eq('id', activeSubmission.id);
-        
+
+        if (lastLoadedUpdatedAt.current) {
+          query = query.eq('draft_feedback_json->>updated_at', lastLoadedUpdatedAt.current);
+        } else {
+          query = query.is('draft_feedback_json', null);
+        }
+
+        const { data, error } = await query.select();
+
         if (error) {
           console.error('Failed to autosave draft:', error.message);
+        } else if (data && data.length === 0) {
+          console.warn('Autosave conflict detected: submission was modified by another user.');
+          showToast(
+            'Autosave Disabled',
+            'Another facilitator has modified this draft. Please reload the page to get their updates and avoid overwriting.',
+            'error'
+          );
+          hasUserModified.current = false;
+        } else {
+          // Success: update the loaded timestamp
+          lastLoadedUpdatedAt.current = draftPayload.updated_at;
         }
       } catch (err) {
         console.error('Unexpected error autosaving draft:', err);
@@ -228,10 +248,12 @@ export default function FacilitatorPage() {
       setWeaknesses(draft.weaknesses || '');
       setSuggestions(draft.suggestions || '');
       setRubricScores(draft.rubric_scores || {});
+      lastLoadedUpdatedAt.current = draft.updated_at || null;
     } else {
       setStrengths('');
       setWeaknesses('');
       setSuggestions('');
+      lastLoadedUpdatedAt.current = null;
       
       // Initialize rubric scores to max points by default
       const initialScores: Record<string, number> = {};

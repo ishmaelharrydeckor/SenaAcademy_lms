@@ -78,7 +78,8 @@ export async function POST(request: NextRequest) {
 
     const studentIds = students ? students.map(s => s.id) : [];
 
-    // Step B: Fetch and delete all R2 files associated with these students
+    // Step B: Fetch student submission file URLs from database before we delete them
+    let filesToDelete: string[] = [];
     if (studentIds.length > 0) {
       const { data: submissions, error: subError } = await supabaseAdmin
         .from('submissions')
@@ -91,36 +92,14 @@ export async function POST(request: NextRequest) {
 
       if (submissions && submissions.length > 0) {
         for (const sub of submissions) {
-          // Delete ZIP file from R2
-          if (sub.zip_file_url) {
-            try {
-              await s3.send(new DeleteObjectCommand({
-                Bucket: process.env.R2_BUCKET_NAME || 'submissions',
-                Key: sub.zip_file_url,
-              }));
-            } catch (err) {
-              console.error(`Failed to delete ZIP file ${sub.zip_file_url} from R2:`, err);
-              // Rollback safety: exit early before running database deletions
-              return NextResponse.json({ error: 'Failed to delete submission ZIP files from R2 storage. Transaction rolled back.' }, { status: 502 });
-            }
-          }
-          // Delete PDF file from R2
-          if (sub.pdf_file_url) {
-            try {
-              await s3.send(new DeleteObjectCommand({
-                Bucket: process.env.R2_BUCKET_NAME || 'submissions',
-                Key: sub.pdf_file_url,
-              }));
-            } catch (err) {
-              console.error(`Failed to delete PDF file ${sub.pdf_file_url} from R2:`, err);
-              return NextResponse.json({ error: 'Failed to delete submission PDF files from R2 storage. Transaction rolled back.' }, { status: 502 });
-            }
-          }
+          if (sub.zip_file_url) filesToDelete.push(sub.zip_file_url);
+          if (sub.pdf_file_url) filesToDelete.push(sub.pdf_file_url);
         }
       }
     }
 
-    // Step C: Run database cascading deletion transaction RPC
+    // Step C: Run database cascading deletion transaction RPC (DB DELETION FIRST)
+    console.log(`Executing database cascade deletion transaction for cohort ${cohortId}`);
     const { error: dbError } = await supabaseAdmin.rpc('delete_cohort_db_cascade', {
       target_cohort_id: cohortId,
     });
@@ -130,14 +109,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Database cascade transaction failed: ' + dbError.message }, { status: 500 });
     }
 
-    // Step D: Delete the auth users from Supabase Auth
+    // Step D: Delete R2 files from storage (R2 DELETION LAST)
+    if (filesToDelete.length > 0) {
+      console.log(`Deleting ${filesToDelete.length} files from R2 storage...`);
+      for (const fileKey of filesToDelete) {
+        try {
+          await s3.send(new DeleteObjectCommand({
+            Bucket: process.env.R2_BUCKET_NAME || 'submissions',
+            Key: fileKey,
+          }));
+        } catch (err: any) {
+          // If R2 deletion fails, we log it for manual/orphan cleanup but do NOT fail the response
+          console.error(`[ORPHANED FILE WARNING] Failed to delete file ${fileKey} from R2 storage:`, err.message || err);
+        }
+      }
+    }
+
+    // Step E: Delete the auth users from Supabase Auth
     if (studentIds.length > 0) {
       for (const studentId of studentIds) {
         try {
           await supabaseAdmin.auth.admin.deleteUser(studentId);
         } catch (authErr: any) {
-          console.error(`Failed to delete Supabase Auth user ${studentId}:`, authErr);
-          // Don't fail the whole request since DB cascade succeeded, but log it
+          console.error(`Failed to delete Supabase Auth user ${studentId} from Auth table:`, authErr);
+          // Don't fail the request since database cascade already succeeded
         }
       }
     }

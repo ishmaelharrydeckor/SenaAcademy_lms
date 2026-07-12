@@ -1,29 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { isRateLimited } from '@/lib/rateLimit';
+import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 
 export async function POST(request: NextRequest) {
   try {
-    // 1. Get client IP for rate limiting
-    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
+    // 1. Get client IP
+    const ip = getClientIp(request);
+
+    // 2. Parse request body
+    const bodyText = await request.text();
+    let code = '';
+    try {
+      const parsed = JSON.parse(bodyText);
+      code = parsed.code;
+    } catch (e) {
+      return NextResponse.json({ error: 'Invalid JSON request body.' }, { status: 400 });
+    }
+
+    if (!code) {
+      return NextResponse.json({ error: 'Access code is required.' }, { status: 400 });
+    }
     
-    // Limit to 5 attempts per 10 minutes
-    const limitCheck = isRateLimited(ip, 5, 10 * 60 * 1000);
-    if (limitCheck.limited) {
-      const waitMinutes = Math.ceil(limitCheck.resetMs / 60000);
+    // 3. Rate Limit Checks (IP based and Code based)
+    const ipCheck = await checkRateLimit(ip, 5, 10 * 60 * 1000);
+    if (ipCheck.limited) {
+      const waitMinutes = Math.ceil(ipCheck.resetMs / 60000);
       return NextResponse.json(
-        { error: `Too many attempts. Please wait ${waitMinutes} minute(s) before trying again.` },
+        { error: `Too many attempts from this IP. Please wait ${waitMinutes} minute(s) before trying again.` },
         { status: 429 }
       );
     }
 
-    // 2. Parse request body
-    const { code } = await request.json();
-    if (!code) {
-      return NextResponse.json({ error: 'Access code is required.' }, { status: 400 });
+    const codeCheck = await checkRateLimit(`code:${code}`, 5, 10 * 60 * 1000);
+    if (codeCheck.limited) {
+      const waitMinutes = Math.ceil(codeCheck.resetMs / 60000);
+      return NextResponse.json(
+        { error: `Too many attempts for this access code. Please wait ${waitMinutes} minute(s) before trying again.` },
+        { status: 429 }
+      );
     }
 
-    // 3. Call the security definer RPC function to verify code
+    // 4. Call the security definer RPC function to verify code
     const { data, error } = await supabase.rpc('verify_access_code', {
       input_code: code,
     });
