@@ -60,10 +60,12 @@ function FacilitatorLayoutContent({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2.5">
             {theme === 'dark' ? (
               <>
-                <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-8 w-8 object-cover shrink-0" />
+                <div className="h-8 w-8 rounded-lg bg-white p-1.5 flex items-center justify-center shrink-0 shadow-sm border border-border-brand/10">
+                  <img src="/logo_icon.png" alt="Sena Logo Icon" className="h-full w-full object-contain" />
+                </div>
                 <span className="text-sm font-bold tracking-tight text-white uppercase">SENA MENTOR</span>
               </>
-            ) : (
+) : (
               <img src="/logo_full.png" alt="Sena Academy Logo" className="h-8 md:h-9 object-contain" />
             )}
           </div>

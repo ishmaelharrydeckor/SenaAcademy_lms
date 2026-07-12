@@ -293,9 +293,9 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 md:px-12 flex items-center justify-between h-[76px]">
           <div 
             onClick={() => router.push('/')}
-            className="bg-white px-4 py-2 rounded-xl border border-border-brand/20 shadow-sm h-12 flex items-center justify-center cursor-pointer select-none hover:opacity-90 transition-opacity"
+            className="bg-white px-3 py-1 rounded-xl border border-border-brand/20 shadow-sm h-11 flex items-center justify-center cursor-pointer select-none hover:opacity-90 transition-opacity"
           >
-            <img src="/logo_full.png" alt="Sena Academy Logo" className="h-7 object-contain" />
+            <img src="/logo_full.png" alt="Sena Academy Logo" className="h-9 object-contain" />
           </div>
           <div className="hidden md:flex items-center gap-8">
             <a href="#roadmap" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Curriculum</a>
@@ -441,9 +441,9 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-line-dark pb-8 mb-10 gap-4">
             <div 
               onClick={() => router.push('/')}
-              className="bg-white px-4 py-2 rounded-xl border border-border-brand/20 shadow-sm h-12 flex items-center justify-center cursor-pointer select-none hover:opacity-90 transition-opacity w-fit"
+              className="bg-white px-3 py-1 rounded-xl border border-border-brand/20 shadow-sm h-11 flex items-center justify-center cursor-pointer select-none hover:opacity-90 transition-opacity w-fit"
             >
-              <img src="/logo_full.png" alt="Sena Academy Logo" className="h-7 object-contain" />
+              <img src="/logo_full.png" alt="Sena Academy Logo" className="h-9 object-contain" />
             </div>
 
           </div>
