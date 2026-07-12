@@ -20,6 +20,9 @@
   --color-btn-primary: var(--ink-on-paper);
   --color-btn-primary-text: var(--bg-canvas);
 
+  --color-on-dark: var(--on-dark);
+  --color-on-dark-soft: var(--on-dark-soft);
+
   --animate-fade-in: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-slide-up: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
