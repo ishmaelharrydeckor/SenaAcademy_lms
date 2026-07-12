@@ -368,24 +368,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 3. MISSION BANNER */}
-      <section className="bg-ink dark:bg-[#0F1012] text-on-dark py-16 text-center w-full">
-        <div className="max-w-4xl mx-auto px-6">
-          <span className="text-[10px] font-mono tracking-widest uppercase text-on-dark-soft/80 block mb-4">MISSION</span>
-          <h2 className="serif text-4xl md:text-5xl font-medium max-w-xl mx-auto mb-6 leading-tight">
-            Sena Academy is built on real, shipped work.
-          </h2>
-          <p className="serif text-base text-on-dark-soft max-w-md mx-auto mb-8 leading-relaxed">
-            See how the roadmap takes you from your first commit to a live, deployed product with a facilitator's name on the review.
-          </p>
-          <a 
-            href="#roadmap" 
-            className="inline-flex items-center gap-2 bg-on-dark/10 hover:bg-on-dark/20 text-on-dark border border-on-dark/20 px-8 py-3.5 rounded-full text-sm font-semibold transition-all"
-          >
-            See the roadmap →
-          </a>
-        </div>
-      </section>
+
 
 
 
