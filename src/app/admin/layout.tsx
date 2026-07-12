@@ -199,6 +199,16 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               <span className="text-xs text-text-primary capitalize">{pathname.split('/').pop() || 'Dashboard'}</span>
             </div>
           </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg transition-colors text-text-secondary hover:text-text-primary hover:bg-bg-surface-hover/50 cursor-pointer"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
+            </button>
+          </div>
         </header>
 
         <main className="flex-1 p-6 md:p-8 max-w-6xl w-full mx-auto animate-fade-in">

@@ -68,16 +68,16 @@ export function Button({
   disabled?: boolean;
   className?: string;
 }) {
-  const baseStyle = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-150 outline-none select-none disabled:opacity-50 disabled:pointer-events-none border border-transparent';
+  const baseStyle = 'inline-flex items-center justify-center font-semibold rounded-full transition-colors duration-150 outline-none select-none disabled:opacity-50 disabled:pointer-events-none border border-transparent';
   
   const sizeStyle = {
-    sm: 'px-3 py-1.5 text-xs',
-    md: 'px-4 py-2 text-sm',
-    lg: 'px-6 py-3 text-base',
+    sm: 'px-3.5 py-1.5 text-xs',
+    md: 'px-5 py-2.5 text-sm',
+    lg: 'px-7 py-3.5 text-base',
   }[size];
 
   const variantStyle = {
-    primary: 'bg-accent-primary hover:bg-accent-primary-hover text-white border-accent-primary/20',
+    primary: 'bg-btn-primary hover:opacity-90 text-btn-primary-text border-btn-primary/20',
     secondary: 'bg-bg-surface hover:bg-bg-surface-hover text-text-primary border-border-brand',
     success: 'bg-success-brand hover:bg-success-brand/90 text-white border-success-brand/20',
     danger: 'bg-red-600 hover:bg-red-700 text-white border-red-500/20',
@@ -135,7 +135,7 @@ export function Input({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className="glass-input text-sm text-text-primary rounded-lg px-3.5 py-2.5 w-full placeholder-text-secondary/40 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="glass-input text-sm text-text-primary rounded-full px-4 py-2.5 w-full placeholder-text-secondary/40 disabled:opacity-50 disabled:cursor-not-allowed"
       />
       {error && <span className="text-[11px] text-red-400 select-none">{error}</span>}
     </div>
@@ -204,3 +204,67 @@ export function CircularProgress({
   );
 }
 
+// Reusable MetaRow Component (V3 Editorial style key-value line)
+export function MetaRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="meta-row">
+      <span className="font-sans font-medium uppercase tracking-wider text-[10px] text-text-secondary">{label}</span>
+      <span className="font-sans font-semibold text-xs text-text-primary">{value}</span>
+    </div>
+  );
+}
+
+// Reusable BuildLogCard Component (Terminal Activity feed)
+export interface LogLine {
+  text: string;
+  isPrompt?: boolean;
+  isDim?: boolean;
+  isSuccess?: boolean;
+}
+
+export function BuildLogCard({
+  title = 'builder.senaacademy.org',
+  status = 'connected',
+  lines = [],
+  reviewLabel = 'Facilitator review —',
+  reviewText = ''
+}: {
+  title?: string;
+  status?: string;
+  lines?: LogLine[];
+  reviewLabel?: string;
+  reviewText?: string;
+}) {
+  return (
+    <div className="bg-ink border border-border-brand/20 dark:bg-[#0F1012] rounded-2xl p-6 text-left text-on-dark font-sans shadow-sm select-none">
+      <div className="flex items-center justify-between border-b border-line-dark pb-4 mb-4 text-xs text-on-dark-soft">
+        <div className="flex gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-on-dark-soft/20"></span>
+          <span className="w-2 h-2 rounded-full bg-on-dark-soft/20"></span>
+          <span className="w-2 h-2 rounded-full bg-on-dark-soft/20"></span>
+        </div>
+        <div className="font-mono text-[11px] tracking-wide">{title}</div>
+        <div className="flex items-center gap-1.5 text-success-brand font-semibold text-[11px] uppercase tracking-wide">
+          <span className="w-1.5 h-1.5 rounded-full bg-success-brand inline-block animate-pulse"></span>
+          {status}
+        </div>
+      </div>
+      <div className="font-mono text-[13px] leading-relaxed space-y-2">
+        {lines.map((line, idx) => (
+          <div key={idx}>
+            {line.isPrompt && <span className="text-accent-primary select-none mr-1.5">$</span>}
+            <span className={line.isSuccess ? 'text-success-brand' : line.isDim ? 'text-on-dark-soft/70' : 'text-on-dark'}>
+              {line.text}
+            </span>
+          </div>
+        ))}
+      </div>
+      {(reviewLabel || reviewText) && (
+        <div className="border-t border-line-dark pt-4 mt-4 text-[13px] text-on-dark-soft leading-normal">
+          <span className="font-semibold text-on-dark mr-1">{reviewLabel}</span>
+          <span>{reviewText}</span>
+        </div>
+      )}
+    </div>
+  );
+}

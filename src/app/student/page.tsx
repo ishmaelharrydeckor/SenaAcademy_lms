@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
 import { supabase } from '@/lib/supabase';
-import { Card, CircularProgress, AccentCard, Button } from '@/components/UI';
+import { Card, CircularProgress, AccentCard, Button, MetaRow, BuildLogCard } from '@/components/UI';
 import { 
   BookOpen, 
   Award, 
@@ -179,6 +179,68 @@ export default function StudentDashboard() {
       status
     };
   });
+
+  // Generate build log lines based on real student submissions
+  const getBuildLogLines = () => {
+    const lines = [];
+    
+    // Default initial line
+    lines.push({ text: 'git init sena-workspace', isPrompt: true });
+    lines.push({ text: 'Initialized empty Git repository in sena-workspace/', isDim: true });
+    
+    if (submissions.length === 0) {
+      lines.push({ text: 'git push origin main', isPrompt: true });
+      lines.push({ text: 'Warning: No module submissions found yet. Ready to build.', isDim: true });
+    } else {
+      // Map up to 3 submissions
+      submissions.slice(-3).forEach((sub) => {
+        const dbMod = modules.find(m => m.id === sub.module_id);
+        const modNum = dbMod ? dbMod.module_number : '?';
+        const modTitle = dbMod ? dbMod.title : 'Project';
+        
+        lines.push({ text: `git commit -am "Complete Module ${modNum} - ${modTitle}"`, isPrompt: true });
+        lines.push({ text: `git push origin main`, isPrompt: true });
+        
+        if (sub.status === 'approved') {
+          lines.push({ text: `✓ Module ${modNum} Approved. Score: ${sub.score}/100`, isSuccess: true });
+        } else if (sub.status === 'rejected') {
+          lines.push({ text: `✗ Module ${modNum} Needs Revisions.`, isDim: true });
+        } else {
+          lines.push({ text: `✓ Module ${modNum} Submitted. Pending review...`, isDim: true });
+        }
+      });
+    }
+    
+    return lines;
+  };
+
+  const getBuildLogReview = () => {
+    if (submissions.length === 0) {
+      return {
+        label: 'System status —',
+        text: 'Ready. Open Module 1 to pull down your first project task.'
+      };
+    }
+    const lastSub = submissions[submissions.length - 1];
+    const dbMod = modules.find(m => m.id === lastSub.module_id);
+    const modNum = dbMod ? dbMod.module_number : '';
+    if (lastSub.status === 'approved') {
+      return {
+        label: 'Facilitator feedback —',
+        text: `Approved by review team. Excellent work on Module ${modNum}.`
+      };
+    } else if (lastSub.status === 'rejected') {
+      return {
+        label: 'Facilitator feedback —',
+        text: `Please review comments on Module ${modNum} and resubmit.`
+      };
+    } else {
+      return {
+        label: 'Review status —',
+        text: 'Awaiting facilitator review. Your live deployment is active.'
+      };
+    }
+  };
 
   // Calculate days remaining helper
   const getDaysRemaining = () => {
@@ -431,49 +493,29 @@ export default function StudentDashboard() {
           {/* Upcoming Deadlines Card */}
           <Card className={`p-6 space-y-4 ${cardClass}`}>
             <h4 className="text-[10px] font-mono uppercase tracking-widest text-text-secondary">Upcoming Deadlines</h4>
-            <div className="space-y-4">
+            <div className="space-y-1">
               {[
                 { title: 'UI Assignment', date: 'Aug 14' },
                 { title: 'Website Project', date: 'Aug 21' },
                 { title: 'Android Milestone', date: 'Aug 28' },
                 { title: 'Backend API', date: 'Sep 03' }
               ].map((dl, i) => (
-                <div key={i} className="flex justify-between items-center border-b border-border-brand/40 pb-2 last:border-0 last:pb-0">
-                  <span className="text-xs font-semibold text-text-secondary">{dl.title}</span>
-                  <span className="text-[10px] font-mono font-bold text-text-secondary">{dl.date}</span>
-                </div>
+                <MetaRow key={i} label={dl.title} value={dl.date} />
               ))}
             </div>
           </Card>
 
-          {/* Recent Announcements */}
-          <Card className={`p-6 space-y-4 ${cardClass}`}>
-            <h4 className="text-[10px] font-mono uppercase tracking-widest text-text-secondary">Announcements</h4>
-            <div className="space-y-4 relative pl-4 border-l border-border-brand/40">
-              {announcements.length === 0 ? (
-                // Fallbacks per layout specifications
-                [
-                  { title: 'Welcome Founding Builders', desc: 'Welcome aboard Sena Academy Lms.' },
-                  { title: 'New Assignment Released', desc: 'Module 2 task brief is live.' },
-                  { title: 'Live Session Friday', desc: 'Interactive review at 5 PM.' },
-                  { title: 'Facilitator Office Hours', desc: 'Drop-in debug sessions.' }
-                ].map((item, i) => (
-                  <div key={i} className="relative space-y-1">
-                    <span className="absolute -left-[21px] top-1.5 w-2 h-2 bg-accent-primary border border-bg-surface rounded-full"></span>
-                    <h5 className="text-xs font-bold text-text-primary">{item.title}</h5>
-                  </div>
-                ))
-              ) : (
-                announcements.map((ann) => (
-                  <div key={ann.id} className="relative space-y-1">
-                    <span className="absolute -left-[21px] top-1.5 w-2 h-2 bg-accent-primary border border-bg-surface rounded-full"></span>
-                    <h5 className="text-xs font-bold text-text-primary">{ann.title}</h5>
-                    <p className="text-[10px] text-text-secondary truncate leading-relaxed">{ann.content}</p>
-                  </div>
-                ))
-              )}
-            </div>
-          </Card>
+          {/* Dynamic Build Log Activity Feed */}
+          <div className="space-y-4">
+            <h4 className="text-[10px] font-mono uppercase tracking-widest text-text-secondary pl-1">Activity Log</h4>
+            <BuildLogCard 
+              title="builder.senaacademy.org"
+              status="connected"
+              lines={getBuildLogLines()}
+              reviewLabel={getBuildLogReview().label}
+              reviewText={getBuildLogReview().text}
+            />
+          </div>
 
         </div>
 
