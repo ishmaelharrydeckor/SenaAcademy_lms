@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     if (!paystackRes.ok) {
       const errText = await paystackRes.text();
       console.error('Paystack initialization failed:', errText);
-      return NextResponse.json({ error: 'Failed to initialize payment gateway' }, { status: 502 });
+      return NextResponse.json({ error: 'Failed to initialize payment gateway' }, { status: 500 });
     }
 
     const data = await paystackRes.json();
