@@ -11,6 +11,7 @@ interface Cohort {
   id: string;
   name: string;
   status: string;
+  price?: number;
 }
 
 function EnrollForm() {
@@ -33,7 +34,7 @@ function EnrollForm() {
       try {
         const { data, error } = await supabase
           .from('cohorts')
-          .select('id, name, status')
+          .select('id, name, status, price')
           .eq('status', 'active');
         
         if (error) throw error;
@@ -133,6 +134,9 @@ function EnrollForm() {
     );
   }
 
+  const selectedCohort = cohorts.find((c) => c.id === cohortId);
+  const cohortPrice = selectedCohort?.price ?? 100;
+
   // Payment Form Screen
   return (
     <main className="min-h-screen flex flex-col justify-center items-center p-4 relative overflow-hidden transition-colors duration-250 bg-bg-canvas text-text-primary">
@@ -153,7 +157,7 @@ function EnrollForm() {
             <span className="text-[10px] font-mono uppercase tracking-widest text-accent-primary font-semibold">Cohort Admissions</span>
             <h2 className="text-xl font-bold tracking-tight text-text-primary">Sena Academy Signup</h2>
             <p className="text-xs text-text-secondary leading-relaxed">
-              Complete payment to secure your seat. Admissions cost is <strong className="text-text-primary">GHS 100</strong>.
+              Complete payment to secure your seat. Admissions cost is <strong className="text-text-primary">GHS {cohortPrice}</strong>.
             </p>
           </div>
 
@@ -212,7 +216,7 @@ function EnrollForm() {
               disabled={submitting || cohorts.length === 0}
             >
               <CreditCard className="h-4 w-4" />
-              {submitting ? 'Redirecting to checkout...' : 'Pay GHS 100 via Paystack'}
+              {submitting ? 'Redirecting to checkout...' : `Pay GHS ${cohortPrice} via Paystack`}
             </Button>
           </form>
         </Card>

@@ -1,4 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+);
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,8 +14,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required registration details' }, { status: 400 });
     }
 
-    // Cohort fee is GHS 100 (passed in subunits: 10000 pesewas)
-    const amountInPesewas = 100 * 100;
+    // Fetch cohort price from database
+    const { data: cohort, error: cohortError } = await supabaseAdmin
+      .from('cohorts')
+      .select('price')
+      .eq('id', cohortId)
+      .single();
+
+    if (cohortError) {
+      console.error('Error fetching cohort price:', cohortError);
+    }
+
+    const price = cohort?.price ? Number(cohort.price) : 100;
+    const amountInPesewas = Math.round(price * 100);
     const host = request.headers.get('host') || '';
     const protocol = request.headers.get('x-forwarded-proto') || (host.includes('localhost') ? 'http' : 'https');
     const appUrl = host ? `${protocol}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || 'https://senaacademy.org');
