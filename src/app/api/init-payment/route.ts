@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
-
 export async function POST(request: NextRequest) {
   try {
     const { fullName, email, cohortId } = await request.json();
@@ -13,6 +8,16 @@ export async function POST(request: NextRequest) {
     if (!fullName || !email || !cohortId) {
       return NextResponse.json({ error: 'Missing required registration details' }, { status: 400 });
     }
+
+    // Initialize Supabase inside the handler to prevent Vercel 500 module load crashes if variables are missing
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase configuration environment variables are missing on the server.');
+    }
+
+    const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
 
     // Fetch cohort price from database
     const { data: cohort, error: cohortError } = await supabaseAdmin
