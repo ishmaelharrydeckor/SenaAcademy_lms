@@ -31,6 +31,8 @@ export async function POST(request: NextRequest) {
     const protocol = request.headers.get('x-forwarded-proto') || (host.includes('localhost') ? 'http' : 'https');
     const appUrl = host ? `${protocol}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || 'https://senaacademy.org');
 
+    const paystackKey = process.env.PAYSTACK_SECRET_KEY || '';
+    console.log(`[PAYSTACK DEBUG] Key starts with: ${paystackKey.substring(0, 7)}... Length: ${paystackKey.length}`);
     console.log(`Initializing Paystack transaction for: ${email}`);
     
     // Call Paystack Transaction Initialize API
