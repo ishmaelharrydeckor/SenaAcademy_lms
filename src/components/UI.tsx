@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 
 // Premium Flat Card Component
 export function Card({
@@ -123,6 +124,10 @@ export function Input({
   disabled?: boolean;
   icon?: React.ReactNode;
 } & React.InputHTMLAttributes<HTMLInputElement>) {
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === 'password';
+  const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+
   return (
     <div className={`flex flex-col gap-1.5 w-full ${className}`}>
       {label && (
@@ -137,7 +142,7 @@ export function Input({
           </div>
         )}
         <input
-          type={type}
+          type={inputType}
           id={id}
           required={required}
           placeholder={placeholder}
@@ -145,10 +150,20 @@ export function Input({
           onChange={onChange}
           disabled={disabled}
           className={`glass-input text-sm text-text-primary rounded-full py-2.5 w-full placeholder-text-secondary/40 disabled:opacity-50 disabled:cursor-not-allowed ${
-            icon ? 'pl-10 pr-4' : 'px-4'
+            icon ? 'pl-10 pr-10' : isPassword ? 'pl-4 pr-10' : 'px-4'
           }`}
           {...props}
         />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            disabled={disabled}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary focus:outline-none select-none cursor-pointer"
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        )}
       </div>
       {error && <span className="text-[11px] text-red-400 select-none">{error}</span>}
     </div>
