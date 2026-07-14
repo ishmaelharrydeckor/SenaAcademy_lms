@@ -109,6 +109,7 @@ export function Input({
   error,
   disabled = false,
   icon,
+  ...props
 }: {
   label?: string;
   id: string;
@@ -121,7 +122,7 @@ export function Input({
   error?: string;
   disabled?: boolean;
   icon?: React.ReactNode;
-}) {
+} & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div className={`flex flex-col gap-1.5 w-full ${className}`}>
       {label && (
@@ -146,6 +147,7 @@ export function Input({
           className={`glass-input text-sm text-text-primary rounded-full py-2.5 w-full placeholder-text-secondary/40 disabled:opacity-50 disabled:cursor-not-allowed ${
             icon ? 'pl-10 pr-4' : 'px-4'
           }`}
+          {...props}
         />
       </div>
       {error && <span className="text-[11px] text-red-400 select-none">{error}</span>}

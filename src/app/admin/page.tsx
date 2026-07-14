@@ -42,6 +42,7 @@ interface Cohort {
   max_students: number;
   status: 'upcoming' | 'active' | 'completed';
   is_archived: boolean;
+  price: number;
 }
 
 interface Module {
@@ -158,6 +159,8 @@ export default function AdminPage() {
   const [cohortEnd, setCohortEnd] = useState('');
   const [cohortMax, setCohortMax] = useState('30');
   const [cohortStatus, setCohortStatus] = useState<'upcoming' | 'active' | 'completed'>('upcoming');
+  const [cohortPrice, setCohortPrice] = useState('100');
+  const [editingCohortId, setEditingCohortId] = useState<string | null>(null);
 
   // Module Form
   const [modNum, setModNum] = useState('');
@@ -735,32 +738,54 @@ export default function AdminPage() {
 
   // --- SUBMISSIONS ---
 
-  // Cohort creation
+  // Cohort creation or update
   const handleCohortSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!cohortName || !cohortStart || !cohortEnd || !cohortMax) return;
+    if (!cohortName || !cohortStart || !cohortEnd || !cohortMax || !cohortPrice) return;
 
     setActionLoading(true);
     try {
-      const { error } = await supabase.from('cohorts').insert([
-        {
-          name: cohortName,
-          start_date: cohortStart,
-          end_date: cohortEnd,
-          max_students: parseInt(cohortMax),
-          status: cohortStatus,
-        },
-      ]);
+      if (editingCohortId) {
+        // Update existing cohort
+        const { error } = await supabase
+          .from('cohorts')
+          .update({
+            name: cohortName,
+            start_date: cohortStart,
+            end_date: cohortEnd,
+            max_students: parseInt(cohortMax),
+            status: cohortStatus,
+            price: parseFloat(cohortPrice),
+          })
+          .eq('id', editingCohortId);
 
-      if (error) throw error;
-      showToast('Cohort Created', `Successfully initialized ${cohortName}`, 'success');
+        if (error) throw error;
+        showToast('Cohort Updated', `Successfully updated ${cohortName}`, 'success');
+      } else {
+        // Create new cohort
+        const { error } = await supabase.from('cohorts').insert([
+          {
+            name: cohortName,
+            start_date: cohortStart,
+            end_date: cohortEnd,
+            max_students: parseInt(cohortMax),
+            status: cohortStatus,
+            price: parseFloat(cohortPrice),
+          },
+        ]);
+
+        if (error) throw error;
+        showToast('Cohort Created', `Successfully initialized ${cohortName}`, 'success');
+      }
       
-      // Reset form
+      // Reset form & state
       setCohortName('');
       setCohortStart('');
       setCohortEnd('');
       setCohortMax('30');
       setCohortStatus('upcoming');
+      setCohortPrice('100');
+      setEditingCohortId(null);
       
       await fetchInitialData();
     } catch (err: any) {
@@ -768,6 +793,33 @@ export default function AdminPage() {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const handleEditCohort = (c: Cohort) => {
+    setEditingCohortId(c.id);
+    setCohortName(c.name);
+    setCohortStart(c.start_date);
+    setCohortEnd(c.end_date);
+    setCohortMax(c.max_students.toString());
+    setCohortStatus(c.status);
+    setCohortPrice(c.price ? c.price.toString() : '100');
+    
+    // Scroll to the cohorts registry view or form if needed
+    const formElement = document.getElementById('c-name');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      formElement.focus();
+    }
+  };
+
+  const cancelCohortEdit = () => {
+    setEditingCohortId(null);
+    setCohortName('');
+    setCohortStart('');
+    setCohortEnd('');
+    setCohortMax('30');
+    setCohortStatus('upcoming');
+    setCohortPrice('100');
   };
 
   // Reset Module Form fields
@@ -1282,10 +1334,12 @@ export default function AdminPage() {
       {/* --- COHORTS TAB PANEL --- */}
       {activeTab === 'cohorts' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
-          {/* Create Form */}
+          {/* Create/Edit Form */}
           <div className="lg:col-span-1">
             <Card className="space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">Initialize Cohort</span>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-text-secondary block">
+                {editingCohortId ? 'Modify Cohort' : 'Initialize Cohort'}
+              </span>
               <form onSubmit={handleCohortSubmit} className="space-y-4">
                 <Input
                   label="Cohort Name"
@@ -1319,6 +1373,16 @@ export default function AdminPage() {
                   onChange={(e) => setCohortMax(e.target.value)}
                   required
                 />
+                <Input
+                  label="Admissions Price (GHS)"
+                  id="c-price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={cohortPrice}
+                  onChange={(e) => setCohortPrice(e.target.value)}
+                  required
+                />
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-medium text-text-secondary">Initial Status</label>
@@ -1333,9 +1397,16 @@ export default function AdminPage() {
                   </select>
                 </div>
 
-                <Button type="submit" className="w-full text-xs" disabled={actionLoading}>
-                  Create Cohort
-                </Button>
+                <div className="flex gap-2">
+                  <Button type="submit" className="flex-1 text-xs" disabled={actionLoading}>
+                    {editingCohortId ? 'Save Changes' : 'Create Cohort'}
+                  </Button>
+                  {editingCohortId && (
+                    <Button type="button" variant="secondary" onClick={cancelCohortEdit} className="text-xs">
+                      Cancel
+                    </Button>
+                  )}
+                </div>
               </form>
             </Card>
           </div>
@@ -1346,13 +1417,13 @@ export default function AdminPage() {
             <div className="grid grid-cols-1 gap-3">
               {cohorts.filter(c => !c.is_archived).map((c) => (
                 <div key={c.id} className="glass-panel p-5 rounded-xl border border-border-brand flex justify-between items-center">
-                  <div className="space-y-1">
+                  <div className="space-y-1 text-left">
                     <h4 className="text-sm font-semibold text-text-primary">{c.name}</h4>
                     <p className="text-[10px] text-text-secondary font-mono">
-                      Capacity: {c.max_students} Students • {new Date(c.start_date).toLocaleDateString()} - {new Date(c.end_date).toLocaleDateString()}
+                      Capacity: {c.max_students} Students • Price: GHS {c.price ?? 100} • {new Date(c.start_date).toLocaleDateString()} - {new Date(c.end_date).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <span className={`text-[10px] font-mono px-2 py-0.5 rounded uppercase font-semibold ${
                       c.status === 'active'
                         ? 'bg-success-green/10 text-success-green'
@@ -1362,6 +1433,14 @@ export default function AdminPage() {
                     }`}>
                       {c.status}
                     </span>
+                    <button
+                      type="button"
+                      onClick={() => handleEditCohort(c)}
+                      className="px-2.5 py-1.5 rounded-lg border border-border-brand bg-bg-surface-hover/50 hover:bg-bg-surface-hover hover:border-border-brand text-text-secondary hover:text-text-primary transition-all cursor-pointer flex items-center gap-1.5 text-[10px] font-semibold"
+                    >
+                      <Edit className="h-3 w-3" />
+                      Edit
+                    </button>
                     <button
                       type="button"
                       onClick={() => handleArchiveCohort(c.id)}

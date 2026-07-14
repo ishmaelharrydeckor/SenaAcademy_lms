@@ -25,6 +25,7 @@ create table if not exists public.cohorts (
     end_date date not null,
     max_students integer not null,
     status text default 'upcoming' not null check (status in ('upcoming', 'active', 'completed')),
+    price numeric(10, 2) default 100.00 not null,
     created_at timestamp with time zone default now() not null
 );
 
