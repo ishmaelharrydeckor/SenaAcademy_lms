@@ -359,126 +359,6 @@ INSERT INTO public.modules (
 ) VALUES (
     'e8aa03c6-3cd1-4069-9315-fea19a0da580', -- Founding Builders Cohort ID
     6,
-    'AI Integration',
-    'Build intelligent software.',
-    ARRAY[
-        'Call large language models programmatically via API keys',
-        'Configure context parameters, model temperature, and JSON responses',
-        'Build custom RAG pipelines using document embeddings and vector search',
-        'Chain multiple AI prompts to execute complex, many-step automation workflows'
-    ],
-    ARRAY[
-        'Explain Retrieval-Augmented Generation (RAG) concepts and chunking',
-        'Understand token pricing, input/output structures, and safety configurations',
-        'Evaluate trade-offs between linear agent loops and autonomous workflows'
-    ],
-    '[
-        {"name": "Gemini API File Search & Embeddings Guide", "url": "https://ai.google.dev/gemini-api/docs/file-search", "category": "documentation"},
-        {"name": "Anthropic Claude API Cookbook", "url": "https://github.com/anthropics/anthropic-cookbook", "category": "documentation"},
-        {"name": "OpenAI Assistants API Overview", "url": "https://platform.openai.com/docs/assistants/overview", "category": "documentation"},
-        {"name": "Gemini RAG File Search Video Tutorial", "url": "https://www.youtube.com/watch?v=AUZIYQEaqF62", "category": "video"},
-        {"name": "Vector Database & Embeddings Intro Video", "url": "https://www.youtube.com/watch?v=ySEx_BqxoQs", "category": "video"}
-    ]'::jsonb,
-    'Integrate a Custom RAG Feature into Your App',
-    'Integrate artificial intelligence capabilities into your application. Create a service that accepts a file, creates chunks, calls the embeddings API, indexes data in a vector store, and utilizes a generative LLM to provide grounded, citation-backed answers.',
-    NOW() + INTERVAL '42 days',
-    '[
-        {"criteria": "Embeddings Generation & Vector Database Indexing", "max_points": 30},
-        {"criteria": "Augmented Context Delivery to the LLM (RAG)", "max_points": 30},
-        {"criteria": "User Query Flow & Citation UI presentation", "max_points": 20},
-        {"criteria": "Error Mitigation & Token Efficiency Checks", "max_points": 20}
-    ]'::jsonb,
-    NOW() + INTERVAL '35 days',
-    TRUE
-)
-ON CONFLICT (cohort_id, module_number) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    learning_outcomes = EXCLUDED.learning_outcomes,
-    objectives = EXCLUDED.objectives,
-    resources = EXCLUDED.resources,
-    assignment_title = EXCLUDED.assignment_title,
-    assignment_description = EXCLUDED.assignment_description,
-    assignment_rubric = EXCLUDED.assignment_rubric;
-
--- Seed Module 7
-INSERT INTO public.modules (
-    cohort_id,
-    module_number,
-    title,
-    description,
-    learning_outcomes,
-    objectives,
-    resources,
-    assignment_title,
-    assignment_description,
-    assignment_deadline,
-    assignment_rubric,
-    unlock_date,
-    is_visible
-) VALUES (
-    'e8aa03c6-3cd1-4069-9315-fea19a0da580', -- Founding Builders Cohort ID
-    7,
-    'Product Development',
-    'Build software people can actually use.',
-    ARRAY[
-        'Define and document a scoped Minimum Viable Product (MVP)',
-        'Conduct live user interview tests to record usage metrics',
-        'Perform structured manual QA smoke testing and bug tracking logs',
-        'Iterate and deploy production code hotfixes based on user data'
-    ],
-    ARRAY[
-        'Contrast features vs. products and outline prioritization models',
-        'Differentiate between stated preferences and actual observed behaviors',
-        'Understand staging configurations vs. live release pipelines'
-    ],
-    '[
-        {"name": "Y Combinator Startup Library", "url": "https://www.ycombinator.com/library", "category": "documentation"},
-        {"name": "The Mom Test Book Summary", "url": "https://www.effectiveengineer.com/blog/the-mom-test", "category": "documentation"},
-        {"name": "Y Combinator: How to Build an MVP Video Guide", "url": "https://www.youtube.com/watch?v=ZRQDqgJHPh0", "category": "video"},
-        {"name": "YC: How to Talk to Users Video Tutorial", "url": "https://www.youtube.com/watch?v=MT4Ig2uqjTc", "category": "video"},
-        {"name": "Manual QA testing tutorial for beginners", "url": "https://www.youtube.com/watch?v=52A0_vjS9a0", "category": "video"}
-    ]'::jsonb,
-    'Launch Your MVP and Collect User Feedback',
-    'Deploy a functional version of your product live to staging/production. Conduct user feedback sessions with at least 5 target users using "The Mom Test" guidelines. Document their friction points, write a QA checklist, and push a bug-fix iteration.',
-    NOW() + INTERVAL '49 days',
-    '[
-        {"criteria": "MVP Scoping & Core Feature Delivery", "max_points": 30},
-        {"criteria": "User Testing Interviews & Recorded Friction Log", "max_points": 30},
-        {"criteria": "Successful Production Deploy & Iteration Pushes", "max_points": 20},
-        {"criteria": "QA Smoke Test Log & Bug Reports Clarity", "max_points": 20}
-    ]'::jsonb,
-    NOW() + INTERVAL '42 days',
-    TRUE
-)
-ON CONFLICT (cohort_id, module_number) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    learning_outcomes = EXCLUDED.learning_outcomes,
-    objectives = EXCLUDED.objectives,
-    resources = EXCLUDED.resources,
-    assignment_title = EXCLUDED.assignment_title,
-    assignment_description = EXCLUDED.assignment_description,
-    assignment_rubric = EXCLUDED.assignment_rubric;
-
--- Seed Module 8
-INSERT INTO public.modules (
-    cohort_id,
-    module_number,
-    title,
-    description,
-    learning_outcomes,
-    objectives,
-    resources,
-    assignment_title,
-    assignment_description,
-    assignment_deadline,
-    assignment_rubric,
-    unlock_date,
-    is_visible
-) VALUES (
-    'e8aa03c6-3cd1-4069-9315-fea19a0da580', -- Founding Builders Cohort ID
-    8,
     'Career & Freelancing',
     'Leave with opportunities, not just skills.',
     ARRAY[
@@ -502,14 +382,14 @@ INSERT INTO public.modules (
     ]'::jsonb,
     'Career Brand Portfolio and Capstone Assessment',
     'Prepare your developer portfolio and public profiles. This includes: an optimized GitHub Profile README, clean readme files on your projects, an updated LinkedIn profile with pinned project media, and a capstone presentation slide deck.',
-    NOW() + INTERVAL '56 days',
+    NOW() + INTERVAL '42 days',
     '[
         {"criteria": "Capstone Project Quality & Technical Defence", "max_points": 40},
         {"criteria": "GitHub Profile & Project Repositories Cleanup", "max_points": 20},
         {"criteria": "LinkedIn Branding, Headline & Project Pinned Assets", "max_points": 20},
         {"criteria": "Freelance Profile Readiness / Resume Polish", "max_points": 20}
     ]'::jsonb,
-    NOW() + INTERVAL '49 days',
+    NOW() + INTERVAL '35 days',
     TRUE
 )
 ON CONFLICT (cohort_id, module_number) DO UPDATE SET
