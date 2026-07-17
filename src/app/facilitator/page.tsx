@@ -50,7 +50,7 @@ interface SubmissionData {
 }
 
 export default function FacilitatorPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { showToast } = useNotifications();
   const [submissions, setSubmissions] = useState<SubmissionData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -193,13 +193,29 @@ export default function FacilitatorPage() {
   const fetchSubmissions = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('submissions')
-        .select(`
+      let selectQuery = `
+        *,
+        profiles:student_id (
+          full_name,
+          email,
+          cohort_id
+        ),
+        modules:module_id (
+          module_number,
+          title,
+          assignment_title,
+          assignment_deadline,
+          assignment_rubric
+        )
+      `;
+
+      if (profile?.cohort_id) {
+        selectQuery = `
           *,
-          profiles:student_id (
+          profiles:student_id!inner (
             full_name,
-            email
+            email,
+            cohort_id
           ),
           modules:module_id (
             module_number,
@@ -208,8 +224,18 @@ export default function FacilitatorPage() {
             assignment_deadline,
             assignment_rubric
           )
-        `)
-        .order('submission_date', { ascending: true });
+        `;
+      }
+
+      let query = supabase
+        .from('submissions')
+        .select(selectQuery);
+
+      if (profile?.cohort_id) {
+        query = query.eq('profiles.cohort_id', profile.cohort_id);
+      }
+
+      const { data, error } = await query.order('submission_date', { ascending: true });
 
       if (error) throw error;
       if (data) {

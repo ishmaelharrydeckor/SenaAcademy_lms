@@ -50,6 +50,7 @@ function EventDetailContent() {
   // Registration Form States
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -189,8 +190,13 @@ function EventDetailContent() {
   // 3. Handle Registration Submit
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !email) {
+    if (!fullName || !email || !confirmEmail) {
       setErrorMsg('Please fill in all fields.');
+      return;
+    }
+
+    if (email.toLowerCase().trim() !== confirmEmail.toLowerCase().trim()) {
+      setErrorMsg('Email addresses do not match.');
       return;
     }
 
@@ -494,6 +500,17 @@ function EventDetailContent() {
                     placeholder="you@domain.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={submitting}
+                  />
+
+                  <Input
+                    label="Confirm Email Address"
+                    id="rsvp-confirm-email"
+                    type="email"
+                    placeholder="you@domain.com"
+                    value={confirmEmail}
+                    onChange={(e) => setConfirmEmail(e.target.value)}
                     required
                     disabled={submitting}
                   />

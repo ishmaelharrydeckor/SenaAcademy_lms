@@ -24,6 +24,7 @@ function EnrollForm() {
   // Form states
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
   const [cohortId, setCohortId] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -56,8 +57,13 @@ function EnrollForm() {
 
   const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !email || !cohortId) {
+    if (!fullName || !email || !confirmEmail || !cohortId) {
       setErrorMsg('Please fill in all fields.');
+      return;
+    }
+
+    if (email.toLowerCase().trim() !== confirmEmail.toLowerCase().trim()) {
+      setErrorMsg('Email addresses do not match.');
       return;
     }
 
@@ -185,6 +191,17 @@ function EnrollForm() {
               placeholder="student@domain.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={submitting}
+            />
+
+            <Input
+              label="Confirm Student Email Address"
+              id="enroll-confirm-email"
+              type="email"
+              placeholder="student@domain.com"
+              value={confirmEmail}
+              onChange={(e) => setConfirmEmail(e.target.value)}
               required
               disabled={submitting}
             />

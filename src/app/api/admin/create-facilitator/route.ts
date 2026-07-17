@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Parse request parameters
-    const { fullName, email } = await request.json();
+    const { fullName, email, cohortId } = await request.json();
     if (!fullName || !email) {
       return NextResponse.json({ error: 'Bad Request: Missing fullName or email' }, { status: 400 });
     }
@@ -65,6 +65,7 @@ export async function POST(request: NextRequest) {
         email: email,
         full_name: fullName,
         role: 'facilitator',
+        cohort_id: cohortId || null,
       });
 
     if (profileErr) {

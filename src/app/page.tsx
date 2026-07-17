@@ -197,6 +197,7 @@ export default function LandingPage() {
   // Onboarding registration fields
   const [studentName, setStudentName] = useState('');
   const [studentPassword, setStudentPassword] = useState('');
+  const [confirmStudentPassword, setConfirmStudentPassword] = useState('');
 
   // Password reset request ticket fields
   const [resetEmail, setResetEmail] = useState('');
@@ -251,6 +252,10 @@ export default function LandingPage() {
   const handleRedeemRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validatedCodeData) return;
+    if (studentPassword !== confirmStudentPassword) {
+      showToast('Error', 'Passwords do not match.', 'error');
+      return;
+    }
     setSubmitting(true);
     try {
       const { success, error } = await redeemCode(
@@ -615,6 +620,15 @@ export default function LandingPage() {
                     placeholder="Minimum 6 characters"
                     value={studentPassword}
                     onChange={(e) => setStudentPassword(e.target.value)}
+                    required
+                  />
+                  <Input
+                    label="Confirm Password"
+                    id="confirmStudentPassword"
+                    type="password"
+                    placeholder="Verify your password"
+                    value={confirmStudentPassword}
+                    onChange={(e) => setConfirmStudentPassword(e.target.value)}
                     required
                   />
                 </div>
