@@ -307,7 +307,6 @@ create policy "Admins and facilitators can view all modules" on public.modules
 create policy "Students can view their cohort's visible modules" on public.modules
     for select using (
         is_visible = true
-        and unlock_date <= now()
         and cohort_id = (select cohort_id from public.profiles where id = auth.uid())
     );
 

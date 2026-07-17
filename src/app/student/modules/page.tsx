@@ -15,7 +15,8 @@ import {
   Code2, 
   Globe, 
   CheckCircle,
-  Sparkles
+  Sparkles,
+  Lock
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -81,6 +82,7 @@ export default function StudentModules() {
     }
   }, [selectedModule]);
   const [submission, setSubmission] = useState<Submission | null>(null);
+  const [studentSubmissionsMap, setStudentSubmissionsMap] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
 
   // Form Fields
@@ -107,26 +109,40 @@ export default function StudentModules() {
 
         if (error) throw error;
         if (data) {
-          // Filter unlocked modules based on unlock_date
-          const unlocked = (data as Module[]).filter(
-            (m) => new Date(m.unlock_date) <= new Date() && m.is_visible
-          );
-          setModules(unlocked);
+          // Filter to all visible modules
+          const visibleModules = (data as Module[]).filter((m) => m.is_visible);
+          setModules(visibleModules);
+
+          // Fetch student submissions to verify previous steps completion
+          const { data: subData, error: subError } = await supabase
+            .from('submissions')
+            .select('*')
+            .eq('student_id', user.id);
+
+          if (subError) throw subError;
+
+          const subMap: Record<string, any> = {};
+          if (subData) {
+            subData.forEach((sub) => {
+              subMap[sub.module_id] = sub;
+            });
+          }
+          setStudentSubmissionsMap(subMap);
 
           // Select module based on query param, fallback to sessionStorage, then first
           const queryId = searchParams.get('id');
           const storedModuleId = typeof window !== 'undefined' ? sessionStorage.getItem('student_selected_module_id') : null;
           
           if (queryId) {
-            const found = unlocked.find((m) => m.id === queryId);
+            const found = visibleModules.find((m) => m.id === queryId);
             if (found) setSelectedModule(found);
-            else if (unlocked.length > 0) setSelectedModule(unlocked[0]);
+            else if (visibleModules.length > 0) setSelectedModule(visibleModules[0]);
           } else if (storedModuleId) {
-            const found = unlocked.find((m) => m.id === storedModuleId);
+            const found = visibleModules.find((m) => m.id === storedModuleId);
             if (found) setSelectedModule(found);
-            else if (unlocked.length > 0) setSelectedModule(unlocked[0]);
-          } else if (unlocked.length > 0) {
-            setSelectedModule(unlocked[0]);
+            else if (visibleModules.length > 0) setSelectedModule(visibleModules[0]);
+          } else if (visibleModules.length > 0) {
+            setSelectedModule(visibleModules[0]);
           }
         }
       } catch (err) {
@@ -303,6 +319,10 @@ export default function StudentModules() {
       if (error) throw error;
       setSubmission(data as Submission);
       setSelectedFile(null);
+      setStudentSubmissionsMap((prev) => ({
+        ...prev,
+        [selectedModule.id]: data,
+      }));
       showToast('Success', 'Project uploaded successfully!', 'success');
     } catch (err: any) {
       showToast('Submit Failed', err.message || 'System error during upload', 'error');
@@ -322,6 +342,16 @@ export default function StudentModules() {
     );
   }
 
+  const isModuleLocked = (mod: Module) => {
+    if (mod.module_number <= 1) return false;
+    // Find the previous module in the list
+    const prevMod = modules.find((m) => m.module_number === mod.module_number - 1);
+    if (!prevMod) return false;
+    const prevSub = studentSubmissionsMap[prevMod.id];
+    // Locked if no submission or if status is not submitted or graded
+    return !prevSub || (prevSub.status !== 'submitted' && prevSub.status !== 'graded');
+  };
+
   const deadlineDate = selectedModule ? new Date(selectedModule.assignment_deadline) : null;
   const isDeadlinePassed = deadlineDate ? new Date() > deadlineDate : false;
   const isGraded = submission?.status === 'graded';
@@ -337,6 +367,7 @@ export default function StudentModules() {
         <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary mb-4 px-1">Curriculum</h3>
         {modules.map((mod) => {
           const isSelected = selectedModule?.id === mod.id;
+          const locked = isModuleLocked(mod);
           return (
             <button
               key={mod.id}
@@ -351,10 +382,16 @@ export default function StudentModules() {
               }`}
             >
               <div className="flex flex-col gap-0.5">
-                <span className="text-[10px] font-mono tracking-wider text-text-secondary">MODULE {mod.module_number}</span>
+                <span className="text-[10px] font-mono tracking-wider text-text-secondary flex items-center gap-1">
+                  MODULE {mod.module_number} {locked && <Lock className="h-2.5 w-2.5 text-text-secondary/70 inline" />}
+                </span>
                 <span className="text-xs truncate max-w-[120px]">{mod.title}</span>
               </div>
-              <ChevronRight className={`h-4 w-4 ${isSelected ? 'text-accent-primary' : 'text-text-secondary'}`} />
+              {locked ? (
+                <Lock className="h-3.5 w-3.5 text-text-secondary/50" />
+              ) : (
+                <ChevronRight className={`h-4 w-4 ${isSelected ? 'text-accent-primary' : 'text-text-secondary'}`} />
+              )}
             </button>
           );
         })}
@@ -502,8 +539,18 @@ export default function StudentModules() {
               </div>
             </div>
 
-            {/* Submission Form OR Read-Only Submitted Status */}
-            {canSubmit ? (
+            {/* Submission Form OR Read-Only Submitted Status OR Locked State */}
+            {isModuleLocked(selectedModule) ? (
+              <div className="p-6 rounded-xl border border-border-brand bg-bg-surface/50 flex flex-col items-center justify-center text-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-bg-canvas border border-border-brand flex items-center justify-center text-text-secondary">
+                  <Lock className="h-4.5 w-4.5" />
+                </div>
+                <h4 className="text-xs font-bold text-text-primary uppercase tracking-wider">Assignment Locked</h4>
+                <p className="text-xs text-text-secondary max-w-sm">
+                  This module's assignment is locked. Please submit the assignment for **Module {selectedModule.module_number - 1}** to unlock this project submission.
+                </p>
+              </div>
+            ) : canSubmit ? (
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 {isResubmissionRequired && (
                   <div className="p-4 rounded-xl bg-warning-brand/5 border border-warning-brand/20 text-warning-brand text-xs">
