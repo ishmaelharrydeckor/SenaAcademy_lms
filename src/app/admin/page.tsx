@@ -163,6 +163,10 @@ export default function AdminPage() {
   const [editingCohortId, setEditingCohortId] = useState<string | null>(null);
 
   // Module Form
+  const [modCohortId, setModCohortId] = useState('');
+  const [moduleCohortFilter, setModuleCohortFilter] = useState('');
+  const [duplicateCohortSourceId, setDuplicateCohortSourceId] = useState('');
+  const [facCohortId, setFacCohortId] = useState('');
   const [modNum, setModNum] = useState('');
   const [modTitle, setModTitle] = useState('');
   const [modDesc, setModDesc] = useState('');
@@ -664,7 +668,7 @@ export default function AdminPage() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ fullName: facName.trim(), email: facEmail.trim() }),
+        body: JSON.stringify({ fullName: facName.trim(), email: facEmail.trim(), cohortId: facCohortId || null }),
       });
 
       const result = await res.json();
@@ -675,11 +679,31 @@ export default function AdminPage() {
       showToast('Facilitator Created', result.message || 'Facilitator account successfully created.', 'success');
       setFacName('');
       setFacEmail('');
+      setFacCohortId('');
       await fetchInitialData();
     } catch (err: any) {
       showToast('Onboarding Failed', err.message || 'Could not onboard facilitator.', 'error');
     } finally {
       setFacSubmitting(false);
+    }
+  };
+
+  const handleUpdateFacilitatorCohort = async (facId: string, cohortId: string) => {
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ cohort_id: cohortId || null })
+        .eq('id', facId);
+
+      if (error) throw error;
+
+      showToast('Facilitator Updated', 'Assigned cohort successfully updated.', 'success');
+      await fetchInitialData();
+    } catch (err: any) {
+      showToast('Error', err.message || 'Failed to update facilitator.', 'error');
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -763,19 +787,61 @@ export default function AdminPage() {
         showToast('Cohort Updated', `Successfully updated ${cohortName}`, 'success');
       } else {
         // Create new cohort
-        const { error } = await supabase.from('cohorts').insert([
-          {
-            name: cohortName,
-            start_date: cohortStart,
-            end_date: cohortEnd,
-            max_students: parseInt(cohortMax),
-            status: cohortStatus,
-            price: parseFloat(cohortPrice),
-          },
-        ]);
+        const { data: newCohortData, error } = await supabase
+          .from('cohorts')
+          .insert([
+            {
+              name: cohortName,
+              start_date: cohortStart,
+              end_date: cohortEnd,
+              max_students: parseInt(cohortMax),
+              status: cohortStatus,
+              price: parseFloat(cohortPrice),
+            },
+          ])
+          .select();
 
         if (error) throw error;
-        showToast('Cohort Created', `Successfully initialized ${cohortName}`, 'success');
+        const newCohort = newCohortData?.[0];
+
+        if (newCohort && duplicateCohortSourceId) {
+          // Fetch source modules
+          const { data: sourceModules, error: fetchModulesErr } = await supabase
+            .from('modules')
+            .select('*')
+            .eq('cohort_id', duplicateCohortSourceId);
+
+          if (fetchModulesErr) throw fetchModulesErr;
+
+          if (sourceModules && sourceModules.length > 0) {
+            const duplicatedModules = sourceModules.map((m) => ({
+              cohort_id: newCohort.id,
+              module_number: m.module_number,
+              title: m.title,
+              description: m.description,
+              learning_outcomes: m.learning_outcomes,
+              objectives: m.objectives,
+              resources: m.resources,
+              assignment_title: m.assignment_title,
+              assignment_description: m.assignment_description,
+              assignment_deadline: m.assignment_deadline,
+              assignment_rubric: m.assignment_rubric,
+              unlock_date: m.unlock_date,
+              is_visible: m.is_visible,
+            }));
+
+            const { error: duplicateErr } = await supabase
+              .from('modules')
+              .insert(duplicatedModules);
+
+            if (duplicateErr) throw duplicateErr;
+            showToast('Cohort & Modules Created', `Successfully initialized ${cohortName} and duplicated ${sourceModules.length} modules.`, 'success');
+          } else {
+            showToast('Cohort Created', `Successfully initialized ${cohortName} (source cohort had no modules to duplicate).`, 'success');
+          }
+        } else {
+          showToast('Cohort Created', `Successfully initialized ${cohortName}`, 'success');
+        }
       }
       
       // Reset form & state
@@ -786,6 +852,7 @@ export default function AdminPage() {
       setCohortStatus('upcoming');
       setCohortPrice('100');
       setEditingCohortId(null);
+      setDuplicateCohortSourceId('');
       
       await fetchInitialData();
     } catch (err: any) {
@@ -828,6 +895,7 @@ export default function AdminPage() {
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('admin_editing_module_id');
     }
+    setModCohortId('');
     setModNum('');
     setModTitle('');
     setModDesc('');
@@ -858,11 +926,12 @@ export default function AdminPage() {
     return localDate.toISOString().slice(0, 16);
   };
 
-  const handleEditModule = (m: Module) => {
+  const handleEditModule = (m: any) => {
     setEditingModuleId(m.id);
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('admin_editing_module_id', m.id);
     }
+    setModCohortId(m.cohort_id || '');
     setModNum(m.module_number.toString());
     setModTitle(m.title);
     setModDesc(m.description);
@@ -908,8 +977,8 @@ export default function AdminPage() {
   // Module creation / modification
   const handleModuleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!modNum || !modTitle || !modDesc || !modAssignTitle || !modAssignDesc || !modAssignDeadline || !modUnlockDate) {
-      showToast('Form Error', 'Please satisfy all required fields.', 'warning');
+    if (!modCohortId || !modNum || !modTitle || !modDesc || !modAssignTitle || !modAssignDesc || !modAssignDeadline || !modUnlockDate) {
+      showToast('Form Error', 'Please satisfy all required fields, including cohort selection.', 'warning');
       return;
     }
 
@@ -919,6 +988,7 @@ export default function AdminPage() {
         const { error } = await supabase
           .from('modules')
           .update({
+            cohort_id: modCohortId,
             module_number: parseInt(modNum),
             title: modTitle,
             description: modDesc,
@@ -939,6 +1009,7 @@ export default function AdminPage() {
       } else {
         const { error } = await supabase.from('modules').insert([
           {
+            cohort_id: modCohortId,
             module_number: parseInt(modNum),
             title: modTitle,
             description: modDesc,
@@ -1397,6 +1468,24 @@ export default function AdminPage() {
                   </select>
                 </div>
 
+                {!editingCohortId && (
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-medium text-text-secondary">Duplicate Modules From (Optional)</label>
+                    <select
+                      value={duplicateCohortSourceId}
+                      onChange={(e) => setDuplicateCohortSourceId(e.target.value)}
+                      className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas"
+                    >
+                      <option value="">Do not duplicate</option>
+                      {cohorts.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name} {c.is_archived ? '(Archived)' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <div className="flex gap-2">
                   <Button type="submit" className="flex-1 text-xs" disabled={actionLoading}>
                     {editingCohortId ? 'Save Changes' : 'Create Cohort'}
@@ -1698,6 +1787,22 @@ export default function AdminPage() {
                   required
                 />
 
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-text-secondary">Assigned Cohort (Optional)</label>
+                  <select
+                    value={facCohortId}
+                    onChange={(e) => setFacCohortId(e.target.value)}
+                    className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas"
+                  >
+                    <option value="">None (Sees all submissions)</option>
+                    {cohorts.filter(c => !c.is_archived).map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <Button type="submit" className="w-full text-xs bg-supporting-purple hover:bg-purple-750" disabled={facSubmitting}>
                   {facSubmitting ? 'Creating Account...' : 'Onboard Facilitator'}
                 </Button>
@@ -1715,6 +1820,7 @@ export default function AdminPage() {
                   <tr className="border-b border-border-brand bg-bg-surface-hover/20 text-text-primary font-semibold">
                     <th className="p-4">Name</th>
                     <th className="p-4">Email</th>
+                    <th className="p-4">Assigned Cohort</th>
                     <th className="p-4">Created Date</th>
                   </tr>
                 </thead>
@@ -1724,13 +1830,34 @@ export default function AdminPage() {
                       <td className="p-4 font-semibold text-text-primary">{fac.full_name}</td>
                       <td className="p-4 text-text-secondary font-mono">{fac.email}</td>
                       <td className="p-4 text-text-secondary">
+                        <div className="flex flex-col gap-1 max-w-[200px]">
+                          <select
+                            value={fac.cohort_id || ''}
+                            onChange={(e) => handleUpdateFacilitatorCohort(fac.id, e.target.value)}
+                            className="glass-input text-[11px] text-text-primary rounded p-1 bg-bg-canvas border border-border-brand w-full"
+                          >
+                            <option value="">No cohort (All Submissions)</option>
+                            {cohorts.map((c) => (
+                              <option key={c.id} value={c.id}>
+                                {c.name} {c.is_archived ? '(Archived)' : ''}
+                              </option>
+                            ))}
+                          </select>
+                          {!fac.cohort_id && (
+                            <span className="text-[9px] text-yellow-500 font-medium">
+                              ⚠️ No cohort assigned — sees all submissions
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="p-4 text-text-secondary">
                         {new Date(fac.created_at).toLocaleDateString()}
                       </td>
                     </tr>
                   ))}
                   {facilitators.length === 0 && (
                     <tr>
-                      <td colSpan={3} className="p-8 text-center text-text-secondary italic">
+                      <td colSpan={4} className="p-8 text-center text-text-secondary italic">
                         No facilitator accounts registered yet.
                       </td>
                     </tr>
@@ -1752,6 +1879,23 @@ export default function AdminPage() {
                 {editingModuleId ? 'Edit Module' : 'Create Module'}
               </span>
               <form onSubmit={handleModuleSubmit} className="space-y-4 max-h-[600px] overflow-y-auto pr-1">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-medium text-text-secondary">Target Cohort</label>
+                  <select
+                    value={modCohortId}
+                    onChange={(e) => setModCohortId(e.target.value)}
+                    required
+                    className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas"
+                  >
+                    <option value="">Select Cohort...</option>
+                    {cohorts.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name} {c.is_archived ? '(Archived)' : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <Input
                   label="Module Number"
                   id="m-num"
@@ -2041,44 +2185,75 @@ export default function AdminPage() {
 
           {/* List panel */}
           <div className="lg:col-span-2 space-y-4">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary">Modules Published</h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h3 className="text-xs font-mono uppercase tracking-widest text-text-secondary">Modules Published</h3>
+              <div className="flex items-center gap-2">
+                <label className="text-xs font-medium text-text-secondary whitespace-nowrap">Filter by Cohort:</label>
+                <select
+                  value={moduleCohortFilter}
+                  onChange={(e) => setModuleCohortFilter(e.target.value)}
+                  className="glass-input text-xs text-text-primary rounded-lg p-1.5 bg-bg-canvas"
+                >
+                  <option value="">All Cohorts</option>
+                  {cohorts.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} {c.is_archived ? '(Archived)' : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 gap-3">
-              {modules.map((m) => (
-                <div key={m.id} className="glass-panel p-5 rounded-xl border border-border-brand flex justify-between items-center gap-4">
-                  <div className="space-y-1 min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-text-secondary uppercase">Module {m.module_number}</span>
-                      <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded uppercase font-semibold ${
-                        m.is_visible ? 'bg-primary-blue/10 text-primary-blue' : 'bg-bg-surface-hover text-text-secondary'
-                      }`}>
-                        {m.is_visible ? 'Visible' : 'Hidden'}
-                      </span>
+              {(() => {
+                const filteredModules = moduleCohortFilter
+                  ? modules.filter((m: any) => m.cohort_id === moduleCohortFilter)
+                  : modules;
+
+                return filteredModules.map((m: any) => {
+                  const cohort = cohorts.find((c) => c.id === m.cohort_id);
+                  return (
+                    <div key={m.id} className="glass-panel p-5 rounded-xl border border-border-brand flex justify-between items-center gap-4">
+                      <div className="space-y-1 min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[10px] font-mono text-text-secondary uppercase">Module {m.module_number}</span>
+                          <span className="h-1 w-1 rounded-full bg-border-brand"></span>
+                          <span className="text-[10px] font-mono text-accent-primary bg-primary-blue/5 px-1.5 py-0.2 rounded">
+                            {cohort ? cohort.name : 'Unknown Cohort'}
+                          </span>
+                          <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded uppercase font-semibold ${
+                            m.is_visible ? 'bg-primary-blue/10 text-primary-blue' : 'bg-bg-surface-hover text-text-secondary'
+                          }`}>
+                            {m.is_visible ? 'Visible' : 'Hidden'}
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-semibold text-text-primary truncate">{m.title}</h4>
+                        <p className="text-[10px] text-text-secondary truncate">
+                          Rubric Criteria: {m.assignment_rubric.map((r: any) => r.criteria).join(', ') || 'None'}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => handleEditModule(m)}
+                          className="text-[10px] px-2.5 py-1"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => handleDeleteModule(m.id, m.module_number, m.title)}
+                          className="text-[10px] px-2.5 py-1"
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </div>
-                    <h4 className="text-sm font-semibold text-text-primary truncate">{m.title}</h4>
-                    <p className="text-[10px] text-text-secondary truncate">
-                      Rubric Criteria: {m.assignment_rubric.map((r) => r.criteria).join(', ') || 'None'}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() => handleEditModule(m)}
-                      className="text-[10px] px-2.5 py-1"
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="danger"
-                      onClick={() => handleDeleteModule(m.id, m.module_number, m.title)}
-                      className="text-[10px] px-2.5 py-1"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                  );
+                });
+              })()}
             </div>
           </div>
         </div>

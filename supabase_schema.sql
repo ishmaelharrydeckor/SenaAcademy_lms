@@ -154,7 +154,8 @@ $$ language plpgsql security definer;
 --------------------------------------------------------------------------------
 create table if not exists public.modules (
     id uuid default gen_random_uuid() primary key,
-    module_number integer unique not null,
+    cohort_id uuid references public.cohorts(id) on delete cascade not null,
+    module_number integer not null,
     title text not null,
     description text not null,
     learning_outcomes text[] default '{}'::text[] not null,
@@ -166,7 +167,8 @@ create table if not exists public.modules (
     assignment_rubric jsonb default '[]'::jsonb not null,
     unlock_date timestamp with time zone not null,
     is_visible boolean default true not null,
-    created_at timestamp with time zone default now() not null
+    created_at timestamp with time zone default now() not null,
+    unique (cohort_id, module_number)
 );
 
 --------------------------------------------------------------------------------
@@ -237,6 +239,7 @@ create table if not exists public.payments (
 create index if not exists idx_submissions_student_id on public.submissions(student_id);
 create index if not exists idx_submissions_module_id on public.submissions(module_id);
 create index if not exists idx_profiles_cohort_id on public.profiles(cohort_id);
+create index if not exists idx_modules_cohort_id on public.modules(cohort_id);
 create index if not exists idx_access_codes_status on public.access_codes(status);
 create index if not exists idx_payments_reference on public.payments(paystack_reference);
 
@@ -298,10 +301,14 @@ create policy "Admins have full control of access codes" on public.access_codes
 
 -- Modules Policies
 drop policy if exists "Users can view unlocked visible modules" on public.modules;
-create policy "Users can view unlocked visible modules" on public.modules
+create policy "Admins and facilitators can view all modules" on public.modules
+    for select using (public.get_user_role() in ('admin', 'facilitator'));
+
+create policy "Students can view their cohort's visible modules" on public.modules
     for select using (
-        public.get_user_role() in ('admin', 'facilitator') or
-        (is_visible = true and unlock_date <= now())
+        is_visible = true
+        and unlock_date <= now()
+        and cohort_id = (select cohort_id from public.profiles where id = auth.uid())
     );
 
 drop policy if exists "Admins have full control of modules" on public.modules;
@@ -310,10 +317,21 @@ create policy "Admins have full control of modules" on public.modules
 
 -- Submissions Policies
 drop policy if exists "Students can view their own submissions, facilitators/admins view all" on public.submissions;
-create policy "Students can view their own submissions, facilitators/admins view all" on public.submissions
+drop policy if exists "Submissions select policy" on public.submissions;
+create policy "Submissions select policy" on public.submissions
     for select using (
         student_id = auth.uid() or
-        public.get_user_role() in ('admin', 'facilitator')
+        public.get_user_role() = 'admin' or
+        (
+            public.get_user_role() = 'facilitator' and
+            (
+                (select cohort_id from public.profiles where id = auth.uid()) is null or
+                student_id in (
+                    select id from public.profiles
+                    where cohort_id = (select cohort_id from public.profiles where id = auth.uid())
+                )
+            )
+        )
     );
 
 drop policy if exists "Students can create submissions" on public.submissions;
@@ -324,16 +342,38 @@ create policy "Students can create submissions" on public.submissions
     );
 
 drop policy if exists "Students can update their submissions, facilitators/admins can grade" on public.submissions;
-create policy "Students can update their submissions, facilitators/admins can grade" on public.submissions
+drop policy if exists "Submissions update policy" on public.submissions;
+create policy "Submissions update policy" on public.submissions
     for update using (
         (student_id = auth.uid() and status != 'graded') or
-        public.get_user_role() in ('admin', 'facilitator')
+        public.get_user_role() = 'admin' or
+        (
+            public.get_user_role() = 'facilitator' and
+            (
+                (select cohort_id from public.profiles where id = auth.uid()) is null or
+                student_id in (
+                    select id from public.profiles
+                    where cohort_id = (select cohort_id from public.profiles where id = auth.uid())
+                )
+            )
+        )
     );
 
 drop policy if exists "Admins and facilitators can delete submissions" on public.submissions;
-create policy "Admins and facilitators can delete submissions" on public.submissions
+drop policy if exists "Submissions delete policy" on public.submissions;
+create policy "Submissions delete policy" on public.submissions
     for delete using (
-        public.get_user_role() in ('admin', 'facilitator')
+        public.get_user_role() = 'admin' or
+        (
+            public.get_user_role() = 'facilitator' and
+            (
+                (select cohort_id from public.profiles where id = auth.uid()) is null or
+                student_id in (
+                    select id from public.profiles
+                    where cohort_id = (select cohort_id from public.profiles where id = auth.uid())
+                )
+            )
+        )
     );
 
 -- Announcements Policies
