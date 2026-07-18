@@ -381,10 +381,6 @@ export default function AdminPage() {
     }
   };
 
-  useEffect(() => {
-    fetchInitialData();
-  }, []);
-
   const fetchInitialData = async () => {
     setLoading(true);
     try {
@@ -541,6 +537,10 @@ export default function AdminPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchInitialData();
+  }, []);
 
   const handleExportTable = async (tableName: string, eventId?: string) => {
     setExportLoading(true);
