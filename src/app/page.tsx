@@ -136,21 +136,9 @@ export default function LandingPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authTab, setAuthTab] = useState<'login' | 'redeem_code' | 'redeem_register' | 'forgot_password' | 'enrollment_coming_soon'>('login');
   
-  // Check if we are on staging, preview, or local environments to test enrollment checkout
-  const isStagingOrLocal = typeof window !== 'undefined' && (
-    window.location.hostname.includes('localhost') || 
-    window.location.hostname.includes('staging') ||
-    window.location.hostname.includes('vercel.app')
-  );
-
   const handleBecomeBuilderClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (isStagingOrLocal) {
-      router.push('/enroll');
-    } else {
-      setAuthTab('enrollment_coming_soon');
-      setShowAuthModal(true);
-    }
+    router.push('/enroll');
   };
 
   // Roadmap detail step modal state
