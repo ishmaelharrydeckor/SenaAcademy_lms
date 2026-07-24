@@ -3179,7 +3179,9 @@ export default function AdminPage() {
                     <FileSpreadsheet className="h-3.5 w-3.5 text-primary-blue" />
                     {exportLoading ? 'Exporting...' : 'Export RSVPs (CSV)'}
                   </Button>
-                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
                     <h3 className="text-base font-bold text-text-primary">{selectedEvent.title} RSVP Registry</h3>
                     <p className="text-[11px] text-text-secondary">
@@ -3378,7 +3380,7 @@ export default function AdminPage() {
                       </div>
                     )}
                   </div>
-                </div>      </div>
+                </div>
               </div>
             )}
           </div>
