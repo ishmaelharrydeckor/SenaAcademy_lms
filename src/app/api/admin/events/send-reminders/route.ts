@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    // 3. Get eventId from request
-    const { eventId } = await request.json();
+    // 3. Get eventId and recipientGroup from request
+    const { eventId, recipientGroup = 'all' } = await request.json();
     if (!eventId) {
       return NextResponse.json({ error: 'Bad Request: Missing eventId' }, { status: 400 });
     }
@@ -50,32 +50,38 @@ export async function POST(request: NextRequest) {
     }
 
     // 5. Fetch confirmed registrants (payment_status is paid or not_required)
-    const { data: registrants, error: regError } = await supabaseAdmin
-      .from('event_registrations')
-      .select('*')
-      .eq('event_id', eventId)
-      .in('payment_status', ['paid', 'not_required']);
+    let registrants: any[] = [];
+    if (recipientGroup === 'all' || recipientGroup === 'registrants') {
+      const { data: regData, error: regError } = await supabaseAdmin
+        .from('event_registrations')
+        .select('*')
+        .eq('event_id', eventId)
+        .in('payment_status', ['paid', 'not_required']);
 
-    if (regError) {
-      console.error('Error fetching event registrants:', regError.message);
-      return NextResponse.json({ error: 'Failed to fetch event registrants' }, { status: 500 });
+      if (regError) {
+        console.error('Error fetching event registrants:', regError.message);
+        return NextResponse.json({ error: 'Failed to fetch event registrants' }, { status: 500 });
+      }
+      if (regData) registrants = regData;
     }
 
     // 6. Fetch waitlisted users (try event_waitlist, fallback to empty array if table not created yet)
     let waitlist: any[] = [];
-    try {
-      const { data: waitlistData, error: wlError } = await supabaseAdmin
-        .from('event_waitlist')
-        .select('*')
-        .eq('event_id', eventId);
-      
-      if (!wlError && waitlistData) {
-        waitlist = waitlistData;
-      } else if (wlError) {
-        console.warn('Could not fetch from event_waitlist (table may not be created yet):', wlError.message);
+    if (recipientGroup === 'all' || recipientGroup === 'waitlist') {
+      try {
+        const { data: waitlistData, error: wlError } = await supabaseAdmin
+          .from('event_waitlist')
+          .select('*')
+          .eq('event_id', eventId);
+        
+        if (!wlError && waitlistData) {
+          waitlist = waitlistData;
+        } else if (wlError) {
+          console.warn('Could not fetch from event_waitlist (table may not be created yet):', wlError.message);
+        }
+      } catch (e) {
+        console.error('Exception reading event_waitlist:', e);
       }
-    } catch (e) {
-      console.error('Exception reading event_waitlist:', e);
     }
 
     console.log(`Admin dispatching reminders for Event "${event.title}". Registrants: ${registrants.length}, Waitlist: ${waitlist.length}`);

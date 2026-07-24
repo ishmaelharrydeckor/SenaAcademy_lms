@@ -220,6 +220,7 @@ export default function AdminPage() {
   const [wlCsvText, setWlCsvText] = useState('');
   const [importingWl, setImportingWl] = useState(false);
   const [showWlImportForm, setShowWlImportForm] = useState(false);
+  const [clearingWl, setClearingWl] = useState(false);
 
   // Event Form States
   const [eventTitle, setEventTitle] = useState('');
@@ -283,8 +284,14 @@ export default function AdminPage() {
     }
   };
 
-  const handleSendReminders = async (eventId: string) => {
-    if (!window.confirm('Are you sure you want to dispatch event reminder emails to all confirmed registrants and waitlist members for tomorrow?')) {
+  const handleSendReminders = async (eventId: string, recipientGroup: 'all' | 'registrants' | 'waitlist' = 'all') => {
+    const groupLabel = recipientGroup === 'all' 
+      ? 'registrants and waitlist members' 
+      : recipientGroup === 'registrants' 
+      ? 'registrants' 
+      : 'waitlist members';
+
+    if (!window.confirm(`Are you sure you want to dispatch event reminder emails to all confirmed ${groupLabel} for tomorrow?`)) {
       return;
     }
     setSendingReminders(true);
@@ -303,7 +310,7 @@ export default function AdminPage() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ eventId })
+        body: JSON.stringify({ eventId, recipientGroup })
       });
 
       const data = await res.json();
@@ -311,9 +318,10 @@ export default function AdminPage() {
         throw new Error(data.error || 'Failed to dispatch reminders.');
       }
 
+      const totalSent = (data.summary?.registrants?.sent || 0) + (data.summary?.waitlist?.sent || 0);
       showToast(
         'Reminders Dispatched', 
-        `Successfully sent ${data.summary.registrants.sent} reminders and ${data.summary.waitlist.sent} waitlist updates!`, 
+        `Successfully sent ${totalSent} updates!`, 
         'success'
       );
     } catch (err: any) {
@@ -321,6 +329,29 @@ export default function AdminPage() {
       showToast('Dispatch Failed', err.message || 'Server returned an error.', 'error');
     } finally {
       setSendingReminders(false);
+    }
+  };
+
+  const handleClearWaitlist = async (eventId: string) => {
+    if (!window.confirm('Are you sure you want to permanently clear all waitlist entries for this event? This action cannot be undone.')) {
+      return;
+    }
+    setClearingWl(true);
+    try {
+      const { error } = await supabase
+        .from('event_waitlist')
+        .delete()
+        .eq('event_id', eventId);
+
+      if (error) throw error;
+
+      showToast('Waitlist Cleared', 'Successfully deleted all waitlist entries for this event.', 'success');
+      await fetchWaitlist(eventId);
+    } catch (err: any) {
+      console.error('Failed to clear waitlist:', err);
+      showToast('Clear Failed', err.message || 'Could not delete waitlist entries.', 'error');
+    } finally {
+      setClearingWl(false);
     }
   };
 
@@ -3395,16 +3426,36 @@ export default function AdminPage() {
                       </table>
                     ) : (
                       <div className="space-y-4 p-4">
-                        <div className="flex justify-between items-center">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border-brand/40 pb-3">
                           <span className="text-[10px] font-mono uppercase tracking-wider text-text-secondary">
                             Waitlist Records ({waitlistList.length})
                           </span>
-                          <Button
-                            onClick={() => setShowWlImportForm(!showWlImportForm)}
-                            className="text-[10px] px-2.5 py-1 bg-bg-surface-hover border border-border-brand"
-                          >
-                            {showWlImportForm ? 'Close Import Tool' : 'Import from Google Sheets / CSV'}
-                          </Button>
+                          <div className="flex flex-wrap gap-2">
+                            {waitlistList.length > 0 && (
+                              <>
+                                <Button
+                                  onClick={() => handleSendReminders(selectedEvent.id, 'waitlist')}
+                                  className="text-[10px] px-2.5 py-1 bg-primary-blue hover:bg-blue-650"
+                                  disabled={sendingReminders}
+                                >
+                                  Notify Waitlist
+                                </Button>
+                                <Button
+                                  onClick={() => handleClearWaitlist(selectedEvent.id)}
+                                  className="text-[10px] px-2.5 py-1 bg-red-650 hover:bg-red-700 text-white border-none"
+                                  disabled={clearingWl}
+                                >
+                                  {clearingWl ? 'Clearing...' : 'Clear Waitlist'}
+                                </Button>
+                              </>
+                            )}
+                            <Button
+                              onClick={() => setShowWlImportForm(!showWlImportForm)}
+                              className="text-[10px] px-2.5 py-1 bg-bg-surface-hover border border-border-brand"
+                            >
+                              {showWlImportForm ? 'Close Import Tool' : 'Import CSV / Google Sheets'}
+                            </Button>
+                          </div>
                         </div>
 
                         {showWlImportForm && (
