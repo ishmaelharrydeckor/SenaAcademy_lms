@@ -80,33 +80,35 @@ export async function POST(request: NextRequest) {
 
     console.log(`Admin dispatching reminders for Event "${event.title}". Registrants: ${registrants.length}, Waitlist: ${waitlist.length}`);
 
-    // 7. Dispatch emails in parallel/batches
+    // 7. Dispatch emails sequentially with a delay to respect Resend free tier rate limits (10 reqs/sec)
     let sentRegistrants = 0;
     let failedRegistrants = 0;
     let sentWaitlist = 0;
     let failedWaitlist = 0;
 
+    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
     // Send to registrants
-    const registrantPromises = registrants.map(async (reg) => {
+    for (const reg of registrants) {
       const result = await sendEventReminderEmail(reg.email, reg.full_name, event);
       if (result.success) {
         sentRegistrants++;
       } else {
         failedRegistrants++;
       }
-    });
+      await delay(150);
+    }
 
     // Send to waitlist
-    const waitlistPromises = waitlist.map(async (wl) => {
+    for (const wl of waitlist) {
       const result = await sendEventWaitlistEmail(wl.email, wl.full_name, event);
       if (result.success) {
         sentWaitlist++;
       } else {
         failedWaitlist++;
       }
-    });
-
-    await Promise.all([...registrantPromises, ...waitlistPromises]);
+      await delay(150);
+    }
 
     return NextResponse.json({
       success: true,
