@@ -4,6 +4,8 @@ import { AccessCodeEmail } from '../../emails/AccessCodeEmail';
 import { PasswordResetEmail } from '../../emails/PasswordResetEmail';
 import { FacilitatorOnboardingEmail } from '../../emails/FacilitatorOnboardingEmail';
 import { EventRegistrationEmail } from '../../emails/EventRegistrationEmail';
+import { EventReminderEmail } from '../../emails/EventReminderEmail';
+import { EventWaitlistEmail } from '../../emails/EventWaitlistEmail';
 
 // Initialize Resend SDK lazily to prevent errors at import/build time
 let resendClient: Resend | null = null;
@@ -218,6 +220,136 @@ export async function sendEventRegistrationEmail(
     return { success: true, messageId: data?.id };
   } catch (err: any) {
     console.error('Error sending event registration email via Resend:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * Sends event reminder to a registered attendee.
+ */
+export async function sendEventReminderEmail(
+  toEmail: string,
+  registrantName: string,
+  event: {
+    title: string;
+    start_time: string;
+    end_time: string;
+    event_type: 'online' | 'in_person' | string;
+    location?: string | null;
+    meeting_link?: string | null;
+  }
+): Promise<{ success: boolean; messageId?: string; error?: any }> {
+  try {
+    console.log(`Sending event reminder email via Resend to: ${toEmail}`);
+    
+    // Format event date
+    const start = new Date(event.start_time);
+    const end = new Date(event.end_time);
+    const optionsDate: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    };
+    const optionsTime: Intl.DateTimeFormatOptions = { 
+      hour: 'numeric', 
+      minute: '2-digit', 
+      hour12: true 
+    };
+    
+    const formattedDate = start.toLocaleDateString('en-US', optionsDate);
+    const startTime = start.toLocaleTimeString('en-US', optionsTime);
+    const endTime = end.toLocaleTimeString('en-US', optionsTime);
+    const eventDate = `${formattedDate} from ${startTime} to ${endTime}`;
+
+    const { data, error } = await getResend().emails.send({
+      from: getSenderEmail(),
+      to: toEmail,
+      subject: `Reminder: ${event.title} is tomorrow! 🎉`,
+      react: (
+        <EventReminderEmail
+          registrantName={registrantName}
+          eventTitle={event.title}
+          eventDate={eventDate}
+          eventType={event.event_type as 'online' | 'in_person'}
+          location={event.location}
+          meetingLink={event.meeting_link}
+          email={toEmail}
+        />
+      ),
+    });
+
+    if (error) {
+      console.error('Error sending event reminder email via Resend:', error);
+      return { success: false, error };
+    }
+
+    console.log('Event reminder email sent successfully:', data?.id);
+    return { success: true, messageId: data?.id };
+  } catch (err: any) {
+    console.error('Error sending event reminder email via Resend:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * Sends waitlist reminder update to a user.
+ */
+export async function sendEventWaitlistEmail(
+  toEmail: string,
+  registrantName: string,
+  event: {
+    title: string;
+    start_time: string;
+    end_time: string;
+  }
+): Promise<{ success: boolean; messageId?: string; error?: any }> {
+  try {
+    console.log(`Sending event waitlist email via Resend to: ${toEmail}`);
+    
+    // Format event date
+    const start = new Date(event.start_time);
+    const end = new Date(event.end_time);
+    const optionsDate: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    };
+    const optionsTime: Intl.DateTimeFormatOptions = { 
+      hour: 'numeric', 
+      minute: '2-digit', 
+      hour12: true 
+    };
+    
+    const formattedDate = start.toLocaleDateString('en-US', optionsDate);
+    const startTime = start.toLocaleTimeString('en-US', optionsTime);
+    const endTime = end.toLocaleTimeString('en-US', optionsTime);
+    const eventDate = `${formattedDate} from ${startTime} to ${endTime}`;
+
+    const { data, error } = await getResend().emails.send({
+      from: getSenderEmail(),
+      to: toEmail,
+      subject: `Waitlist Update: ${event.title} tomorrow`,
+      react: (
+        <EventWaitlistEmail
+          registrantName={registrantName}
+          eventTitle={event.title}
+          eventDate={eventDate}
+          email={toEmail}
+        />
+      ),
+    });
+
+    if (error) {
+      console.error('Error sending event waitlist email via Resend:', error);
+      return { success: false, error };
+    }
+
+    console.log('Event waitlist email sent successfully:', data?.id);
+    return { success: true, messageId: data?.id };
+  } catch (err: any) {
+    console.error('Error sending event waitlist email via Resend:', err);
     return { success: false, error: err };
   }
 }

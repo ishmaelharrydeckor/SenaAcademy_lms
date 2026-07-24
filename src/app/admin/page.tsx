@@ -209,8 +209,15 @@ export default function AdminPage() {
   const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
   const [registrants, setRegistrants] = useState<any[]>([]);
   const [loadingRegistrants, setLoadingRegistrants] = useState(false);
+  const [waitlistList, setWaitlistList] = useState<any[]>([]);
+  const [loadingWaitlist, setLoadingWaitlist] = useState(false);
+  const [rsvpActiveTab, setRsvpActiveTab] = useState<'attendees' | 'waitlist'>('attendees');
+  const [sendingReminders, setSendingReminders] = useState(false);
   const [editingModuleId, setEditingModuleId] = useState<string | null>(null);
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
+  const [wlCsvText, setWlCsvText] = useState('');
+  const [importingWl, setImportingWl] = useState(false);
+  const [showWlImportForm, setShowWlImportForm] = useState(false);
 
   // Event Form States
   const [eventTitle, setEventTitle] = useState('');
@@ -250,6 +257,130 @@ export default function AdminPage() {
       console.error('Error fetching registrants:', err);
     } finally {
       setLoadingRegistrants(false);
+    }
+  };
+
+  const fetchWaitlist = async (eventId: string) => {
+    setLoadingWaitlist(true);
+    try {
+      const { data, error } = await supabase
+        .from('event_waitlist')
+        .select('*')
+        .eq('event_id', eventId)
+        .order('created_at', { ascending: false });
+      if (data) {
+        setWaitlistList(data);
+      } else {
+        setWaitlistList([]);
+      }
+    } catch (err) {
+      console.error('Error fetching waitlist:', err);
+      setWaitlistList([]);
+    } finally {
+      setLoadingWaitlist(false);
+    }
+  };
+
+  const handleSendReminders = async (eventId: string) => {
+    if (!window.confirm('Are you sure you want to dispatch event reminder emails to all confirmed registrants and waitlist members for tomorrow?')) {
+      return;
+    }
+    setSendingReminders(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) {
+        showToast('Authentication Error', 'You must be logged in to send reminders.', 'error');
+        setSendingReminders(false);
+        return;
+      }
+
+      const res = await fetch('/api/admin/events/send-reminders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ eventId })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to dispatch reminders.');
+      }
+
+      showToast(
+        'Reminders Dispatched', 
+        `Successfully sent ${data.summary.registrants.sent} reminders and ${data.summary.waitlist.sent} waitlist updates!`, 
+        'success'
+      );
+    } catch (err: any) {
+      console.error('Error dispatching reminders:', err);
+      showToast('Dispatch Failed', err.message || 'Server returned an error.', 'error');
+    } finally {
+      setSendingReminders(false);
+    }
+  };
+
+  const handleBulkWaitlistSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!wlCsvText.trim() || !selectedEvent) {
+      showToast('Form Error', 'Please paste waitlist CSV content.', 'warning');
+      return;
+    }
+
+    const lines = wlCsvText.split('\n');
+    const waitlistToInsert = [];
+
+    for (let line of lines) {
+      line = line.trim();
+      if (!line) continue;
+      
+      const parts = line.split(',').map(p => p.trim().replace(/^["']|["']$/g, ''));
+      if (parts.length === 0) continue;
+      
+      let name = '';
+      let email = '';
+
+      if (parts.length === 1) {
+        email = parts[0];
+        name = email.split('@')[0];
+      } else {
+        name = parts[0];
+        email = parts[1];
+      }
+
+      if (!email.includes('@')) continue;
+
+      waitlistToInsert.push({
+        event_id: selectedEvent.id,
+        full_name: name || 'Waitlisted Attendee',
+        email: email.toLowerCase().trim()
+      });
+    }
+
+    if (waitlistToInsert.length === 0) {
+      showToast('Import Failed', 'No valid email rows parsed from CSV text.', 'error');
+      return;
+    }
+
+    setImportingWl(true);
+    try {
+      const { error } = await supabase
+        .from('event_waitlist')
+        .insert(waitlistToInsert);
+
+      if (error) throw error;
+
+      showToast('Import Success', `Successfully imported ${waitlistToInsert.length} users to the waitlist!`, 'success');
+      setWlCsvText('');
+      setShowWlImportForm(false);
+      await fetchWaitlist(selectedEvent.id);
+    } catch (err: any) {
+      console.error('Waitlist import failed:', err);
+      showToast('Import Failed', err.message || 'Could not save to waitlist.', 'error');
+    } finally {
+      setImportingWl(false);
     }
   };
 
@@ -495,6 +626,7 @@ export default function AdminPage() {
           if (found) {
             setSelectedEvent(found);
             setLoadingRegistrants(true);
+            setLoadingWaitlist(true);
             try {
               const { data: regData } = await supabase
                 .from('event_registrations')
@@ -502,10 +634,18 @@ export default function AdminPage() {
                 .eq('event_id', found.id)
                 .order('created_at', { ascending: false });
               if (regData) setRegistrants(regData);
+
+              const { data: wlData } = await supabase
+                .from('event_waitlist')
+                .select('*')
+                .eq('event_id', found.id)
+                .order('created_at', { ascending: false });
+              if (wlData) setWaitlistList(wlData);
             } catch (err) {
-              console.error('Error fetching registrants:', err);
+              console.error('Error fetching registrants/waitlist:', err);
             } finally {
               setLoadingRegistrants(false);
+              setLoadingWaitlist(false);
             }
           }
         }
@@ -3001,6 +3141,7 @@ export default function AdminPage() {
                                       sessionStorage.setItem('admin_selected_event_id', ev.id);
                                     }
                                     fetchRegistrants(ev.id);
+                                    fetchWaitlist(ev.id);
                                   }}
                                   className="text-[10px] px-2 py-1"
                                 >
@@ -3038,79 +3179,206 @@ export default function AdminPage() {
                     <FileSpreadsheet className="h-3.5 w-3.5 text-primary-blue" />
                     {exportLoading ? 'Exporting...' : 'Export RSVPs (CSV)'}
                   </Button>
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <h3 className="text-base font-bold text-text-primary">{selectedEvent.title} RSVP Registry</h3>
+                    <p className="text-[11px] text-text-secondary">
+                      Format: <span className="capitalize text-text-secondary">{selectedEvent.event_type}</span> | 
+                      Price: <span className="text-text-secondary">{selectedEvent.is_paid ? `GHS ${selectedEvent.price}` : 'Free'}</span> |
+                      Capacity: <span className="text-text-secondary">{selectedEvent.capacity ? `${registrants.length} / ${selectedEvent.capacity} filled` : `${registrants.length} registered`}</span>
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => handleSendReminders(selectedEvent.id)}
+                    className="text-[11px] px-3.5 py-2 flex items-center gap-1.5 bg-primary-blue hover:bg-blue-650"
+                    disabled={sendingReminders}
+                  >
+                    <Mail className="h-3.5 w-3.5" />
+                    {sendingReminders ? 'Sending Reminders...' : 'Send Event Reminders'}
+                  </Button>
                 </div>
 
-                <div className="space-y-2">
-                  <h3 className="text-base font-bold text-text-primary">{selectedEvent.title} RSVP Registry</h3>
-                  <p className="text-[11px] text-text-secondary">
-                    Format: <span className="capitalize text-text-secondary">{selectedEvent.event_type}</span> | 
-                    Price: <span className="text-text-secondary">{selectedEvent.is_paid ? `GHS ${selectedEvent.price}` : 'Free'}</span> |
-                    Capacity: <span className="text-text-secondary">{selectedEvent.capacity ? `${registrants.length} / ${selectedEvent.capacity} filled` : `${registrants.length} registered`}</span>
-                  </p>
+                {/* RSVP Tab Navigation */}
+                <div className="flex border-b border-border-brand gap-4 text-xs font-mono pt-2">
+                  <button
+                    onClick={() => setRsvpActiveTab('attendees')}
+                    className={`pb-2 px-1 relative ${
+                      rsvpActiveTab === 'attendees'
+                        ? 'text-white border-b-2 border-primary-blue font-semibold'
+                        : 'text-text-secondary hover:text-text-primary'
+                    }`}
+                  >
+                    Attendees ({registrants.length})
+                  </button>
+                  <button
+                    onClick={() => setRsvpActiveTab('waitlist')}
+                    className={`pb-2 px-1 relative ${
+                      rsvpActiveTab === 'waitlist'
+                        ? 'text-white border-b-2 border-primary-blue font-semibold'
+                        : 'text-text-secondary hover:text-text-primary'
+                    }`}
+                  >
+                    Waitlist ({waitlistList.length})
+                  </button>
                 </div>
 
                 <div className="glass-panel rounded-xl overflow-hidden border border-border-brand bg-bg-canvas/50">
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse text-xs">
-                      <thead>
-                        <tr className="border-b border-border-brand bg-bg-surface-hover/40 text-text-secondary font-mono uppercase tracking-wider text-[10px]">
-                          <th className="p-4">Name</th>
-                          <th className="p-4">Email</th>
-                          <th className="p-4">Payment</th>
-                          <th className="p-4">Checked-In</th>
-                          <th className="p-4 text-right">Registered At</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-border-brand text-text-primary">
-                        {loadingRegistrants ? (
-                          <tr>
-                            <td colSpan={5} className="p-8 text-center text-text-secondary">
-                              <span className="flex items-center gap-2 justify-center">
-                                <Loader2 className="h-4 w-4 animate-spin text-primary-blue" />
-                                Retrieving registrants list...
-                              </span>
-                            </td>
+                    {rsvpActiveTab === 'attendees' ? (
+                      <table className="w-full text-left border-collapse text-xs">
+                        <thead>
+                          <tr className="border-b border-border-brand bg-bg-surface-hover/40 text-text-secondary font-mono uppercase tracking-wider text-[10px]">
+                            <th className="p-4">Name</th>
+                            <th className="p-4">Email</th>
+                            <th className="p-4">Payment</th>
+                            <th className="p-4">Checked-In</th>
+                            <th className="p-4 text-right">Registered At</th>
                           </tr>
-                        ) : registrants.length === 0 ? (
-                          <tr>
-                            <td colSpan={5} className="p-8 text-center text-text-secondary italic">
-                              No attendees registered for this event yet.
-                            </td>
-                          </tr>
-                        ) : (
-                          registrants.map((reg) => (
-                            <tr key={reg.id} className="hover:bg-bg-surface-hover/30">
-                              <td className="p-4 font-semibold text-text-primary">{reg.full_name}</td>
-                              <td className="p-4 text-text-secondary">{reg.email}</td>
-                              <td className="p-4">
-                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
-                                  reg.payment_status === 'paid' 
-                                    ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
-                                    : reg.payment_status === 'pending'
-                                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                                    : 'bg-bg-surface-hover text-text-secondary border border-border-brand'
-                                }`}>
-                                  {reg.payment_status.replace('_', ' ')}
+                        </thead>
+                        <tbody className="divide-y divide-border-brand text-text-primary">
+                          {loadingRegistrants ? (
+                            <tr>
+                              <td colSpan={5} className="p-8 text-center text-text-secondary">
+                                <span className="flex items-center gap-2 justify-center">
+                                  <Loader2 className="h-4 w-4 animate-spin text-primary-blue" />
+                                  Retrieving registrants list...
                                 </span>
                               </td>
-                              <td className="p-4">
-                                <input
-                                  type="checkbox"
-                                  checked={reg.checked_in}
-                                  onChange={() => handleToggleCheckIn(reg.id, reg.checked_in)}
-                                  className="h-4 w-4 rounded border-border-brand text-primary-blue focus:ring-primary-blue cursor-pointer"
-                                />
-                              </td>
-                              <td className="p-4 text-right text-text-secondary">
-                                {new Date(reg.created_at).toLocaleDateString()}
+                            </tr>
+                          ) : registrants.length === 0 ? (
+                            <tr>
+                              <td colSpan={5} className="p-8 text-center text-text-secondary italic">
+                                No attendees registered for this event yet.
                               </td>
                             </tr>
-                          ))
+                          ) : (
+                            registrants.map((reg) => (
+                              <tr key={reg.id} className="hover:bg-bg-surface-hover/30">
+                                <td className="p-4 font-semibold text-text-primary">{reg.full_name}</td>
+                                <td className="p-4 text-text-secondary">{reg.email}</td>
+                                <td className="p-4">
+                                  <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
+                                    reg.payment_status === 'paid' 
+                                      ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                                      : reg.payment_status === 'pending'
+                                      ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                                      : 'bg-bg-surface-hover text-text-secondary border border-border-brand'
+                                  }`}>
+                                    {reg.payment_status.replace('_', ' ')}
+                                  </span>
+                                </td>
+                                <td className="p-4">
+                                  <input
+                                    type="checkbox"
+                                    checked={reg.checked_in}
+                                    onChange={() => handleToggleCheckIn(reg.id, reg.checked_in)}
+                                    className="h-4 w-4 rounded border-border-brand text-primary-blue focus:ring-primary-blue cursor-pointer"
+                                  />
+                                </td>
+                                <td className="p-4 text-right text-text-secondary">
+                                  {new Date(reg.created_at).toLocaleDateString()}
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div className="space-y-4 p-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[10px] font-mono uppercase tracking-wider text-text-secondary">
+                            Waitlist Records ({waitlistList.length})
+                          </span>
+                          <Button
+                            onClick={() => setShowWlImportForm(!showWlImportForm)}
+                            className="text-[10px] px-2.5 py-1 bg-bg-surface-hover border border-border-brand"
+                          >
+                            {showWlImportForm ? 'Close Import Tool' : 'Import from Google Sheets / CSV'}
+                          </Button>
+                        </div>
+
+                        {showWlImportForm && (
+                          <Card className="border-border-brand p-4 bg-bg-canvas/30 space-y-3">
+                            <div>
+                              <h4 className="text-xs font-bold text-text-primary">Paste Google Sheets Columns</h4>
+                              <p className="text-[10px] text-text-secondary mt-0.5">
+                                Select and copy the name and email columns from your Google Sheet, then paste them below. 
+                                Format: <code>Name, Email</code> (or just <code>Email</code>) per line.
+                              </p>
+                            </div>
+                            <form onSubmit={handleBulkWaitlistSubmit} className="space-y-3">
+                              <textarea
+                                rows={5}
+                                placeholder="Ama Osei, ama@gmail.com&#10;Kofi Mensah, kofi@gmail.com&#10;or just:&#10;test@example.com"
+                                value={wlCsvText}
+                                onChange={(e) => setWlCsvText(e.target.value)}
+                                className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas/80 border border-border-brand focus:outline-none focus:ring-1 focus:ring-primary-blue min-h-[100px] font-mono"
+                                required
+                              />
+                              <div className="flex gap-2">
+                                <Button
+                                  type="submit"
+                                  className="text-[10px] px-3 py-1 bg-primary-blue hover:bg-blue-650"
+                                  disabled={importingWl}
+                                >
+                                  {importingWl ? 'Importing...' : 'Start Import'}
+                                </Button>
+                                <Button
+                                  type="button"
+                                  variant="secondary"
+                                  onClick={() => setShowWlImportForm(false)}
+                                  className="text-[10px] px-3 py-1"
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </form>
+                          </Card>
                         )}
-                      </tbody>
-                    </table>
+
+                        <div className="border border-border-brand rounded-lg overflow-hidden">
+                          <table className="w-full text-left border-collapse text-xs">
+                            <thead>
+                              <tr className="border-b border-border-brand bg-bg-surface-hover/40 text-text-secondary font-mono uppercase tracking-wider text-[10px]">
+                                <th className="p-4">Name</th>
+                                <th className="p-4">Email</th>
+                                <th className="p-4 text-right">Joined Waitlist At</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-border-brand text-text-primary">
+                              {loadingWaitlist ? (
+                                <tr>
+                                  <td colSpan={3} className="p-8 text-center text-text-secondary">
+                                    <span className="flex items-center gap-2 justify-center">
+                                      <Loader2 className="h-4 w-4 animate-spin text-primary-blue" />
+                                      Retrieving waitlist...
+                                    </span>
+                                  </td>
+                                </tr>
+                              ) : waitlistList.length === 0 ? (
+                                <tr>
+                                  <td colSpan={3} className="p-8 text-center text-text-secondary italic">
+                                    No attendees on the waitlist for this event yet.
+                                  </td>
+                                </tr>
+                              ) : (
+                                waitlistList.map((wl) => (
+                                  <tr key={wl.id} className="hover:bg-bg-surface-hover/30">
+                                    <td className="p-4 font-semibold text-text-primary">{wl.full_name}</td>
+                                    <td className="p-4 text-text-secondary">{wl.email}</td>
+                                    <td className="p-4 text-right text-text-secondary">
+                                      {new Date(wl.created_at).toLocaleDateString()}
+                                    </td>
+                                  </tr>
+                                ))
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
+                </div>      </div>
               </div>
             )}
           </div>

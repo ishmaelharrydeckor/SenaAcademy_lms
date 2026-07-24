@@ -54,6 +54,13 @@ function EventDetailContent() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Waitlist Form States
+  const [waitlistName, setWaitlistName] = useState('');
+  const [waitlistEmail, setWaitlistEmail] = useState('');
+  const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
+  const [waitlistSuccess, setWaitlistSuccess] = useState(false);
+  const [waitlistError, setWaitlistError] = useState('');
+
   // Post-Registration States
   const [registered, setRegistered] = useState(false);
   const [registrationDetails, setRegistrationDetails] = useState<any>(null);
@@ -237,6 +244,39 @@ function EventDetailContent() {
     } catch (err: any) {
       setErrorMsg(err.message || 'Registration system offline. Please try again later.');
       setSubmitting(false);
+    }
+  };
+
+  // 3.5 Handle Waitlist Submit
+  const handleWaitlistSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!waitlistName || !waitlistEmail) {
+      setWaitlistError('Please fill in all fields.');
+      return;
+    }
+
+    setWaitlistSubmitting(true);
+    setWaitlistError('');
+
+    try {
+      const res = await fetch('/api/events/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ eventId: event.id, fullName: waitlistName, email: waitlistEmail }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to join waitlist.');
+      }
+
+      setWaitlistSuccess(true);
+      setWaitlistSubmitting(false);
+    } catch (err: any) {
+      setWaitlistError(err.message || 'Waitlist system offline. Please try again later.');
+      setWaitlistSubmitting(false);
     }
   };
 
@@ -473,14 +513,59 @@ function EventDetailContent() {
               )}
 
               {isFull ? (
-                <div className="space-y-4">
-                  <div className="bg-bg-surface-hover border border-border-brand text-text-secondary text-xs p-4 rounded-lg text-center font-semibold">
-                    Event is Full
+                waitlistSuccess ? (
+                  <div className="space-y-4 text-center py-4">
+                    <div className="mx-auto w-10 h-10 rounded-full bg-success-brand/10 flex items-center justify-center">
+                      <CheckCircle2 className="h-5 w-5 text-success-brand" />
+                    </div>
+                    <h3 className="text-sm font-bold text-text-primary">Joined Waitlist!</h3>
+                    <p className="text-[11px] text-text-secondary leading-relaxed">
+                      We've added you to the waitlist. We will notify you immediately if a spot opens up!
+                    </p>
                   </div>
-                  <p className="text-[11px] text-text-secondary text-center">
-                    All seats are currently taken. Follow our events page to join future cohorts and workshops!
-                  </p>
-                </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs p-3 rounded-lg text-center font-semibold">
+                      This Event is Full
+                    </div>
+                    <p className="text-[11px] text-text-secondary">
+                      All seats are currently taken. Enter your details below to join the waitlist and get notified if a spot opens up.
+                    </p>
+                    {waitlistError && (
+                      <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-xs p-2 rounded text-center">
+                        {waitlistError}
+                      </div>
+                    )}
+                    <form onSubmit={handleWaitlistSubmit} className="space-y-3">
+                      <Input
+                        label="Full Name"
+                        id="wl-name"
+                        placeholder="e.g. Kofi Mensah"
+                        value={waitlistName}
+                        onChange={(e) => setWaitlistName(e.target.value)}
+                        required
+                        disabled={waitlistSubmitting}
+                      />
+                      <Input
+                        label="Email Address"
+                        id="wl-email"
+                        type="email"
+                        placeholder="you@domain.com"
+                        value={waitlistEmail}
+                        onChange={(e) => setWaitlistEmail(e.target.value)}
+                        required
+                        disabled={waitlistSubmitting}
+                      />
+                      <Button
+                        type="submit"
+                        className="w-full text-xs font-semibold py-2"
+                        disabled={waitlistSubmitting}
+                      >
+                        {waitlistSubmitting ? 'Joining Waitlist...' : 'Join Waitlist'}
+                      </Button>
+                    </form>
+                  </div>
+                )
               ) : (
                 <form onSubmit={handleRegisterSubmit} className="space-y-4">
                   <Input
