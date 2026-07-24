@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import * as React from 'react';
+import { render } from '@react-email/components';
 import { AccessCodeEmail } from '../../emails/AccessCodeEmail';
 import { PasswordResetEmail } from '../../emails/PasswordResetEmail';
 import { FacilitatorOnboardingEmail } from '../../emails/FacilitatorOnboardingEmail';
@@ -23,6 +24,80 @@ const getResend = () => {
 // Helper to resolve the sender email dynamically at call-time
 const getSenderEmail = () => process.env.SENDER_EMAIL || 'Sena Academy <onboarding@resend.dev>';
 
+// Generic helper to send email, dynamically routing to Brevo or Resend
+async function sendMail(
+  toEmail: string,
+  subject: string,
+  reactElement: React.ReactElement
+): Promise<{ success: boolean; messageId?: string; error?: any }> {
+  const brevoApiKey = process.env.BREVO_API_KEY;
+
+  if (brevoApiKey) {
+    try {
+      console.log(`Routing email to Brevo API for recipient: ${toEmail}`);
+      const htmlContent = await render(reactElement);
+      
+      const senderEnv = getSenderEmail();
+      let senderName = 'Sena Academy';
+      let senderEmail = 'no.reply@senaacademy.org';
+      
+      const match = senderEnv.match(/^(.*?)\s*<(.*?)>$/);
+      if (match) {
+        senderName = match[1].trim();
+        senderEmail = match[2].trim();
+      }
+
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': brevoApiKey,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: { name: senderName, email: senderEmail },
+          to: [{ email: toEmail }],
+          subject: subject,
+          htmlContent: htmlContent
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to send email via Brevo.');
+      }
+
+      console.log('Email sent successfully via Brevo. Message ID:', data.messageId);
+      return { success: true, messageId: data.messageId };
+    } catch (err: any) {
+      console.error('Error sending email via Brevo:', err);
+      return { success: false, error: err };
+    }
+  } else {
+    // Fallback to Resend
+    try {
+      console.log(`Routing email to Resend API for recipient: ${toEmail}`);
+      const { data, error } = await getResend().emails.send({
+        from: getSenderEmail(),
+        to: toEmail,
+        subject: subject,
+        react: reactElement,
+      });
+
+      if (error) {
+        console.error('Error sending email via Resend:', error);
+        return { success: false, error };
+      }
+
+      console.log('Email sent successfully via Resend. Message ID:', data?.id);
+      return { success: true, messageId: data?.id };
+    } catch (err: any) {
+      console.error('Error sending email via Resend:', err);
+      return { success: false, error: err };
+    }
+  }
+}
+
 /**
  * Sends the generated Sena Academy access code to a student.
  */
@@ -32,33 +107,16 @@ export async function sendAccessCodeEmail(
   accessCode: string,
   cohortName: string
 ): Promise<{ success: boolean; messageId?: string; error?: any }> {
-  try {
-    console.log(`Sending access code email via Resend to: ${toEmail}`);
-    const { data, error } = await getResend().emails.send({
-      from: getSenderEmail(),
-      to: toEmail,
-      subject: 'Your Sena Academy Access Code is Here 🎉',
-      react: (
-        <AccessCodeEmail
-          studentName={studentName}
-          cohortName={cohortName}
-          accessCode={accessCode}
-          email={toEmail}
-        />
-      ),
-    });
-
-    if (error) {
-      console.error('Error sending access code email via Resend:', error);
-      return { success: false, error };
-    }
-
-    console.log('Access code email sent successfully:', data?.id);
-    return { success: true, messageId: data?.id };
-  } catch (err: any) {
-    console.error('Error sending access code email via Resend:', err);
-    return { success: false, error: err };
-  }
+  return sendMail(
+    toEmail,
+    'Your Sena Academy Access Code is Here 🎉',
+    <AccessCodeEmail
+      studentName={studentName}
+      cohortName={cohortName}
+      accessCode={accessCode}
+      email={toEmail}
+    />
+  );
 }
 
 /**
@@ -70,32 +128,15 @@ export async function sendPasswordResetEmail(
   studentName: string = 'Trainee',
   expiryWindow: string = '24 hours'
 ): Promise<{ success: boolean; messageId?: string; error?: any }> {
-  try {
-    console.log(`Sending password reset email via Resend to: ${toEmail}`);
-    const { data, error } = await getResend().emails.send({
-      from: getSenderEmail(),
-      to: toEmail,
-      subject: 'Reset Your Sena Academy Password',
-      react: (
-        <PasswordResetEmail
-          studentName={studentName}
-          resetLink={resetLink}
-          expiryWindow={expiryWindow}
-        />
-      ),
-    });
-
-    if (error) {
-      console.error('Error sending password reset email via Resend:', error);
-      return { success: false, error };
-    }
-
-    console.log('Password reset email sent successfully:', data?.id);
-    return { success: true, messageId: data?.id };
-  } catch (err: any) {
-    console.error('Error sending password reset email via Resend:', err);
-    return { success: false, error: err };
-  }
+  return sendMail(
+    toEmail,
+    'Reset Your Sena Academy Password',
+    <PasswordResetEmail
+      studentName={studentName}
+      resetLink={resetLink}
+      expiryWindow={expiryWindow}
+    />
+  );
 }
 
 /**
@@ -106,31 +147,14 @@ export async function sendFacilitatorOnboardingEmail(
   name: string,
   setupLink: string
 ): Promise<{ success: boolean; messageId?: string; error?: any }> {
-  try {
-    console.log(`Sending facilitator onboarding email via Resend to: ${toEmail}`);
-    const { data, error } = await getResend().emails.send({
-      from: getSenderEmail(),
-      to: toEmail,
-      subject: 'Sena Academy: Facilitator Account Created',
-      react: (
-        <FacilitatorOnboardingEmail
-          name={name}
-          setupLink={setupLink}
-        />
-      ),
-    });
-
-    if (error) {
-      console.error('Error sending facilitator onboarding email via Resend:', error);
-      return { success: false, error };
-    }
-
-    console.log('Facilitator onboarding email sent successfully:', data?.id);
-    return { success: true, messageId: data?.id };
-  } catch (err: any) {
-    console.error('Error sending facilitator onboarding email via Resend:', err);
-    return { success: false, error: err };
-  }
+  return sendMail(
+    toEmail,
+    'Sena Academy: Facilitator Account Created',
+    <FacilitatorOnboardingEmail
+      name={name}
+      setupLink={setupLink}
+    />
+  );
 }
 
 /**
@@ -192,34 +216,23 @@ export async function sendEventRegistrationEmail(
       calDetails
     )}&location=${encodeURIComponent(calLocation)}`;
 
-    const { data, error } = await getResend().emails.send({
-      from: getSenderEmail(),
-      to: toEmail,
-      subject: `Registration Confirmed: ${event.title} 🎉`,
-      react: (
-        <EventRegistrationEmail
-          registrantName={registrantName}
-          eventTitle={event.title}
-          eventDate={eventDate}
-          eventType={event.event_type as 'online' | 'in_person'}
-          location={event.location}
-          meetingLink={event.meeting_link}
-          email={toEmail}
-          googleCalendarUrl={googleCalendarUrl}
-          outlookCalendarUrl={outlookCalendarUrl}
-        />
-      ),
-    });
-
-    if (error) {
-      console.error('Error sending event registration email via Resend:', error);
-      return { success: false, error };
-    }
-
-    console.log('Event registration email sent successfully:', data?.id);
-    return { success: true, messageId: data?.id };
+    return sendMail(
+      toEmail,
+      `Registration Confirmed: ${event.title} 🎉`,
+      <EventRegistrationEmail
+        registrantName={registrantName}
+        eventTitle={event.title}
+        eventDate={eventDate}
+        eventType={event.event_type as 'online' | 'in_person'}
+        location={event.location}
+        meetingLink={event.meeting_link}
+        email={toEmail}
+        googleCalendarUrl={googleCalendarUrl}
+        outlookCalendarUrl={outlookCalendarUrl}
+      />
+    );
   } catch (err: any) {
-    console.error('Error sending event registration email via Resend:', err);
+    console.error('Error sending event registration email:', err);
     return { success: false, error: err };
   }
 }
@@ -262,32 +275,21 @@ export async function sendEventReminderEmail(
     const endTime = end.toLocaleTimeString('en-US', optionsTime);
     const eventDate = `${formattedDate} from ${startTime} to ${endTime}`;
 
-    const { data, error } = await getResend().emails.send({
-      from: getSenderEmail(),
-      to: toEmail,
-      subject: `Reminder: ${event.title} is tomorrow! 🎉`,
-      react: (
-        <EventReminderEmail
-          registrantName={registrantName}
-          eventTitle={event.title}
-          eventDate={eventDate}
-          eventType={event.event_type as 'online' | 'in_person'}
-          location={event.location}
-          meetingLink={event.meeting_link}
-          email={toEmail}
-        />
-      ),
-    });
-
-    if (error) {
-      console.error('Error sending event reminder email via Resend:', error);
-      return { success: false, error };
-    }
-
-    console.log('Event reminder email sent successfully:', data?.id);
-    return { success: true, messageId: data?.id };
+    return sendMail(
+      toEmail,
+      `Reminder: ${event.title} is tomorrow! 🎉`,
+      <EventReminderEmail
+        registrantName={registrantName}
+        eventTitle={event.title}
+        eventDate={eventDate}
+        eventType={event.event_type as 'online' | 'in_person'}
+        location={event.location}
+        meetingLink={event.meeting_link}
+        email={toEmail}
+      />
+    );
   } catch (err: any) {
-    console.error('Error sending event reminder email via Resend:', err);
+    console.error('Error sending event reminder email:', err);
     return { success: false, error: err };
   }
 }
@@ -327,29 +329,18 @@ export async function sendEventWaitlistEmail(
     const endTime = end.toLocaleTimeString('en-US', optionsTime);
     const eventDate = `${formattedDate} from ${startTime} to ${endTime}`;
 
-    const { data, error } = await getResend().emails.send({
-      from: getSenderEmail(),
-      to: toEmail,
-      subject: `Waitlist Update: ${event.title} tomorrow`,
-      react: (
-        <EventWaitlistEmail
-          registrantName={registrantName}
-          eventTitle={event.title}
-          eventDate={eventDate}
-          email={toEmail}
-        />
-      ),
-    });
-
-    if (error) {
-      console.error('Error sending event waitlist email via Resend:', error);
-      return { success: false, error };
-    }
-
-    console.log('Event waitlist email sent successfully:', data?.id);
-    return { success: true, messageId: data?.id };
+    return sendMail(
+      toEmail,
+      `Waitlist Update: ${event.title} tomorrow`,
+      <EventWaitlistEmail
+        registrantName={registrantName}
+        eventTitle={event.title}
+        eventDate={eventDate}
+        email={toEmail}
+      />
+    );
   } catch (err: any) {
-    console.error('Error sending event waitlist email via Resend:', err);
+    console.error('Error sending event waitlist email:', err);
     return { success: false, error: err };
   }
 }
