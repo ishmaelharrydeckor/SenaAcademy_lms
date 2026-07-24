@@ -3364,7 +3364,7 @@ export default function AdminPage() {
                 </div>
 
                 <div className="glass-panel rounded-xl overflow-hidden border border-border-brand bg-bg-canvas/50">
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-auto max-h-[550px] overflow-y-auto">
                     {rsvpActiveTab === 'attendees' ? (
                       <table className="w-full text-left border-collapse text-xs">
                         <thead>
@@ -3523,7 +3523,7 @@ export default function AdminPage() {
                           </Card>
                         )}
 
-                        <div className="border border-border-brand rounded-lg overflow-hidden">
+                        <div className="border border-border-brand rounded-lg overflow-hidden max-h-[550px] overflow-y-auto">
                           <table className="w-full text-left border-collapse text-xs">
                             <thead>
                               <tr className="border-b border-border-brand bg-bg-surface-hover/40 text-text-secondary font-mono uppercase tracking-wider text-[10px]">
