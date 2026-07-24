@@ -33,10 +33,14 @@ interface PublicStats {
 const CURRICULUM_MODULES = [
   {
     num: 1,
-    title: 'AI Foundations & The Builder Mindset',
-    subtitle: 'From zero to shipping in week one',
-    desc: 'Shift from memorizing syntax to building real things. Set up your AI coding assistants (Cursor and Claude) and start deploying working code on day one. No prior experience required.',
-    outcomes: ['Setting up AI IDEs & developer tools', 'Writing effective prompts & context strategies', 'Deploying a static web app live on GitHub']
+    title: 'Builder Mindset & AI Foundations',
+    subtitle: 'From LLM basics to structured prompt engineering',
+    desc: 'Understand what AI and machine learning actually are, how large language models evolved, and how to write structured, effective prompts — the foundation every later module builds on.',
+    outcomes: [
+      'Explain the relationship between AI, machine learning, and LLMs',
+      'Identify genuine LLM limitations (hallucinations, knowledge cutoffs)',
+      'Apply structured prompting frameworks (Persona-Problem-Solution & SALT)'
+    ]
   },
   {
     num: 2,
