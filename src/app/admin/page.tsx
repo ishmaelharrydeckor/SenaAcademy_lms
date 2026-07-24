@@ -433,12 +433,7 @@ export default function AdminPage() {
       if (delimiter === '\t') {
         parts = line.split('\t').map(p => p.trim().replace(/^["']|["']$/g, ''));
       } else {
-        const matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-        if (matches) {
-          parts = matches.map(p => p.trim().replace(/^["']|["']$/g, ''));
-        } else {
-          parts = line.split(',').map(p => p.trim().replace(/^["']|["']$/g, ''));
-        }
+        parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(p => (p || '').trim().replace(/^["']|["']$/g, ''));
       }
 
       if (parts.length === 0) continue;
