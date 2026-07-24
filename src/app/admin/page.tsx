@@ -335,6 +335,8 @@ export default function AdminPage() {
     const waitlistToInsert = [];
 
     let nameColIdx = 1; // default to 2nd column based on Timestamp, Full Name, Email Address...
+    let firstNameColIdx = -1;
+    let lastNameColIdx = -1;
     let emailColIdx = 2; // default to 3rd column
     let delimiter = ',';
 
@@ -348,14 +350,31 @@ export default function AdminPage() {
       
       const hasTimestamp = headers.includes('timestamp');
       const hasEmail = headers.some(h => h.includes('email') || h.includes('email address'));
-      const hasName = headers.some(h => h.includes('name') || h.includes('full name'));
+      const hasName = headers.some(h => h.includes('name') || h.includes('full name') || h.includes('first name') || h.includes('last name'));
 
       if (hasTimestamp || hasEmail || hasName) {
         const foundEmailIdx = headers.findIndex(h => h.includes('email'));
         if (foundEmailIdx !== -1) emailColIdx = foundEmailIdx;
 
-        const foundNameIdx = headers.findIndex(h => h.includes('name') || h.includes('full name'));
-        if (foundNameIdx !== -1) nameColIdx = foundNameIdx;
+        // Try to find "Full Name"
+        const foundFullNameIdx = headers.findIndex(h => h.includes('full name') || h === 'name');
+        if (foundFullNameIdx !== -1) {
+          nameColIdx = foundFullNameIdx;
+        } else {
+          // If no "Full Name", try to find "First Name" and "Last Name"
+          const foundFirstIdx = headers.findIndex(h => h.includes('first name') || h.includes('firstname') || h === 'first');
+          const foundLastIdx = headers.findIndex(h => h.includes('last name') || h.includes('lastname') || h === 'last');
+          
+          if (foundFirstIdx !== -1 && foundLastIdx !== -1) {
+            firstNameColIdx = foundFirstIdx;
+            lastNameColIdx = foundLastIdx;
+            nameColIdx = -2; // special flag indicating merged first/last name
+          } else if (foundFirstIdx !== -1) {
+            nameColIdx = foundFirstIdx;
+          } else if (foundLastIdx !== -1) {
+            nameColIdx = foundLastIdx;
+          }
+        }
 
         lines.shift();
       } else {
@@ -400,7 +419,11 @@ export default function AdminPage() {
         email = parts[emailColIdx];
       }
       
-      if (nameColIdx >= 0 && nameColIdx < parts.length) {
+      if (nameColIdx === -2) {
+        const first = firstNameColIdx >= 0 && firstNameColIdx < parts.length ? parts[firstNameColIdx] : '';
+        const last = lastNameColIdx >= 0 && lastNameColIdx < parts.length ? parts[lastNameColIdx] : '';
+        name = `${first} ${last}`.trim();
+      } else if (nameColIdx >= 0 && nameColIdx < parts.length) {
         name = parts[nameColIdx];
       }
 
