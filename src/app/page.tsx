@@ -30,55 +30,48 @@ interface PublicStats {
   whatsappMemberCount: number;
 }
 
-const ROADMAP_STEPS = [
+const CURRICULUM_MODULES = [
   {
-    step: 1,
-    title: 'Discover Stage',
-    subtitle: 'Discover — find your spark and explore modern developer tools',
-    desc: 'Explore the modern tools of software engineering. Learn to configure AI coding assistants, read repository structures, and navigate local terminals to find your spark.',
-    verbs: ['Explore', 'Configure', 'Navigate']
+    num: 1,
+    title: 'AI Foundations & The Builder Mindset',
+    subtitle: 'From zero to shipping in week one',
+    desc: 'Shift from memorizing syntax to building real things. Set up your AI coding assistants (Cursor and Claude) and start deploying working code on day one. No prior experience required.',
+    outcomes: ['Setting up AI IDEs & developer tools', 'Writing effective prompts & context strategies', 'Deploying a static web app live on GitHub']
   },
   {
-    step: 2,
-    title: 'Learn Stage',
-    subtitle: 'Learn — attend live sessions, review recordings',
-    desc: 'Attend structured live interactive sessions led by industry facilitators. Access class recordings, review technical notes, and build foundation concepts.',
-    verbs: ['Attend', 'Access', 'Review']
+    num: 2,
+    title: 'UI/UX Design with AI',
+    subtitle: 'Design interfaces that look and feel premium',
+    desc: 'Learn visual hierarchy, layout spacing, and accessibility. You will design functional screens in Figma and build interactive prototypes before coding.',
+    outcomes: ['Modern UI design patterns & typography scale', 'Auto-Layout and components in Figma', 'AI-assisted screen wireframing & mockups']
   },
   {
-    step: 3,
-    title: 'Build Stage',
-    subtitle: 'Build — complete challenges matching real workflows',
-    desc: 'Execute practical hands-on briefs matching real-world developer requirements. Set up environment variables, design styling systems, and write clean codebase solutions.',
-    verbs: ['Execute', 'Configure', 'Code']
+    num: 3,
+    title: 'Front-End Website Development',
+    subtitle: 'Bring your designs to life on the web',
+    desc: 'Translate Figma mockups into responsive webpages. Master semantic HTML structure, CSS layouts with Tailwind CSS, and interactive logic using JavaScript.',
+    outcomes: ['Responsive CSS grid & flexbox layouts', 'JavaScript interactive DOM logic', 'Vercel static site deployment & Git commits']
   },
   {
-    step: 4,
-    title: 'Submit Stage',
-    subtitle: 'Submit — push to GitHub, deploy live to Vercel',
-    desc: 'Stage and commit your codebase using Git. Push changes directly to GitHub repositories, run production tests, and deploy live workspaces to Vercel.',
-    verbs: ['Commit', 'Push', 'Deploy']
+    num: 4,
+    title: 'Android App Development',
+    subtitle: 'Build and package installable mobile apps',
+    desc: 'Create mobile applications from scratch using React Native and Expo. Configure layout screens, implement smooth navigation, and package your app into an installable APK.',
+    outcomes: ['React Native UI layouts vs Web DOM', 'React hooks & local state management', 'EAS CLI configuration & Android APK building']
   },
   {
-    step: 5,
-    title: 'Review Stage',
-    subtitle: 'Receive feedback — get async code review from facilitators',
-    desc: 'Receive async code reviews from facilitators. Inspect inline comments, refine implementation details, and refactor codebases based on mentor feedback.',
-    verbs: ['Inspect', 'Refactor', 'Improve']
+    num: 5,
+    title: 'Backend & Cloud Databases',
+    subtitle: 'Power your apps with real-time cloud data',
+    desc: 'Connect your frontends to a secure cloud database. Write server-side APIs in Python (FastAPI) and secure user accounts with Supabase Auth.',
+    outcomes: ['FastAPI server routes & database migrations', 'PostgreSQL database relations', 'Supabase Auth & Row Level Security (RLS)']
   },
   {
-    step: 6,
-    title: 'Graduate Stage',
-    subtitle: 'Graduate — earn your course credentials',
-    desc: 'Earn course credentials and unlock builder status. Finalize submission modules, calculate scores, and receive the digital completion cert.',
-    verbs: ['Finalize', 'Verify', 'Unlock']
-  },
-  {
-    step: 7,
-    title: 'Launch Stage',
-    subtitle: 'Become a Founding Builder — join the alumni network',
-    desc: 'Join the alumni builders network. Leverage WhatsApp debug workspaces, participate in mastermind meetups, and deploy production projects in teams.',
-    verbs: ['Connect', 'Network', 'Launch']
+    num: 6,
+    title: 'Career, Portfolio & Freelancing',
+    subtitle: 'Turn your skills into freelance income or jobs',
+    desc: 'Build a premium developer portfolio highlighting your project codebase, optimize your LinkedIn profile, and pitch clients on freelance platforms.',
+    outcomes: ['Curating a standalone GitHub developer profile', 'LinkedIn branding & project showcases', 'Upwork outreach & client acquisition framework']
   }
 ];
 
@@ -141,8 +134,8 @@ export default function LandingPage() {
     router.push('/enroll');
   };
 
-  // Roadmap detail step modal state
-  const [activeRoadmapStep, setActiveRoadmapStep] = useState<number | null>(null);
+  // Curriculum active module accordion state (Module 1 open by default)
+  const [activeModuleIndex, setActiveModuleIndex] = useState<number | null>(0);
 
   // FAQ accordion state
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
@@ -308,7 +301,7 @@ export default function LandingPage() {
             <img src="/logo_full.png" alt="Sena Academy Logo" className="h-7 sm:h-9 object-contain" />
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#roadmap" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Curriculum</a>
+            <a href="#curriculum" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Curriculum</a>
             <Link href="/events" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Events</Link>
             <a href="#faq" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">FAQ</a>
             <a href="#community" className="text-sm font-medium text-text-primary hover:text-accent-primary transition-colors">Community</a>
@@ -342,10 +335,10 @@ export default function LandingPage() {
             <div className="flex flex-wrap gap-4">
               <Button onClick={handleBecomeBuilderClick}>Become a Founding Builder</Button>
               <a 
-                href="#roadmap" 
+                href="#curriculum" 
                 className="inline-flex items-center justify-center px-6 py-3 rounded-full border border-border-brand text-sm font-semibold text-text-primary hover:bg-bg-surface-hover transition-colors"
               >
-                Explore the Roadmap
+                Explore the Curriculum
               </a>
             </div>
           </div>
@@ -382,20 +375,92 @@ export default function LandingPage() {
 
 
 
-      {/* 5. ROADMAP TIMELINE */}
-      <section className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-12 py-24 max-w-6xl mx-auto px-6 md:px-12 w-full" id="roadmap">
-        <h2 className="text-2xl md:text-3xl font-black font-archivo leading-tight text-text-primary">Your journey starts here.</h2>
-        <div className="flex flex-col">
-          {ROADMAP_STEPS.map((step, idx) => (
-            <div 
-              key={idx} 
-              onClick={() => setActiveRoadmapStep(idx)}
-              className="list-row hover:bg-bg-surface-hover/50 cursor-pointer transition-colors px-4 -mx-4 rounded-xl gap-4"
-            >
-              <span className="font-semibold text-sm md:text-base text-text-primary flex-1 min-w-0">{step.subtitle}</span>
-              <span className="text-xs text-text-secondary font-mono tracking-wider whitespace-nowrap shrink-0 ml-4">Step {step.step}</span>
+      {/* 5. CURRICULUM SECTION */}
+      <section className="py-24 max-w-6xl mx-auto px-6 md:px-12 w-full border-t border-border-brand/40" id="curriculum">
+        <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-16 items-start">
+          {/* Left Column: Copy & Call-to-Action */}
+          <div className="space-y-8 lg:sticky lg:top-28">
+            <div className="space-y-4">
+              <span className="text-[10px] font-mono tracking-widest uppercase text-accent-primary font-bold">Curriculum</span>
+              <h2 className="text-3xl md:text-4xl font-black font-archivo leading-tight text-text-primary tracking-tight">
+                Designed to help you ship.
+              </h2>
+              <p className="serif text-sm leading-relaxed text-text-secondary">
+                No dry lectures or syntax memorization. You will learn by building real-world projects, co-piloting with AI, and receiving async code feedback from industry mentors.
+              </p>
             </div>
-          ))}
+
+            {/* Premium CTA Card */}
+            <Card className="border border-border-brand bg-bg-surface-hover/30 p-6 space-y-4">
+              <div className="space-y-1">
+                <span className="text-[10px] font-mono tracking-wider text-text-secondary uppercase">Founding Builders Cohort</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-black text-text-primary font-mono">GHS 100</span>
+                  <span className="text-[10px] text-text-secondary font-mono">One-time payment</span>
+                </div>
+              </div>
+              <p className="text-[11px] text-text-secondary leading-normal">
+                Admissions are currently open. Secure your seat, get your access code, and join our active WhatsApp debug community.
+              </p>
+              <Button onClick={handleBecomeBuilderClick} className="w-full text-xs py-2.5 font-bold">
+                Enroll Now
+              </Button>
+            </Card>
+          </div>
+
+          {/* Right Column: Modules Accordion */}
+          <div className="space-y-4">
+            {CURRICULUM_MODULES.map((mod, idx) => {
+              const isOpen = activeModuleIndex === idx;
+              return (
+                <div 
+                  key={idx}
+                  className={`border rounded-2xl overflow-hidden bg-bg-surface transition-all duration-250 ${
+                    isOpen 
+                      ? 'border-accent-primary bg-accent-primary/5 shadow-sm' 
+                      : 'border-border-brand hover:border-accent-primary/20 hover:bg-bg-surface-hover/30'
+                  }`}
+                >
+                  <button
+                    onClick={() => setActiveModuleIndex(isOpen ? null : idx)}
+                    className="w-full py-5 px-6 flex items-center justify-between text-left font-archivo font-bold text-base text-text-primary cursor-pointer focus:outline-none select-none border-none bg-transparent"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="font-mono text-xs text-text-secondary/70 shrink-0">0{mod.num}</span>
+                      <span className="text-sm sm:text-base font-extrabold tracking-tight">{mod.title}</span>
+                    </div>
+                    <span className="text-accent-primary font-mono text-xs shrink-0 ml-4">
+                      {isOpen ? 'Close' : 'View Details'}
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="px-6 pb-6 pt-1 text-xs text-text-secondary leading-relaxed border-t border-border-brand/20 bg-bg-canvas/10 space-y-4 animate-fade-in">
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-mono text-accent-primary uppercase tracking-wider font-semibold">Focus</span>
+                        <p className="text-xs font-semibold text-text-primary font-archivo">{mod.subtitle}</p>
+                      </div>
+                      
+                      <p className="serif leading-relaxed text-text-secondary text-[11px] sm:text-xs">
+                        {mod.desc}
+                      </p>
+
+                      <div className="space-y-2 pt-2">
+                        <span className="text-[10px] font-mono text-text-secondary uppercase tracking-wider">What you will build & master:</span>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-text-primary font-medium">
+                          {mod.outcomes.map((outcome, oIdx) => (
+                            <li key={oIdx} className="flex gap-2 items-start">
+                              <span className="text-accent-primary font-bold">•</span>
+                              <span>{outcome}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -443,8 +508,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="space-y-3">
               <h4 className="text-xs uppercase tracking-wider text-on-dark font-bold">Program</h4>
-              <a href="#roadmap" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Roadmap</a>
-              <a href="#" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Curriculum</a>
+              <a href="#curriculum" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Curriculum</a>
               <a href="#" className="block text-xs text-on-dark-soft hover:text-on-dark transition-colors">Facilitators</a>
               <button 
                 onClick={handleBecomeBuilderClick}
@@ -701,49 +765,7 @@ export default function LandingPage() {
         </div>
       )}
 
-      {/* 8. ROADMAP STEP EXPLANATION MODAL */}
-      {activeRoadmapStep !== null && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 backdrop-blur-none transition-opacity">
-          <Card className="max-w-md w-full p-8 border border-border-brand bg-bg-surface relative rounded-2xl shadow-xl space-y-6 text-left">
-            <button
-              onClick={() => setActiveRoadmapStep(null)}
-              className="absolute top-4 right-4 text-text-secondary hover:text-text-primary cursor-pointer p-1 animate-fade-in"
-            >
-              <X className="h-4.5 w-4.5" />
-            </button>
 
-            <div className="space-y-1">
-              <span className="text-[10px] font-mono tracking-wider text-text-secondary uppercase">Step {ROADMAP_STEPS[activeRoadmapStep].step} Stage</span>
-              <h3 className="text-xl font-bold font-archivo text-text-primary">{ROADMAP_STEPS[activeRoadmapStep].title}</h3>
-            </div>
-
-            <p className="serif text-sm leading-relaxed text-text-secondary">
-              {ROADMAP_STEPS[activeRoadmapStep].desc}
-            </p>
-
-            <div className="space-y-2 border-t border-border-brand/40 pt-4">
-              <span className="text-[10px] font-mono tracking-wider text-text-secondary uppercase">Associated Actions</span>
-              <div className="flex flex-wrap gap-2 pt-1">
-                {ROADMAP_STEPS[activeRoadmapStep].verbs.map((verb, vIdx) => (
-                  <span 
-                    key={vIdx}
-                    className="px-3 py-1 rounded-full border border-border-brand text-xs font-semibold text-text-primary bg-bg-canvas"
-                  >
-                    {verb}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <Button 
-              className="w-full" 
-              onClick={() => setActiveRoadmapStep(null)}
-            >
-              Dismiss
-            </Button>
-          </Card>
-        </div>
-      )}
 
     </div>
   );
