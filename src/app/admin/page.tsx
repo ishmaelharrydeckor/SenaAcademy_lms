@@ -332,29 +332,91 @@ export default function AdminPage() {
     const lines = wlCsvText.split('\n');
     const waitlistToInsert = [];
 
+    let nameColIdx = 1; // default to 2nd column based on Timestamp, Full Name, Email Address...
+    let emailColIdx = 2; // default to 3rd column
+    let delimiter = ',';
+
+    if (lines.length > 0) {
+      const firstLine = lines[0].trim();
+      const tabCount = (firstLine.match(/\t/g) || []).length;
+      const commaCount = (firstLine.match(/,/g) || []).length;
+      delimiter = tabCount > commaCount ? '\t' : ',';
+
+      const headers = firstLine.split(delimiter).map(h => h.trim().replace(/^["']|["']$/g, '').toLowerCase());
+      
+      const hasTimestamp = headers.includes('timestamp');
+      const hasEmail = headers.some(h => h.includes('email') || h.includes('email address'));
+      const hasName = headers.some(h => h.includes('name') || h.includes('full name'));
+
+      if (hasTimestamp || hasEmail || hasName) {
+        const foundEmailIdx = headers.findIndex(h => h.includes('email'));
+        if (foundEmailIdx !== -1) emailColIdx = foundEmailIdx;
+
+        const foundNameIdx = headers.findIndex(h => h.includes('name') || h.includes('full name'));
+        if (foundNameIdx !== -1) nameColIdx = foundNameIdx;
+
+        lines.shift();
+      } else {
+        const sampleParts = firstLine.split(delimiter).map(p => p.trim());
+        if (sampleParts.length === 1) {
+          nameColIdx = -1;
+          emailColIdx = 0;
+        } else if (sampleParts.length === 2) {
+          if (sampleParts[0].includes('@')) {
+            emailColIdx = 0;
+            nameColIdx = 1;
+          } else {
+            nameColIdx = 0;
+            emailColIdx = 1;
+          }
+        }
+      }
+    }
+
     for (let line of lines) {
       line = line.trim();
       if (!line) continue;
       
-      const parts = line.split(',').map(p => p.trim().replace(/^["']|["']$/g, ''));
-      if (parts.length === 0) continue;
-      
-      let name = '';
-      let email = '';
-
-      if (parts.length === 1) {
-        email = parts[0];
-        name = email.split('@')[0];
+      let parts: string[] = [];
+      if (delimiter === '\t') {
+        parts = line.split('\t').map(p => p.trim().replace(/^["']|["']$/g, ''));
       } else {
-        name = parts[0];
-        email = parts[1];
+        const matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+        if (matches) {
+          parts = matches.map(p => p.trim().replace(/^["']|["']$/g, ''));
+        } else {
+          parts = line.split(',').map(p => p.trim().replace(/^["']|["']$/g, ''));
+        }
       }
 
-      if (!email.includes('@')) continue;
+      if (parts.length === 0) continue;
+      
+      let email = '';
+      let name = '';
+
+      if (emailColIdx >= 0 && emailColIdx < parts.length) {
+        email = parts[emailColIdx];
+      }
+      
+      if (nameColIdx >= 0 && nameColIdx < parts.length) {
+        name = parts[nameColIdx];
+      }
+
+      if (!email || !email.includes('@')) {
+        const foundEmail = parts.find(p => p.includes('@'));
+        if (foundEmail) {
+          email = foundEmail;
+          if (!name) {
+            name = parts.find(p => p !== email) || '';
+          }
+        }
+      }
+
+      if (!email || !email.includes('@')) continue;
 
       waitlistToInsert.push({
         event_id: selectedEvent.id,
-        full_name: name || 'Waitlisted Attendee',
+        full_name: name || email.split('@')[0] || 'Waitlisted Attendee',
         email: email.toLowerCase().trim()
       });
     }
