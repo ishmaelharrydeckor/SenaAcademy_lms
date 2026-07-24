@@ -32,6 +32,7 @@ import {
   ChevronLeft,
   Loader2,
   Edit,
+  UploadCloud,
 } from 'lucide-react';
 
 interface Cohort {
@@ -215,6 +216,7 @@ export default function AdminPage() {
   const [sendingReminders, setSendingReminders] = useState(false);
   const [editingModuleId, setEditingModuleId] = useState<string | null>(null);
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
+  const wlFileInputRef = useRef<HTMLInputElement>(null);
   const [wlCsvText, setWlCsvText] = useState('');
   const [importingWl, setImportingWl] = useState(false);
   const [showWlImportForm, setShowWlImportForm] = useState(false);
@@ -443,6 +445,27 @@ export default function AdminPage() {
       showToast('Import Failed', err.message || 'Could not save to waitlist.', 'error');
     } finally {
       setImportingWl(false);
+    }
+  };
+
+  const handleWlFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      if (text) {
+        setWlCsvText(text);
+        showToast('File Loaded', `Successfully loaded "${file.name}". Click 'Start Import' to save.`, 'success');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const triggerWlFileSelect = () => {
+    if (wlFileInputRef.current) {
+      wlFileInputRef.current.click();
     }
   };
 
@@ -3364,21 +3387,44 @@ export default function AdminPage() {
                         {showWlImportForm && (
                           <Card className="border-border-brand p-4 bg-bg-canvas/30 space-y-3">
                             <div>
-                              <h4 className="text-xs font-bold text-text-primary">Paste Google Sheets Columns</h4>
+                              <h4 className="text-xs font-bold text-text-primary">Import Waitlist Data</h4>
                               <p className="text-[10px] text-text-secondary mt-0.5">
-                                Select and copy the name and email columns from your Google Sheet, then paste them below. 
-                                Format: <code>Name, Email</code> (or just <code>Email</code>) per line.
+                                Select and copy/paste columns from your Google Sheet, or upload a CSV file directly. 
+                                Headers should contain <code>Full Name</code> and <code>Email Address</code>.
                               </p>
                             </div>
-                            <form onSubmit={handleBulkWaitlistSubmit} className="space-y-3">
-                              <textarea
-                                rows={5}
-                                placeholder="Ama Osei, ama@gmail.com&#10;Kofi Mensah, kofi@gmail.com&#10;or just:&#10;test@example.com"
-                                value={wlCsvText}
-                                onChange={(e) => setWlCsvText(e.target.value)}
-                                className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas/80 border border-border-brand focus:outline-none focus:ring-1 focus:ring-primary-blue min-h-[100px] font-mono"
-                                required
+                            
+                            {/* Upload Zone */}
+                            <div 
+                              onClick={triggerWlFileSelect}
+                              className="border border-dashed border-border-brand rounded-lg p-5 bg-bg-canvas/50 hover:bg-bg-surface-hover/20 flex flex-col items-center justify-center cursor-pointer transition-colors"
+                            >
+                              <input
+                                ref={wlFileInputRef}
+                                type="file"
+                                accept=".csv"
+                                onChange={handleWlFileChange}
+                                className="hidden"
                               />
+                              <UploadCloud className="h-7 w-7 text-text-secondary mb-2" />
+                              <p className="text-xs font-semibold text-text-primary">
+                                Click to select a CSV file (.csv)
+                              </p>
+                              <p className="text-[10px] text-text-secondary mt-1">or paste the text content directly in the area below</p>
+                            </div>
+
+                            <form onSubmit={handleBulkWaitlistSubmit} className="space-y-3">
+                              <div className="flex flex-col gap-1.5">
+                                <label className="text-[10px] font-mono uppercase tracking-wider text-text-secondary">Pasted Content</label>
+                                <textarea
+                                  rows={5}
+                                  placeholder="Ama Osei, ama@gmail.com&#10;Kofi Mensah, kofi@gmail.com"
+                                  value={wlCsvText}
+                                  onChange={(e) => setWlCsvText(e.target.value)}
+                                  className="glass-input text-xs text-text-primary rounded-lg p-2.5 w-full bg-bg-canvas/80 border border-border-brand focus:outline-none focus:ring-1 focus:ring-primary-blue min-h-[100px] font-mono"
+                                  required
+                                />
+                              </div>
                               <div className="flex gap-2">
                                 <Button
                                   type="submit"
@@ -3390,7 +3436,10 @@ export default function AdminPage() {
                                 <Button
                                   type="button"
                                   variant="secondary"
-                                  onClick={() => setShowWlImportForm(false)}
+                                  onClick={() => {
+                                    setShowWlImportForm(false);
+                                    setWlCsvText('');
+                                  }}
                                   className="text-[10px] px-3 py-1"
                                 >
                                   Cancel
