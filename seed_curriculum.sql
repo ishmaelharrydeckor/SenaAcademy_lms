@@ -23,7 +23,7 @@ INSERT INTO public.modules (
     'e8aa03c6-3cd1-4069-9315-fea19a0da580', -- Founding Builders Cohort ID
     1,
     'Builder Mindset & AI Foundations',
-    'Understand how AI is changing software development and set up a modern AI development workflow.',
+    'Understand what AI and machine learning actually are, how large language models evolved, and how to write structured, effective prompts — the foundation every later module builds on.',
     ARRAY[
         'The Builder Mindset: Shifting from "I need to know everything" to "I can figure it out as I build." Bias towards shipping small, working things. Comfort with ambiguity. Debugging as learning.',
         'AI Fundamentals',
@@ -31,25 +31,28 @@ INSERT INTO public.modules (
         'AI Developer Tools: General-purpose AI assistants (Claude, ChatGPT, Gemini) vs. AI-native IDEs (Cursor). Understanding when to use which.'
     ],
     ARRAY[
-        'Explain the mindset shift from learning-first to building-first',
-        'Differentiate between general chat assistants and AI-native IDEs like Cursor',
-        'Identify the limitations of LLMs including context windows and hallucinations'
+        'Explain the relationship between AI, machine learning, and large language models, and describe how LLMs like GPT evolved over time.',
+        'Identify the genuine strengths and limitations of LLMs, including hallucination, knowledge cutoffs, and prompt sensitivity.',
+        'Apply a structured prompt engineering framework (Persona-Problem-Solution + SALT) and demonstrate zero-shot, one-shot, and few-shot prompting techniques.'
     ],
     '[
         {"name": "OpenAI Prompt Engineering Guide", "url": "https://platform.openai.com/docs/guides/prompt-engineering", "category": "documentation"},
-        {"name": "Anthropic Claude Prompt Library", "url": "https://docs.anthropic.com/en/prompt-library/library", "category": "documentation"},
-        {"name": "Cursor Learn Portal", "url": "https://docs.cursor.com/", "category": "documentation"},
-        {"name": "Cursor AI Tutorial for Beginners (2026) - Build Apps with Vibe Coding", "url": "https://www.youtube.com/watch?v=HzWJ-S95U_8", "category": "video"},
-        {"name": "Git and GitHub for Beginners - Crash Course", "url": "https://www.youtube.com/watch?v=RGOj5yH7evk", "category": "video"},
-        {"name": "Introduction to Prompt Engineering & LLM Basics", "url": "https://www.youtube.com/watch?v=uK1Xk3p2kG0", "category": "video"}
+        {"name": "Anthropic Prompt Engineering Overview", "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering", "category": "documentation"},
+        {"name": "Anthropic Prompt Library", "url": "https://docs.anthropic.com/en/prompt-library/library", "category": "documentation"},
+        {"name": "Google Machine Learning Crash Course", "url": "https://developers.google.com/machine-learning/crash-course", "category": "documentation"},
+        {"name": "OpenAI Model Documentation (GPT lineage/current models)", "url": "https://platform.openai.com/docs/models", "category": "documentation"},
+        {"name": "Introduction to Prompt Engineering & LLMs", "url": "https://www.youtube.com/watch?v=dOxUW9nQ850", "category": "video"},
+        {"name": "Zero-Shot vs Few-Shot Prompting Explained", "url": "https://www.youtube.com/watch?v=sO4-L_Q0w8o", "category": "video"}
     ]'::jsonb,
-    'Build and Deploy Your First AI-Assisted App',
-    'Build a small static web utility tool using Cursor AI. Setup a GitHub repository, push your code, and write a README.md.',
+    'Build a Prompt Engineering Portfolio',
+    'Choose three real tasks you''d actually want AI help with (e.g., drafting an email, summarizing a document, generating a plan). For each task, write a fully structured prompt using the Persona-Problem-Solution framework and the SALT technique, with proper markdown formatting. For one of the three tasks, additionally demonstrate the same task solved zero-shot, one-shot, and few-shot, and write a short comparison of the output quality across all three. Finally, include one example of using AI itself to refine one of your prompts (meta-prompting), showing your original rough prompt and the improved version.
+
+Submit as a single PDF or document containing all prompts, outputs, and your written comparisons/reflections — no code or GitHub repository required for this module.',
     NOW() + INTERVAL '7 days',
     '[
-        {"criteria": "Functionality & Working Code", "max_points": 40},
-        {"criteria": "Git Commits & GitHub Repository Setup", "max_points": 30},
-        {"criteria": "README Documentation & Code Explanation", "max_points": 30}
+        {"criteria": "Prompt Structure & Framework Application (Persona-Problem-Solution, SALT, correct formatting used across all 3 prompts)", "max_points": 40},
+        {"criteria": "Shot-Learning Comparison & Analysis (clear zero/one/few-shot examples with thoughtful written comparison)", "max_points": 30},
+        {"criteria": "Meta-Prompting Documentation (clear before/after example with brief explanation of what improved)", "max_points": 30}
     ]'::jsonb,
     NOW(),
     TRUE

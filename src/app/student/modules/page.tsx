@@ -210,10 +210,10 @@ export default function StudentModules() {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       const ext = file.name.split('.').pop()?.toLowerCase();
-      if (ext === 'zip' || ext === 'pdf') {
+      if (ext === 'zip' || ext === 'pdf' || ext === 'docx') {
         setSelectedFile(file);
       } else {
-        showToast('Invalid File', 'Only ZIP or PDF uploads are supported.', 'error');
+        showToast('Invalid File', 'Only ZIP, PDF, or DOCX uploads are supported.', 'error');
       }
     }
   };
@@ -233,7 +233,10 @@ export default function StudentModules() {
     if (!selectedModule || !user) return;
 
     if (!selectedFile && !githubUrl && !vercelUrl && !driveUrl) {
-      showToast('Error', 'Please attach a ZIP/PDF file or provide repository links.', 'error');
+      const errorMsg = selectedModule.module_number < 3
+        ? 'Please attach a file (PDF/DOCX) or provide a Google Drive link.'
+        : 'Please attach a ZIP/PDF file or provide repository links.';
+      showToast('Error', errorMsg, 'error');
       return;
     }
 
@@ -575,38 +578,42 @@ export default function StudentModules() {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept=".zip,.pdf"
+                    accept=".zip,.pdf,.docx"
                     onChange={handleFileChange}
                     className="hidden"
                   />
                   <UploadCloud className="h-10 w-10 text-text-secondary mb-3" />
                   <p className="text-xs font-semibold text-text-primary">
-                    {selectedFile ? selectedFile.name : 'Drag & drop ZIP or PDF file here'}
+                    {selectedFile ? selectedFile.name : selectedModule.module_number < 3 ? 'Drag & drop PDF or DOCX file here' : 'Drag & drop ZIP, PDF, or DOCX file here'}
                   </p>
                   <p className="text-[10px] text-text-secondary mt-1">or click to browse local files (max 20MB)</p>
                 </div>
 
                 {/* URL inputs */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Input
-                    label="GitHub Repo Link"
-                    id="github-link"
-                    type="url"
-                    placeholder="https://github.com/..."
-                    value={githubUrl}
-                    onChange={(e) => setGithubUrl(e.target.value)}
-                    icon={<Code2 className="h-4 w-4" />}
-                  />
+                  {selectedModule.module_number >= 3 && (
+                    <>
+                      <Input
+                        label="GitHub Repo Link"
+                        id="github-link"
+                        type="url"
+                        placeholder="https://github.com/..."
+                        value={githubUrl}
+                        onChange={(e) => setGithubUrl(e.target.value)}
+                        icon={<Code2 className="h-4 w-4" />}
+                      />
 
-                  <Input
-                    label="Vercel Deploy Link"
-                    id="vercel-link"
-                    type="url"
-                    placeholder="https://...vercel.app"
-                    value={vercelUrl}
-                    onChange={(e) => setVercelUrl(e.target.value)}
-                    icon={<Globe className="h-4 w-4" />}
-                  />
+                      <Input
+                        label="Vercel Deploy Link"
+                        id="vercel-link"
+                        type="url"
+                        placeholder="https://...vercel.app"
+                        value={vercelUrl}
+                        onChange={(e) => setVercelUrl(e.target.value)}
+                        icon={<Globe className="h-4 w-4" />}
+                      />
+                    </>
+                  )}
 
                   <Input
                     label="Google Drive Link"
@@ -616,6 +623,7 @@ export default function StudentModules() {
                     value={driveUrl}
                     onChange={(e) => setDriveUrl(e.target.value)}
                     icon={<FileText className="h-4 w-4" />}
+                    className={selectedModule.module_number < 3 ? 'md:col-span-3' : ''}
                   />
                 </div>
 
