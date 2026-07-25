@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
 
     // Send to waitlist
     for (const wl of waitlist) {
-      const result = await sendEventWaitlistEmail(wl.email, wl.full_name, event);
+      const result = await sendEventReminderEmail(wl.email, wl.full_name, event);
       if (result.success) {
         sentWaitlist++;
       } else {
