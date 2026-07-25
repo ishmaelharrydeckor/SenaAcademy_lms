@@ -3,6 +3,7 @@ import {
   Heading,
   Text,
   Section,
+  Img,
 } from '@react-email/components';
 import * as React from 'react';
 import { EmailLayout } from './EmailLayout';
@@ -15,6 +16,7 @@ interface EventWaitlistEmailProps {
   isToday?: boolean;
   whatsappLink?: string;
   meetingLink?: string | null;
+  coverImageUrl?: string | null;
 }
 
 export const EventWaitlistEmail = ({
@@ -25,10 +27,22 @@ export const EventWaitlistEmail = ({
   isToday = true,
   whatsappLink = 'https://chat.whatsapp.com/JsXT6Od90Ms77sqiCy5oHm?s=cl&p=a&ilr=1',
   meetingLink = '',
+  coverImageUrl = '',
 }: EventWaitlistEmailProps) => {
   return (
     <EmailLayout previewText={`Waitlist Update: ${eventTitle} ${isToday ? 'today' : 'tomorrow'}`} email={email}>
       <Heading style={heading}>Waitlist Update</Heading>
+      
+      {coverImageUrl && (
+        <Section style={imageContainer}>
+          <Img
+            src={coverImageUrl}
+            alt={eventTitle}
+            width="100%"
+            style={coverImage}
+          />
+        </Section>
+      )}
       
       <Text style={text}>Hi {registrantName},</Text>
       
@@ -99,6 +113,20 @@ const text = {
   lineHeight: '1.5',
   color: '#18181B',
   margin: '0 0 16px 0',
+};
+
+const imageContainer = {
+  margin: '0 0 24px 0',
+  borderRadius: '8px',
+  overflow: 'hidden',
+  border: '1px solid #E2E8F0',
+};
+
+const coverImage = {
+  display: 'block',
+  width: '100%',
+  height: 'auto',
+  maxWidth: '600px',
 };
 
 const detailsContainer = {

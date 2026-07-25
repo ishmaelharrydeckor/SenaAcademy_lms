@@ -250,6 +250,7 @@ export async function sendEventReminderEmail(
     event_type: 'online' | 'in_person' | string;
     location?: string | null;
     meeting_link?: string | null;
+    cover_image_url?: string | null;
   }
 ): Promise<{ success: boolean; messageId?: string; error?: any }> {
   try {
@@ -294,6 +295,7 @@ export async function sendEventReminderEmail(
         meetingLink={event.meeting_link}
         email={toEmail}
         isToday={isToday}
+        coverImageUrl={event.cover_image_url}
       />
     );
   } catch (err: any) {
@@ -315,6 +317,7 @@ export async function sendEventWaitlistEmail(
     event_type?: string;
     location?: string | null;
     meeting_link?: string | null;
+    cover_image_url?: string | null;
   }
 ): Promise<{ success: boolean; messageId?: string; error?: any }> {
   try {
@@ -357,6 +360,7 @@ export async function sendEventWaitlistEmail(
         email={toEmail}
         isToday={isToday}
         meetingLink={event.meeting_link}
+        coverImageUrl={event.cover_image_url}
       />
     );
   } catch (err: any) {
