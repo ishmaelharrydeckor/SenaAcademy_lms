@@ -291,7 +291,22 @@ export default function AdminPage() {
       ? 'registrants' 
       : 'waitlist members';
 
-    if (!window.confirm(`Are you sure you want to dispatch event reminder emails to all confirmed ${groupLabel} for tomorrow?`)) {
+    const start = selectedEvent ? new Date(selectedEvent.start_time) : null;
+    let timeLabel = 'this event';
+    if (start) {
+      const now = new Date();
+      if (start.toDateString() === now.toDateString()) {
+        timeLabel = 'today';
+      } else {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        if (start.toDateString() === tomorrow.toDateString()) {
+          timeLabel = 'tomorrow';
+        }
+      }
+    }
+
+    if (!window.confirm(`Are you sure you want to dispatch event reminder emails to all confirmed ${groupLabel} for ${timeLabel}?`)) {
       return;
     }
     setSendingReminders(true);
