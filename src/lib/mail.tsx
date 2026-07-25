@@ -253,11 +253,14 @@ export async function sendEventReminderEmail(
   }
 ): Promise<{ success: boolean; messageId?: string; error?: any }> {
   try {
-    console.log(`Sending event reminder email via Resend to: ${toEmail}`);
+    console.log(`Sending event reminder email via Resend/Brevo to: ${toEmail}`);
     
     // Format event date
     const start = new Date(event.start_time);
     const end = new Date(event.end_time);
+    const now = new Date();
+    const isToday = start.toDateString() === now.toDateString();
+
     const optionsDate: Intl.DateTimeFormatOptions = { 
       weekday: 'long', 
       year: 'numeric', 
@@ -275,9 +278,13 @@ export async function sendEventReminderEmail(
     const endTime = end.toLocaleTimeString('en-US', optionsTime);
     const eventDate = `${formattedDate} from ${startTime} to ${endTime}`;
 
+    const subject = isToday 
+      ? `Reminder: ${event.title} is today! 🎉` 
+      : `Reminder: ${event.title} is tomorrow! 🎉`;
+
     return sendMail(
       toEmail,
-      `Reminder: ${event.title} is tomorrow! 🎉`,
+      subject,
       <EventReminderEmail
         registrantName={registrantName}
         eventTitle={event.title}
@@ -286,6 +293,7 @@ export async function sendEventReminderEmail(
         location={event.location}
         meetingLink={event.meeting_link}
         email={toEmail}
+        isToday={isToday}
       />
     );
   } catch (err: any) {
@@ -304,14 +312,20 @@ export async function sendEventWaitlistEmail(
     title: string;
     start_time: string;
     end_time: string;
+    event_type?: string;
+    location?: string | null;
+    meeting_link?: string | null;
   }
 ): Promise<{ success: boolean; messageId?: string; error?: any }> {
   try {
-    console.log(`Sending event waitlist email via Resend to: ${toEmail}`);
+    console.log(`Sending event waitlist email via Resend/Brevo to: ${toEmail}`);
     
     // Format event date
     const start = new Date(event.start_time);
     const end = new Date(event.end_time);
+    const now = new Date();
+    const isToday = start.toDateString() === now.toDateString();
+
     const optionsDate: Intl.DateTimeFormatOptions = { 
       weekday: 'long', 
       year: 'numeric', 
@@ -329,14 +343,20 @@ export async function sendEventWaitlistEmail(
     const endTime = end.toLocaleTimeString('en-US', optionsTime);
     const eventDate = `${formattedDate} from ${startTime} to ${endTime}`;
 
+    const subject = isToday 
+      ? `Waitlist Update: ${event.title} today` 
+      : `Waitlist Update: ${event.title} tomorrow`;
+
     return sendMail(
       toEmail,
-      `Waitlist Update: ${event.title} tomorrow`,
+      subject,
       <EventWaitlistEmail
         registrantName={registrantName}
         eventTitle={event.title}
         eventDate={eventDate}
         email={toEmail}
+        isToday={isToday}
+        meetingLink={event.meeting_link}
       />
     );
   } catch (err: any) {

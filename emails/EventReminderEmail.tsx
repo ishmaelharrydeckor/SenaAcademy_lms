@@ -15,27 +15,31 @@ interface EventReminderEmailProps {
   location?: string | null;
   meetingLink?: string | null;
   email: string;
+  isToday?: boolean;
+  whatsappLink?: string;
 }
 
 export const EventReminderEmail = ({
   registrantName = 'Builder',
   eventTitle = 'AI Builder Meetup',
-  eventDate = 'Tomorrow',
+  eventDate = 'Today',
   eventType = 'online',
   location = '',
   meetingLink = '',
   email = 'builder@example.com',
+  isToday = true,
+  whatsappLink = 'https://chat.whatsapp.com/JsXT6Od90Ms77sqiCy5oHm?s=cl&p=a&ilr=1',
 }: EventReminderEmailProps) => {
   const isOnline = eventType === 'online';
 
   return (
-    <EmailLayout previewText={`Reminder: ${eventTitle} is tomorrow! 🎉`} email={email}>
-      <Heading style={heading}>Event Tomorrow! 🎉</Heading>
+    <EmailLayout previewText={`Reminder: ${eventTitle} is ${isToday ? 'today' : 'tomorrow'}! 🎉`} email={email}>
+      <Heading style={heading}>Event {isToday ? 'Today' : 'Tomorrow'}! 🎉</Heading>
       
       <Text style={text}>Hi {registrantName},</Text>
       
       <Text style={text}>
-        This is a friendly reminder that <strong>{eventTitle}</strong> is happening tomorrow. We are excited to see you there!
+        This is a friendly reminder that <strong>{eventTitle}</strong> is happening {isToday ? 'today' : 'tomorrow'}. We are excited to see you there!
       </Text>
       
       <Section style={detailsContainer}>
@@ -71,6 +75,20 @@ export const EventReminderEmail = ({
         </Section>
       )}
 
+      {/* WhatsApp Community Button */}
+      <Section style={buttonContainer}>
+        <Text style={linkNote}>
+          Make sure you join our WhatsApp Community for updates and session notifications:
+        </Text>
+        <Button href={whatsappLink} style={secondaryButton}>
+          Join WhatsApp Community
+        </Button>
+        <Text style={rawLinkText}>
+          Or copy this link: <br />
+          <a href={whatsappLink} style={linkColor}>{whatsappLink}</a>
+        </Text>
+      </Section>
+
       {!isOnline && (
         <Text style={noteText}>
           Please aim to arrive 10-15 minutes early. If you need any assistance, feel free to reply directly to this email.
@@ -78,7 +96,7 @@ export const EventReminderEmail = ({
       )}
 
       <Text style={text}>
-        See you tomorrow!
+        See you {isToday ? 'today' : 'tomorrow'}!
       </Text>
       
       <Text style={signoff}>
@@ -141,6 +159,19 @@ const linkNote = {
 
 const button = {
   backgroundColor: '#0552FE',
+  borderRadius: '6px',
+  color: '#ffffff',
+  fontSize: '14px',
+  fontWeight: '600',
+  textDecoration: 'none',
+  textAlign: 'center' as const,
+  display: 'inline-block',
+  padding: '12px 24px',
+  lineHeight: '100%',
+};
+
+const secondaryButton = {
+  backgroundColor: '#25D366', // WhatsApp green
   borderRadius: '6px',
   color: '#ffffff',
   fontSize: '14px',
