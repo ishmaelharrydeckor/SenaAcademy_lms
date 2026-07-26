@@ -463,29 +463,51 @@ export default function AdminPage() {
       let name = '';
       let phone = '';
 
-      if (emailColIdx >= 0 && emailColIdx < parts.length) {
-        email = parts[emailColIdx];
+      // 1. Identify Email (part containing '@')
+      const emailIdx = parts.findIndex(p => p.includes('@'));
+      if (emailIdx !== -1) {
+        email = parts[emailIdx].trim();
+      } else if (emailColIdx >= 0 && emailColIdx < parts.length) {
+        email = parts[emailColIdx].trim();
       }
       
+      // 2. Identify Name
       if (nameColIdx === -2) {
         const first = firstNameColIdx >= 0 && firstNameColIdx < parts.length ? parts[firstNameColIdx] : '';
         const last = lastNameColIdx >= 0 && lastNameColIdx < parts.length ? parts[lastNameColIdx] : '';
         name = `${first} ${last}`.trim();
       } else if (nameColIdx >= 0 && nameColIdx < parts.length) {
-        name = parts[nameColIdx];
+        name = parts[nameColIdx].trim();
+      } else {
+        // Fallback: Name is the first non-email, non-phone, non-timestamp column
+        const foundName = parts.find((p, idx) => {
+          if (idx === emailIdx) return false;
+          if (p.includes(':') || p.includes('T')) return false; // skip timestamps
+          const clean = p.replace(/[\s\-\+\(\)]/g, '');
+          if (clean.length >= 9 && clean.length <= 15 && /^\d+$/.test(clean)) return false; // skip phones
+          return p.trim().length > 0;
+        });
+        if (foundName) name = foundName.trim();
       }
 
+      // 3. Identify Phone
       if (phoneColIdx >= 0 && phoneColIdx < parts.length) {
-        phone = parts[phoneColIdx];
+        phone = parts[phoneColIdx].trim();
       }
 
-      if (!email || !email.includes('@')) {
-        const foundEmail = parts.find(p => p.includes('@'));
-        if (foundEmail) {
-          email = foundEmail;
-          if (!name) {
-            name = parts.find(p => p !== email) || '';
-          }
+      // Fallback: If phone is not detected or doesn't look like a phone, scan all cells
+      const cleanPhone = phone.replace(/[\s\-\+\(\)]/g, '');
+      const isValidPhone = cleanPhone.length >= 9 && cleanPhone.length <= 15 && /^\d+$/.test(cleanPhone);
+      
+      if (!isValidPhone) {
+        const foundPhone = parts.find((p, idx) => {
+          if (idx === emailIdx) return false;
+          if (p.includes(':') || p.includes('T')) return false; // skip timestamps
+          const clean = p.replace(/[\s\-\+\(\)]/g, '');
+          return clean.length >= 9 && clean.length <= 15 && /^\d+$/.test(clean);
+        });
+        if (foundPhone) {
+          phone = foundPhone.trim();
         }
       }
 
