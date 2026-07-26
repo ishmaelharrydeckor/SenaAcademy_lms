@@ -33,6 +33,7 @@ import {
   Loader2,
   Edit,
   UploadCloud,
+  MessageCircle,
 } from 'lucide-react';
 
 interface Cohort {
@@ -384,6 +385,7 @@ export default function AdminPage() {
     let firstNameColIdx = -1;
     let lastNameColIdx = -1;
     let emailColIdx = 2; // default to 3rd column
+    let phoneColIdx = -1;
     let delimiter = ',';
 
     if (lines.length > 0) {
@@ -397,10 +399,14 @@ export default function AdminPage() {
       const hasTimestamp = headers.includes('timestamp');
       const hasEmail = headers.some(h => h.includes('email') || h.includes('email address'));
       const hasName = headers.some(h => h.includes('name') || h.includes('full name') || h.includes('first name') || h.includes('last name'));
+      const hasPhone = headers.some(h => h.includes('phone') || h.includes('mobile') || h.includes('contact') || h.includes('whatsapp'));
 
-      if (hasTimestamp || hasEmail || hasName) {
+      if (hasTimestamp || hasEmail || hasName || hasPhone) {
         const foundEmailIdx = headers.findIndex(h => h.includes('email'));
         if (foundEmailIdx !== -1) emailColIdx = foundEmailIdx;
+
+        const foundPhoneIdx = headers.findIndex(h => h.includes('phone') || h.includes('mobile') || h.includes('contact') || h.includes('whatsapp'));
+        if (foundPhoneIdx !== -1) phoneColIdx = foundPhoneIdx;
 
         // Try to find "Full Name"
         const foundFullNameIdx = headers.findIndex(h => h.includes('full name') || h === 'name');
@@ -425,17 +431,17 @@ export default function AdminPage() {
         lines.shift();
       } else {
         const sampleParts = firstLine.split(delimiter).map(p => p.trim());
-        if (sampleParts.length === 1) {
+        const emailIdx = sampleParts.findIndex(p => p.includes('@'));
+        const phoneIdx = sampleParts.findIndex(p => /^\+?[0-9\s-]{9,15}$/.test(p.replace(/[\s-]/g, '')));
+        
+        if (emailIdx !== -1) emailColIdx = emailIdx;
+        if (phoneIdx !== -1) phoneColIdx = phoneIdx;
+        
+        const remainingIndices = sampleParts.map((_, i) => i).filter(i => i !== emailColIdx && i !== phoneColIdx);
+        if (remainingIndices.length > 0) {
+          nameColIdx = remainingIndices[0];
+        } else {
           nameColIdx = -1;
-          emailColIdx = 0;
-        } else if (sampleParts.length === 2) {
-          if (sampleParts[0].includes('@')) {
-            emailColIdx = 0;
-            nameColIdx = 1;
-          } else {
-            nameColIdx = 0;
-            emailColIdx = 1;
-          }
         }
       }
     }
@@ -455,6 +461,7 @@ export default function AdminPage() {
       
       let email = '';
       let name = '';
+      let phone = '';
 
       if (emailColIdx >= 0 && emailColIdx < parts.length) {
         email = parts[emailColIdx];
@@ -466,6 +473,10 @@ export default function AdminPage() {
         name = `${first} ${last}`.trim();
       } else if (nameColIdx >= 0 && nameColIdx < parts.length) {
         name = parts[nameColIdx];
+      }
+
+      if (phoneColIdx >= 0 && phoneColIdx < parts.length) {
+        phone = parts[phoneColIdx];
       }
 
       if (!email || !email.includes('@')) {
@@ -483,7 +494,8 @@ export default function AdminPage() {
       waitlistToInsert.push({
         event_id: selectedEvent.id,
         full_name: name || email.split('@')[0] || 'Waitlisted Attendee',
-        email: email.toLowerCase().trim()
+        email: email.toLowerCase().trim(),
+        phone: phone ? phone.trim() : null
       });
     }
 
@@ -3539,13 +3551,15 @@ export default function AdminPage() {
                               <tr className="border-b border-border-brand bg-bg-surface-hover/40 text-text-secondary font-mono uppercase tracking-wider text-[10px]">
                                 <th className="p-4">Name</th>
                                 <th className="p-4">Email</th>
+                                <th className="p-4">Phone</th>
                                 <th className="p-4 text-right">Joined Waitlist At</th>
+                                <th className="p-4 text-center">Actions</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-border-brand text-text-primary">
                               {loadingWaitlist ? (
                                 <tr>
-                                  <td colSpan={3} className="p-8 text-center text-text-secondary">
+                                  <td colSpan={5} className="p-8 text-center text-text-secondary">
                                     <span className="flex items-center gap-2 justify-center">
                                       <Loader2 className="h-4 w-4 animate-spin text-primary-blue" />
                                       Retrieving waitlist...
@@ -3554,7 +3568,7 @@ export default function AdminPage() {
                                 </tr>
                               ) : waitlistList.length === 0 ? (
                                 <tr>
-                                  <td colSpan={3} className="p-8 text-center text-text-secondary italic">
+                                  <td colSpan={5} className="p-8 text-center text-text-secondary italic">
                                     No attendees on the waitlist for this event yet.
                                   </td>
                                 </tr>
@@ -3563,8 +3577,26 @@ export default function AdminPage() {
                                   <tr key={wl.id} className="hover:bg-bg-surface-hover/30">
                                     <td className="p-4 font-semibold text-text-primary">{wl.full_name}</td>
                                     <td className="p-4 text-text-secondary">{wl.email}</td>
+                                    <td className="p-4 text-text-secondary font-mono">{wl.phone || '—'}</td>
                                     <td className="p-4 text-right text-text-secondary">
                                       {new Date(wl.created_at).toLocaleDateString()}
+                                    </td>
+                                    <td className="p-4 text-center">
+                                      {wl.phone ? (
+                                        <a
+                                          href={`https://wa.me/${wl.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+                                            `Hi ${wl.full_name.trim().split(' ')[0] || 'Builder'}, Ishmael here from Sena Academy! I saw you joined the waitlist for the Founding Builders Cohort. We are starting this Saturday, August 1st, and still have a few slots left at the special price of GHS 100 (regularly GHS 200). If you are ready to build with AI, you can secure your spot by joining the cohort group here: https://chat.whatsapp.com/FMfa6oY0VhKGriix2EEH9e`
+                                          )}`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-semibold transition-colors"
+                                        >
+                                          <MessageCircle className="h-3 w-3" />
+                                          WhatsApp DM
+                                        </a>
+                                      ) : (
+                                        <span className="text-[10px] text-text-secondary italic">No Phone</span>
+                                      )}
                                     </td>
                                   </tr>
                                 ))
