@@ -3607,7 +3607,7 @@ export default function AdminPage() {
                                       {wl.phone ? (
                                         <a
                                           href={`https://wa.me/${wl.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-                                            `Hi ${wl.full_name.trim().split(' ')[0] || 'Builder'}, Ishmael here from Sena Academy. We just sent out access codes to the latest batch of builders who completed their enrollment for the Founding Builders Cohort. The remaining GHS 100 discount slots (regularly GHS 200) are filling up. If you are ready to build with AI starting this Saturday, August 1st, complete your enrollment here: https://senaacademy.org/enroll. You can also join the cohort group here: https://chat.whatsapp.com/FMfa6oY0VhKGriix2EEH9e`
+                                            `Hi ${wl.full_name.trim().split(' ')[0] || 'Builder'},\n\nIshmael here from Sena Academy.\n\nWe just sent out access codes to the latest batch of builders who completed their enrollment for the Founding Builders Cohort. The remaining GHS 100 discount slots (regularly GHS 200) are filling up.\n\nIf you are ready to build with AI starting this Saturday, August 1st, complete your enrollment here:\nhttps://senaacademy.org/enroll\n\nYou can also join the cohort group here:\nhttps://chat.whatsapp.com/FMfa6oY0VhKGriix2EEH9e`
                                           )}`}
                                           target="_blank"
                                           rel="noopener noreferrer"
