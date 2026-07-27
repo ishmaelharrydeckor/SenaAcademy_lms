@@ -3567,15 +3567,15 @@ export default function AdminPage() {
                           </Card>
                         )}
 
-                        <div className="border border-border-brand rounded-lg overflow-hidden max-h-[550px] overflow-y-auto">
+                        <div className="border border-border-brand rounded-lg overflow-x-auto max-h-[550px] overflow-y-auto">
                           <table className="w-full text-left border-collapse text-xs">
                             <thead>
                               <tr className="border-b border-border-brand bg-bg-surface-hover/40 text-text-secondary font-mono uppercase tracking-wider text-[10px]">
-                                <th className="p-4">Name</th>
-                                <th className="p-4">Email</th>
-                                <th className="p-4">Phone</th>
-                                <th className="p-4 text-right">Joined Waitlist At</th>
-                                <th className="p-4 text-center">Actions</th>
+                                <th className="py-3 px-3">Name</th>
+                                <th className="py-3 px-3">Email</th>
+                                <th className="py-3 px-3">Phone</th>
+                                <th className="py-3 px-3 text-right">Joined Waitlist At</th>
+                                <th className="py-3 px-3 text-center">Actions</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-border-brand text-text-primary">
@@ -3597,13 +3597,13 @@ export default function AdminPage() {
                               ) : (
                                 waitlistList.map((wl) => (
                                   <tr key={wl.id} className="hover:bg-bg-surface-hover/30">
-                                    <td className="p-4 font-semibold text-text-primary">{wl.full_name}</td>
-                                    <td className="p-4 text-text-secondary">{wl.email}</td>
-                                    <td className="p-4 text-text-secondary font-mono">{wl.phone || '—'}</td>
-                                    <td className="p-4 text-right text-text-secondary">
+                                    <td className="py-3 px-3 font-semibold text-text-primary">{wl.full_name}</td>
+                                    <td className="py-3 px-3 text-text-secondary">{wl.email}</td>
+                                    <td className="py-3 px-3 text-text-secondary font-mono">{wl.phone || '—'}</td>
+                                    <td className="py-3 px-3 text-right text-text-secondary">
                                       {new Date(wl.created_at).toLocaleDateString()}
                                     </td>
-                                    <td className="p-4 text-center">
+                                    <td className="py-3 px-3 text-center">
                                       {wl.phone ? (
                                         <a
                                           href={`https://wa.me/${wl.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
