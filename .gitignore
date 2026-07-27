@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel
+.env*
+
+# scratch session and progress files
+scratch/whatsapp-session*
+scratch/progress*
+scratch/social_proof_progress.json
+scratch/waitlist_contacts.json
+scratch/waitlist_contacts_export.csv

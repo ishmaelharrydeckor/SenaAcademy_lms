@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sena Academy WhatsApp Outreach Dashboard</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0b141a;
+      color: #e9edef;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: #111b21;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      border: 1px border #222e35;
+    }
+    h1 {
+      color: #00a884;
+      margin-top: 0;
+      font-size: 24px;
+      border-bottom: 1px solid #222e35;
+      padding-bottom: 15px;
+    }
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      background-color: #202c33;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .stat-box {
+      flex: 1;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 20px;
+      font-weight: bold;
+      color: #00d6a5;
+      margin-top: 5px;
+    }
+    .search-container {
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #2a3942;
+      background-color: #2a3942;
+      color: white;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #222e35;
+    }
+    th {
+      background-color: #202c33;
+      color: #8696a0;
+      font-weight: 500;
+    }
+    tr:hover {
+      background-color: #202c33/50;
+    }
+    .btn-send {
+      background-color: #00a884;
+      color: #0b141a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.2s;
+    }
+    .btn-send:hover {
+      background-color: #00c298;
+    }
+    .row-sent {
+      opacity: 0.5;
+    }
+    .row-sent .btn-send {
+      background-color: #3b4a54;
+      color: #8696a0;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-pending {
+      background-color: #ffe59933;
+      color: #ffe599;
+    }
+    .badge-sent {
+      background-color: #00a88433;
+      color: #00d6a5;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Sena Academy Outreach Helper</h1>
+  
+  <div class="stats">
+    <div class="stat-box">
+      Total Waitlist
+      <div id="stat-total" class="stat-val">0</div>
+    </div>
+    <div class="stat-box">
+      Pending
+      <div id="stat-pending" class="stat-val">0</div>
+    </div>
+    <div class="stat-box">
+      Sent
+      <div id="stat-sent" class="stat-val">0</div>
+    </div>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="search-input" placeholder="Search by name, email or phone..." onkeyup="filterTable()">
+  </div>
+
+  <table id="contacts-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+      <!-- Generated rows go here -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+  let contacts = [];
+  let sentList = JSON.parse(localStorage.getItem('outreach_sent') || '[]');
+
+  // Load from contacts file
+  async function loadContacts() {
+    try {
+      const response = await fetch('waitlist_contacts.json');
+      contacts = await response.json();
+      renderTable();
+      updateStats();
+    } catch (e) {
+      alert("Failed to load contacts data. Make sure waitlist_contacts.json is in the same directory as this file.");
+    }
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = '';
+    
+    contacts.forEach((contact, idx) => {
+      const isSent = sentList.includes(contact.email);
+      const tr = document.createElement('tr');
+      tr.id = `row-${idx}`;
+      if (isSent) tr.className = 'row-sent';
+      
+      const firstName = contact.name.split(' ')[0] || 'Builder';
+      const messageText = `Hi ${firstName}, Ishmael here from Sena Academy. We just sent out access codes to the latest batch of builders who completed their enrollment for the Founding Builders Cohort. The remaining GHS 100 discount slots (regularly GHS 200) are filling up. If you are ready to build with AI starting this Saturday, August 1st, complete your enrollment here: https://senaacademy.org/enroll. You can also join the cohort group here: https://chat.whatsapp.com/FMfa6oY0VhKGriix2EEH9e`;
+      
+      const waUrl = `https://web.whatsapp.com/send?phone=${contact.phone}&text=${encodeURIComponent(messageText)}`;
+      
+      tr.innerHTML = `
+        <td><strong>${contact.name}</strong><br><small style="color:#8696a0">${contact.email}</small></td>
+        <td style="font-family: monospace;">+${contact.phone}</td>
+        <td>
+          <span class="badge ${isSent ? 'badge-sent' : 'badge-pending'}" id="badge-${idx}">
+            ${isSent ? 'Sent' : 'Pending'}
+          </span>
+        </td>
+        <td>
+          <a href="${waUrl}" target="_blank" class="btn-send" onclick="markAsSent(${idx}, '${contact.email}')">
+            ${isSent ? 'Send Again' : 'Send DM'}
+          </a>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function markAsSent(idx, email) {
+    if (!sentList.includes(email)) {
+      sentList.push(email);
+      localStorage.setItem('outreach_sent', JSON.stringify(sentList));
+    }
+    
+    document.getElementById(`row-${idx}`).className = 'row-sent';
+    const badge = document.getElementById(`badge-${idx}`);
+    badge.className = 'badge badge-sent';
+    badge.innerText = 'Sent';
+    
+    updateStats();
+  }
+
+  function updateStats() {
+    document.getElementById('stat-total').innerText = contacts.length;
+    document.getElementById('stat-sent').innerText = sentList.length;
+    document.getElementById('stat-pending').innerText = contacts.length - sentList.length;
+  }
+
+  function filterTable() {
+    const input = document.getElementById('search-input');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('contacts-table');
+    const tr = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < tr.length; i++) {
+      const tdText = tr[i].textContent || tr[i].innerText;
+      if (tdText.toLowerCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+
+  window.onload = loadContacts;
+</script>
+
+</body>
+</html>
