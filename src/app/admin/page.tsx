@@ -3607,7 +3607,7 @@ export default function AdminPage() {
                                       {wl.phone ? (
                                         <a
                                           href={`https://wa.me/${wl.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-                                            `Hi ${wl.full_name.trim().split(' ')[0] || 'Builder'}, Ishmael here from Sena Academy! I saw you joined the waitlist for the Founding Builders Cohort. We are starting this Saturday, August 1st, and still have a few slots left at the special price of GHS 100 (regularly GHS 200). If you are ready to build with AI, you can secure your spot by joining the cohort group here: https://chat.whatsapp.com/FMfa6oY0VhKGriix2EEH9e`
+                                            `Hi ${wl.full_name.trim().split(' ')[0] || 'Builder'}, Ishmael here from Sena Academy. We just sent out access codes to the latest batch of builders who completed their enrollment for the Founding Builders Cohort. The remaining GHS 100 discount slots (regularly GHS 200) are filling up. If you are ready to build with AI starting this Saturday, August 1st, complete your enrollment here: https://senaacademy.org/enroll. You can also join the cohort group here: https://chat.whatsapp.com/FMfa6oY0VhKGriix2EEH9e`
                                           )}`}
                                           target="_blank"
                                           rel="noopener noreferrer"
