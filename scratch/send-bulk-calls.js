@@ -120,17 +120,24 @@ async function run() {
   console.log('\nTriggering mNotify voice API...');
 
   try {
+    // Download the pre-uploaded mp3 file on the fly
+    console.log('Downloading audio template from mNotify storage...');
+    const audioUrl = 'https://production.mnotify.com/storage/voice_files/A9JLk9YxekioLl9_20260727180022.mp3';
+    const audioResponse = await fetch(audioUrl);
+    if (!audioResponse.ok) throw new Error('Failed to download audio template');
+    const audioBlob = await audioResponse.blob();
+
+    const formData = new FormData();
+    formData.append('campaign', 'Founding Builders Invitation');
+    formData.append('file', audioBlob, 'enrollment.mp3');
+    recipients.forEach(r => {
+      formData.append('recipient[]', r);
+    });
+
     const url = `https://api.mnotify.com/api/voice/quick?key=${mnotifyApiKey}`;
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        campaign: 'Founding Builders Invitation',
-        voice_id: voiceId,
-        contacts: recipients
-      })
+      body: formData
     });
 
     const data = await response.json();
