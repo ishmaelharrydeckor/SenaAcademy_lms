@@ -146,24 +146,13 @@ async function triggerVoiceBroadcast(recipients) {
   }
 
   try {
-    console.log('Downloading audio template from mNotify storage...');
-    // We fetch the dynamic audio URL using the template ID
-    const templatesUrl = `https://api.mnotify.com/api/template?key=${mnotifyApiKey}`;
-    const tResponse = await fetch(templatesUrl);
-    const tData = await tResponse.json();
-    
-    let audioUrl = 'https://production.mnotify.com/storage/voice_files/A9JLk9YxekioLl9_20260727180022.mp3'; // Fallback
-    if (tData.status === 'success' && tData.template_list) {
-      const template = tData.template_list.find(t => t._id == voiceId);
-      if (template && template.content) {
-        audioUrl = template.content;
-        console.log(`Found audio URL for template ID ${voiceId}:`, audioUrl);
-      }
+    console.log('Reading local denoised audio file (S3NA_FINAL_cleaned.mp3)...');
+    const audioPath = path.resolve(__dirname, 'S3NA_FINAL_cleaned.mp3');
+    if (!fs.existsSync(audioPath)) {
+      throw new Error(`Processed audio file not found at: ${audioPath}`);
     }
-
-    const audioResponse = await fetch(audioUrl);
-    if (!audioResponse.ok) throw new Error('Failed to download audio template');
-    const audioBlob = await audioResponse.blob();
+    const audioBuffer = fs.readFileSync(audioPath);
+    const audioBlob = new Blob([audioBuffer], { type: 'audio/mpeg' });
 
     const formData = new FormData();
     formData.append('campaign', 'Founding Builders Invitation');
