@@ -186,7 +186,7 @@ async function main() {
         <p style="font-size: 15px; line-height: 1.6; color: #334155;">The GHS 100 discount has officially ended. Admissions for the Founding Builders Cohort are now at the standard rate of GHS 200.</p>
         <p style="font-size: 15px; line-height: 1.6; color: #334155; font-weight: 600;">Admissions close permanently tonight at 11:59 PM.</p>
         <p style="font-size: 15px; line-height: 1.6; color: #334155;">We are closing registration to configure student dashboards and send out live session invite links for tomorrow morning's launch (Saturday, August 1st).</p>
-        <p style="font-size: 15px; line-height: 1.6; color: #334155;">If you are ready to learn build-in-public methodologies, master React & databases, and ship production apps, secure your standard seat now before the cohort closes.</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #334155;">If you are ready to learn how to design websites, command AI to build systems, and launch real mobile apps from scratch, secure your standard seat now before the cohort closes.</p>
         <div style="text-align: center; margin: 30px 0;">
           <a href="https://senaacademy.org/enroll" style="background-color: #000000; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; display: inline-block;">Complete Your Registration</a>
         </div>
