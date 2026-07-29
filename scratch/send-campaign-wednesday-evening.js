@@ -214,22 +214,49 @@ async function main() {
     const formattedPhone = formatPhone(contact.phone);
 
     // Evening templates
-    const emailSubject = 'GHS 100 Discount: Closing Tomorrow Night';
+    const emailSubject = 'December 2026: Two different realities';
     const emailHtml = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #1e293b;">
-        <h2 style="color: #0f172a; margin-top: 0; font-size: 20px; font-weight: 700; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px;">⏳ GHS 100 Discount: Closing Tomorrow Night</h2>
-        <p style="font-size: 15px; line-height: 1.6; color: #334155;">Hi ${firstName},</p>
-        <p style="font-size: 15px; line-height: 1.6; color: #334155;">Just a quick evening reminder that the Founding Builders GHS 100 discount expires tomorrow night (Thursday) at 11:59 PM.</p>
-        <p style="font-size: 15px; line-height: 1.6; color: #334155;">We kickoff live sessions this Saturday morning to start building real-world applications. Secure your seat and get your student dashboard access code before the price doubles to GHS 200.</p>
+        <h2 style="color: #0f172a; margin-top: 0; font-size: 20px; font-weight: 700; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px;">December 2026: Two different realities</h2>
+        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">Hi ${firstName},</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">In five months, the year will be over.</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">By December 2026, you will be in one of two places with your coding skills. Let’s look at the contrast:</p>
+        
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px;">
+          <thead>
+            <tr style="background-color: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+              <th style="padding: 10px; text-align: left; font-weight: 700; color: #0f172a; width: 50%; border-right: 1px solid #e2e8f0;">Reality A: If you join today</th>
+              <th style="padding: 10px; text-align: left; font-weight: 700; color: #0f172a; width: 50%;">Reality B: If you do nothing</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid #edf2f7;">
+              <td style="padding: 12px 10px; color: #334155; border-right: 1px solid #e2e8f0; vertical-align: top;"><strong>Shipping standalone apps:</strong> You can turn any idea into a functional frontend, database, and packageable Android APK.</td>
+              <td style="padding: 12px 10px; color: #64748b; vertical-align: top;"><strong>Stuck in tutorial loop:</strong> Still searching YouTube, watching others code, but unable to build a project from a blank canvas.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #edf2f7;">
+              <td style="padding: 12px 10px; color: #334155; border-right: 1px solid #e2e8f0; vertical-align: top;"><strong>AI co-piloting mastery:</strong> You write prompt scripts, deploy cloud backends, and command AI to build systems in hours.</td>
+              <td style="padding: 12px 10px; color: #64748b; vertical-align: top;"><strong>Syntax frustration:</strong> Fighting minor typos and bugs for days without a structured debug workflow or community support.</td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 10px; color: #334155; border-right: 1px solid #e2e8f0; vertical-align: top;"><strong>Freelance & job ready:</strong> You have a standalone GitHub developer profile, custom portfolio, and clients on Upwork.</td>
+              <td style="padding: 12px 10px; color: #64748b; vertical-align: top;"><strong>Empty portfolio:</strong> A blank GitHub commit history and no live, deployed projects to show potential employers or clients.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">The Founding Builders Cohort kicksoff this Saturday morning to give you Reality A.</p>
+        
         <div style="text-align: center; margin: 30px 0;">
           <a href="https://senaacademy.org/enroll" style="background-color: #000000; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; display: inline-block;">Secure Your Founding Seat (GHS 100)</a>
         </div>
+        
         <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 25px 0;" />
         <p style="font-size: 12px; color: #64748b; margin: 0;">— The Sena Academy Team</p>
       </div>
     `;
 
-    const smsText = `Hi ${firstName},\njust a quick reminder that the GHS 100 Founding Builder discount expires tomorrow night. 11 students have already enrolled. Secure your GHS 100 seat before the price returns to GHS 200: senaacademy.org/enroll`;
+    const smsText = `Hi ${firstName},\nin 5 months, where will your coding skills be? By December, you could be deploying full-stack databases, packaging Android apps, and earning from tech—or still stuck in tutorial purgatory, watching others build. Saturday we kickoff live. Secure your GHS 100 seat before the discount expires tomorrow night: senaacademy.org/enroll`;
 
     console.log(`[${i + 1}/${pending.length}] Dispatching to ${contact.name}...`);
 
