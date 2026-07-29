@@ -229,7 +229,7 @@ async function main() {
       </div>
     `;
 
-    const smsText = `Hi ${firstName},\nthis is a final warning that the GHS 100 Founding Builder discount expires tomorrow night. 11 students have already enrolled. Secure your GHS 100 seat before the price returns to GHS 200: senaacademy.org/enroll`;
+    const smsText = `Hi ${firstName},\njust a quick reminder that the GHS 100 Founding Builder discount expires tomorrow night. 11 students have already enrolled. Secure your GHS 100 seat before the price returns to GHS 200: senaacademy.org/enroll`;
 
     console.log(`[${i + 1}/${pending.length}] Dispatching to ${contact.name}...`);
 
