@@ -214,13 +214,13 @@ async function main() {
     const formattedPhone = formatPhone(contact.phone);
 
     // Evening templates
-    const emailSubject = 'December 2026: Two different realities';
+    const emailSubject = 'December 2026: Two different realities (For Beginners)';
     const emailHtml = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #1e293b;">
         <h2 style="color: #0f172a; margin-top: 0; font-size: 20px; font-weight: 700; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px;">December 2026: Two different realities</h2>
         <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">Hi ${firstName},</p>
         <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">In five months, the year will be over.</p>
-        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">By December 2026, you will be in one of two places with your coding skills. Let’s look at the contrast:</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">If you have **zero coding experience** right now, by December 2026, you will be in one of two places with your digital skills:</p>
         
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px;">
           <thead>
@@ -231,21 +231,21 @@ async function main() {
           </thead>
           <tbody>
             <tr style="border-bottom: 1px solid #edf2f7;">
-              <td style="padding: 12px 10px; color: #334155; border-right: 1px solid #e2e8f0; vertical-align: top;"><strong>Shipping standalone apps:</strong> You can turn any idea into a functional frontend, database, and packageable Android APK.</td>
-              <td style="padding: 12px 10px; color: #64748b; vertical-align: top;"><strong>Stuck in tutorial loop:</strong> Still searching YouTube, watching others code, but unable to build a project from a blank canvas.</td>
+              <td style="padding: 12px 10px; color: #334155; border-right: 1px solid #e2e8f0; vertical-align: top;"><strong>Building apps with AI:</strong> You use AI tools to design, build, and launch real websites and mobile apps from scratch.</td>
+              <td style="padding: 12px 10px; color: #64748b; vertical-align: top;"><strong>Still wishing:</strong> Feeling like building software is only for "math geniuses" and remaining stuck in non-tech jobs.</td>
             </tr>
             <tr style="border-bottom: 1px solid #edf2f7;">
-              <td style="padding: 12px 10px; color: #334155; border-right: 1px solid #e2e8f0; vertical-align: top;"><strong>AI co-piloting mastery:</strong> You write prompt scripts, deploy cloud backends, and command AI to build systems in hours.</td>
-              <td style="padding: 12px 10px; color: #64748b; vertical-align: top;"><strong>Syntax frustration:</strong> Fighting minor typos and bugs for days without a structured debug workflow or community support.</td>
+              <td style="padding: 12px 10px; color: #334155; border-right: 1px solid #e2e8f0; vertical-align: top;"><strong>Practical tech skills:</strong> You command AI to write code, design screens, and turn your business ideas into real products.</td>
+              <td style="padding: 12px 10px; color: #64748b; vertical-align: top;"><strong>Left behind:</strong> Feeling overwhelmed by the AI wave instead of learning how to use it as your career superpower.</td>
             </tr>
             <tr>
-              <td style="padding: 12px 10px; color: #334155; border-right: 1px solid #e2e8f0; vertical-align: top;"><strong>Freelance & job ready:</strong> You have a standalone GitHub developer profile, custom portfolio, and clients on Upwork.</td>
-              <td style="padding: 12px 10px; color: #64748b; vertical-align: top;"><strong>Empty portfolio:</strong> A blank GitHub commit history and no live, deployed projects to show potential employers or clients.</td>
+              <td style="padding: 12px 10px; color: #334155; border-right: 1px solid #e2e8f0; vertical-align: top;"><strong>Earn from anywhere:</strong> You have a portfolio of real projects, ready to start pitching clients for freelance or remote work.</td>
+              <td style="padding: 12px 10px; color: #64748b; vertical-align: top;"><strong>No new income:</strong> No new digital skills to show, and no portfolio to help increase your earning power.</td>
             </tr>
           </tbody>
         </table>
 
-        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">The Founding Builders Cohort kicksoff this Saturday morning to give you Reality A.</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">We designed the Founding Builders Cohort specifically for absolute beginners. We start from the very basics this Saturday morning.</p>
         
         <div style="text-align: center; margin: 30px 0;">
           <a href="https://senaacademy.org/enroll" style="background-color: #000000; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; display: inline-block;">Secure Your Founding Seat (GHS 100)</a>
@@ -256,7 +256,7 @@ async function main() {
       </div>
     `;
 
-    const smsText = `Hi ${firstName},\nin 5 months, where will your coding skills be? By December, you could be deploying full-stack databases, packaging Android apps, and earning from tech—or still stuck in tutorial purgatory, watching others build. Saturday we kickoff live. Secure your GHS 100 seat before the discount expires tomorrow night: senaacademy.org/enroll`;
+    const smsText = `Hi ${firstName},\nin 5 months, where will your tech skills be? By December, you could be designing websites, launching apps using AI, and earning from tech—even starting with zero coding experience. Or you could still be wishing you knew how to build digital products. Our GHS 100 seat closes tomorrow night: senaacademy.org/enroll`;
 
     console.log(`[${i + 1}/${pending.length}] Dispatching to ${contact.name}...`);
 
