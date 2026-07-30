@@ -266,8 +266,8 @@ async function main() {
 
   console.log('\nSMS & Email blast complete.');
   
-  // Trigger voice broadcast immediately after
-  await triggerVoiceBroadcast(voiceRecipients);
+  // Trigger voice broadcast immediately after (disabled here, rescheduled for 8:00 AM)
+  // await triggerVoiceBroadcast(voiceRecipients);
 }
 
 main().catch(console.error);
