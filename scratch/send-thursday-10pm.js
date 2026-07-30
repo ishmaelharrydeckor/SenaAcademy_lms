@@ -204,7 +204,7 @@ async function main() {
     }
 
     fs.writeFileSync(progressFile, JSON.stringify(progress, null, 2));
-    await new Promise(r => setTimeout(r, 1500));
+    await new Promise(r => setTimeout(r, 300));
   }
 
   console.log('\n10PM blast complete.');

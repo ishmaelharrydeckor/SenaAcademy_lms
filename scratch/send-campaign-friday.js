@@ -218,8 +218,7 @@ async function main() {
 
     fs.writeFileSync(progressFile, JSON.stringify(progress, null, 2));
     
-    // 1.5 seconds delay between recipients
-    await new Promise(r => setTimeout(r, 1500));
+    await new Promise(r => setTimeout(r, 300));
   }
 
   console.log('\nFriday campaign finished.');
