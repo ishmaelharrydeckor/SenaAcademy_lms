@@ -57,8 +57,7 @@ async function processAudio() {
   }
 
   try {
-    // Compress to 64k mono MP3 for minimal file size and crisp voice transmission over cellular lines
-    execSync(`"${ffmpegPath}" -i "${cleanedWavPath}" -codec:a libmp3lame -b:a 64k "${finalMp3Path}"`, { stdio: 'inherit' });
+    execSync(`"${ffmpegPath}" -i "${cleanedWavPath}" -filter:a "atempo=1.12" -codec:a libmp3lame -b:a 64k "${finalMp3Path}"`, { stdio: 'inherit' });
     console.log(`[+] Compression successful. Saved output to: ${finalMp3Path}`);
   } catch (err) {
     console.error('[-] Compression to MP3 failed:', err.message);
