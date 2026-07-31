@@ -170,27 +170,28 @@ async function main() {
     const firstName = contact.name.split(' ')[0] || 'Builder';
     const formattedPhone = formatPhone(contact.phone);
 
-    const smsText = `Hi ${firstName}, this is your final reminder: the GHS 100 early-bird discount extension for the Founding Builders Cohort expires at exactly 9 PM GMT tonight. Class starts tomorrow morning! Claim your seat before 9 PM: https://senaacademy.org/enroll`;
+    const smsText = `Sena Academy: Roster lock is scheduled for 8:00 AM tomorrow. To ensure your student portal access is configured before class begins, complete your registration tonight at the GHS 100 early-bird rate. Price increases to GHS 200 at 8 AM. Secure seat: https://senaacademy.org/enroll`;
 
-    const emailSubject = 'Final 3 Hours: GHS 100 early-bird discount closing permanently';
+    const emailSubject = 'Action Required: Founding Builders Roster Lock (8:00 AM Tomorrow)';
     const emailHtml = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #1e293b;">
-        <h2 style="color: #0f172a; margin-top: 0; font-size: 20px; font-weight: 700; border-bottom: 1px solid #ef4444; padding-bottom: 15px;">⏳ Final Reminder: GHS 100 Discount Closes at 9 PM Tonight</h2>
+        <h2 style="color: #0f172a; margin-top: 0; font-size: 20px; font-weight: 700; border-bottom: 1px solid #0f172a; padding-bottom: 15px;">🔒 Founding Builders: Roster Lock at 8:00 AM Tomorrow</h2>
         <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">Hi ${firstName},</p>
-        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">This is your final alert. The temporary GHS 100 early-bird discount re-opening will close at <strong>exactly 9:00 PM GMT tonight</strong> to finalize kickoff rosters.</p>
-        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">After 9:00 PM tonight, registration will revert to the standard price of <strong>GHS 200</strong> permanently. Live classes kickoff tomorrow morning!</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">We are currently running database syncs and setting up student portal accounts for the Founding Builders Cohort kickoff tomorrow morning (August 1st).</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">To accommodate late applicants and ensure everyone on the waitlist has an opportunity to complete onboarding, we are keeping the <strong>GHS 100</strong> early-bird registration open until <strong>exactly 8:00 AM GMT tomorrow</strong>.</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 20px 0;">After 8:00 AM, the cohort roster will lock, and registration pricing will revert to the standard price of <strong>GHS 200</strong> permanently to cover late onboarding setup overhead.</p>
         
-        <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; margin: 25px 0; border-radius: 4px;">
-          <h4 style="margin: 0 0 10px 0; color: #991b1b; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Founding Builders Cohort Details:</h4>
-          <ul style="margin: 0; padding-left: 20px; font-size: 13.5px; line-height: 1.6; color: #7f1d1d;">
-            <li style="margin-bottom: 8px;"><strong>Kickoff:</strong> Saturday morning, August 1st at 9:00 AM GMT.</li>
-            <li style="margin-bottom: 8px;"><strong>Pricing Cut-off:</strong> GHS 100 expires at 9:00 PM GMT tonight (reverts to GHS 200).</li>
-            <li style="margin-bottom: 0;"><strong>Opportunity:</strong> A single basic client freelance landing page or dashboard setup will pay back this GHS 100 investment multiple times over.</li>
+        <div style="background-color: #f8fafc; border-left: 4px solid #0f172a; padding: 15px; margin: 25px 0; border-radius: 4px;">
+          <h4 style="margin: 0 0 10px 0; color: #0f172a; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Founding Builders Cohort Onboarding:</h4>
+          <ul style="margin: 0; padding-left: 20px; font-size: 13.5px; line-height: 1.6; color: #475569;">
+            <li style="margin-bottom: 8px;"><strong>Kickoff Class:</strong> Tomorrow (Saturday, August 1st) at 9:00 AM GMT.</li>
+            <li style="margin-bottom: 8px;"><strong>Roster Lock & Cut-off:</strong> 8:00 AM GMT tomorrow (pricing reverts to GHS 200).</li>
+            <li style="margin-bottom: 0;"><strong>Opportunity:</strong> A single basic client freelance website or database project will pay back this GHS 100 investment multiple times over.</li>
           </ul>
         </div>
 
         <div style="text-align: center; margin: 30px 0;">
-          <a href="https://senaacademy.org/enroll" style="background-color: #ef4444; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; display: inline-block;">Secure My Seat & Enroll for GHS 100</a>
+          <a href="https://senaacademy.org/enroll" style="background-color: #0f172a; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; display: inline-block;">Complete Onboarding & Secure GHS 100 Seat</a>
         </div>
 
         <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 25px 0;" />
