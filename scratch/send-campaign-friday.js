@@ -102,7 +102,8 @@ async function sendEmail(toEmail, recipientName, subject, htmlContent) {
         to: [{ email: toEmail, name: recipientName }],
         subject: subject,
         htmlContent: htmlContent
-      })
+      }),
+      signal: AbortSignal.timeout(10000)
     });
     const data = await response.json();
     return response.ok ? { success: true } : { success: false, error: data.message };
@@ -123,7 +124,8 @@ async function sendSMS(recipientPhone, messageText) {
         sender: arkeselSenderId,
         message: messageText,
         recipients: [recipientPhone]
-      })
+      }),
+      signal: AbortSignal.timeout(10000)
     });
     const data = await response.json();
     if (response.ok && (data.status === 'success' || data.code === 1000 || data.code === '1000')) {
