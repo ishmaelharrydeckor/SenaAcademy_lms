@@ -53,6 +53,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
 
   const navLinks = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Marketing OS', href: '/admin/marketing', icon: FileSpreadsheet },
   ];
 
   return (
