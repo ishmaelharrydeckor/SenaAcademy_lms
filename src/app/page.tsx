@@ -402,7 +402,7 @@ export default function LandingPage() {
               <div className="space-y-1">
                 <span className="text-[10px] font-mono tracking-wider text-text-secondary uppercase">Founding Builders Cohort</span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-black text-text-primary font-mono">GHS 100</span>
+                  <span className="text-2xl font-black text-text-primary font-mono">GHS 200</span>
                   <span className="text-[10px] text-text-secondary font-mono">One-time payment</span>
                 </div>
               </div>
