@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { sendEventWaitlistEmail } from '@/lib/mail';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder-project.supabase.co';
 const supabaseServiceRole = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-role-key';
@@ -9,9 +10,9 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRole);
 
 export async function POST(request: NextRequest) {
   try {
-    const { eventId, fullName, email } = await request.json();
+    const { eventId, fullName, email, phone } = await request.json();
 
-    if (!eventId || !fullName || !email) {
+    if (!eventId || !fullName || !email || !phone) {
       return NextResponse.json({ error: 'Missing required details' }, { status: 400 });
     }
 
@@ -49,7 +50,8 @@ export async function POST(request: NextRequest) {
       .insert({
         event_id: eventId,
         full_name: fullName,
-        email: email.toLowerCase().trim()
+        email: email.toLowerCase().trim(),
+        phone: phone.trim()
       })
       .select()
       .single();
@@ -57,6 +59,12 @@ export async function POST(request: NextRequest) {
     if (waitlistError) {
       console.error('Failed to join waitlist:', waitlistError.message);
       return NextResponse.json({ error: 'Failed to join waitlist. Database error.' }, { status: 500 });
+    }
+
+    // 3. Send automated waitlist confirmation email
+    const emailResult = await sendEventWaitlistEmail(email.toLowerCase().trim(), fullName, event);
+    if (!emailResult.success) {
+      console.error('Failed to send waitlist confirmation email:', emailResult.error);
     }
 
     return NextResponse.json({
