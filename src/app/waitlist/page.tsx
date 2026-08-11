@@ -104,9 +104,6 @@ function WaitlistPageContent() {
               Without Writing Code
             </span>
           </h1>
-          <p className="text-sm text-text-secondary max-w-md mx-auto leading-relaxed">
-            Join Ishmael live online as we open our laptops and build a functional web application from scratch in plain English.
-          </p>
         </div>
 
         {/* Free Gift Card */}
