@@ -73,10 +73,15 @@ const CURRICULUM_MODULES = [
   },
   {
     num: 6,
-    title: 'Career, Portfolio & Freelancing',
-    subtitle: 'Turn your skills into freelance income or jobs',
-    desc: 'Build a premium developer portfolio highlighting your project codebase, optimize your LinkedIn profile, and pitch clients on freelance platforms.',
-    outcomes: ['Curating a standalone GitHub developer profile', 'LinkedIn branding & project showcases', 'Upwork outreach & client acquisition framework']
+    title: 'Personal Branding',
+    subtitle: 'The "Account Stacking" method to grow without burnout',
+    desc: 'Master personal branding through Account Stacking. Focus on one anchor platform first (LinkedIn, TikTok, Instagram, or YouTube), build consistent momentum, and systematically stack new accounts to attract inbound clients and opportunities.',
+    outcomes: [
+      'The Account Stacking framework (one platform first)',
+      'Hook-Story-Value developer content templates',
+      'Anchor profile optimization (LinkedIn/TikTok/IG/YouTube)',
+      'Sequential channel expansion & inbound lead setup'
+    ]
   }
 ];
 

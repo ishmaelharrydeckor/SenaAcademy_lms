@@ -362,35 +362,36 @@ INSERT INTO public.modules (
 ) VALUES (
     'e8aa03c6-3cd1-4069-9315-fea19a0da580', -- Founding Builders Cohort ID
     6,
-    'Career & Freelancing',
-    'Leave with opportunities, not just skills.',
+    'Personal Branding',
+    'Master personal branding through Account Stacking: build and scale your presence on one platform first (LinkedIn, TikTok, Instagram, or YouTube), then systematically stack new accounts to attract inbound opportunities.',
     ARRAY[
-        'Portfolio: Curated highlights, write-ups (problem, approach, stack, outcome), live demos.',
-        'LinkedIn Branding: Professional headshots, keyword headlines, featured section pins, work sharing.',
-        'Freelancing: Platforms (Upwork, Fiverr), rate setting, contract scope, invoice collection.',
-        'Client Acquisition: Tailored cold outreach, project pitches, expectations alignment.'
+        'The Account Stacking Framework: Why focusing on one channel first beats multi-platform multitasking. Selecting your primary anchor platform (LinkedIn, TikTok, Instagram, or YouTube).',
+        'Anchor Account Setup & Positioning: Crafting high-converting bios, headlines, and pinned proof of work for software builders.',
+        'Content Creation for Developers: The Hook-Story-Value framework, sharing builder journeys, vibe-coding demos, and project breakdowns.',
+        'Account Stacking & Growth: Hitting momentum milestones, stacking secondary platforms sequentially, and turning profile attention into inbound opportunities.'
     ],
     ARRAY[
-        'Understand freelance scoping constraints and payment collection procedures',
-        'Formulate value-based networking and brand headlines',
-        'Outline technical interview formats (live, take-home, system design)'
+        'Select and optimize a primary anchor platform (LinkedIn, TikTok, Instagram, or YouTube) with clear builder positioning',
+        'Apply the Hook-Story-Value framework to produce consistent, engaging developer content',
+        'Design a 90-day Account Stacking roadmap to sequentially expand across new channels after mastering the anchor platform'
     ],
     '[
-        {"name": "Awesome GitHub Profile README List", "url": "https://github.com/abhisheknaiidu/awesome-github-profile-readme", "category": "documentation"},
-        {"name": "Upwork Resource Center: Freelancer Guide", "url": "https://www.upwork.com/resources/how-to-create-a-profile-that-stands-out", "category": "documentation"},
-        {"name": "Tech Interview Handbook", "url": "https://www.techinterviewhandbook.org/", "category": "documentation"},
-        {"name": "LinkedIn Profile Optimization for Software Engineers", "url": "https://www.youtube.com/watch?v=uK1Xk3p2kG0", "category": "video"},
-        {"name": "How to Get Your First Client on Upwork", "url": "https://www.youtube.com/watch?v=3M6B1H85R_M", "category": "video"},
-        {"name": "Software Engineer Portfolio Walkthrough & Tips", "url": "https://www.youtube.com/watch?v=uK1Xk3p2kG0", "category": "video"}
+        {"name": "LinkedIn Creator Strategy Guide for Engineers", "url": "https://www.linkedin.com/help/linkedin/answer/a548441", "category": "documentation"},
+        {"name": "Short-Form Video & Hook Frameworks (TikTok / Instagram)", "url": "https://creatoracademy.youtube.com/", "category": "documentation"},
+        {"name": "YouTube Creator Playbook & Studio Guide", "url": "https://support.google.com/youtube/answer/1646861", "category": "documentation"},
+        {"name": "How to Build a Personal Brand as a Developer (2026)", "url": "https://www.youtube.com/watch?v=uK1Xk3p2kG0", "category": "video"},
+        {"name": "From 0 to Inbound Clients with Developer Content", "url": "https://www.youtube.com/watch?v=3M6B1H85R_M", "category": "video"},
+        {"name": "The Account Stacking Strategy Explained", "url": "https://www.youtube.com/watch?v=dOxUW9nQ850", "category": "video"}
     ]'::jsonb,
-    'Career Brand Portfolio and Capstone Assessment',
-    'Prepare your developer portfolio and public profiles. This includes: an optimized GitHub Profile README, clean readme files on your projects, an updated LinkedIn profile with pinned project media, and a capstone presentation slide deck.',
+    'Launch Your Anchor Platform & 90-Day Stacking Roadmap',
+    'Choose your primary anchor platform (LinkedIn, TikTok, Instagram, or YouTube). Complete a full profile makeover with optimized bios and pinned projects, publish 3 original builder content pieces using the Hook-Story-Value framework, and write a 90-day Account Stacking roadmap for when and how you will expand into your next platform.
+
+Submit as a single PDF or document containing live links, screenshots of your published content, and your stacking roadmap.',
     NOW() + INTERVAL '42 days',
     '[
-        {"criteria": "Capstone Project Quality & Technical Defence", "max_points": 40},
-        {"criteria": "GitHub Profile & Project Repositories Cleanup", "max_points": 20},
-        {"criteria": "LinkedIn Branding, Headline & Project Pinned Assets", "max_points": 20},
-        {"criteria": "Freelance Profile Readiness / Resume Polish", "max_points": 20}
+        {"criteria": "Anchor Profile Positioning & Makeover (Bio, headline, pinned projects on chosen anchor platform)", "max_points": 40},
+        {"criteria": "Content Execution (3 published builder posts/videos using Hook-Story-Value framework)", "max_points": 30},
+        {"criteria": "90-Day Account Stacking Strategy (Weekly schedule, milestones, and sequential expansion roadmap)", "max_points": 30}
     ]'::jsonb,
     NOW() + INTERVAL '35 days',
     TRUE
