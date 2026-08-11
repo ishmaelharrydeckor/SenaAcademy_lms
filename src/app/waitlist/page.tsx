@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { CheckCircle2, ArrowRight, Sparkles, BookOpen, MessageCircle } from 'lucide-react';
+import { Card, Button, Input } from '@/components/UI';
+import { CheckCircle2, ArrowRight, Sparkles, BookOpen, MessageCircle, User, Mail, Phone } from 'lucide-react';
+import Link from 'next/link';
 
 function WaitlistPageContent() {
   const [fullName, setFullName] = useState('');
@@ -82,68 +84,68 @@ function WaitlistPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090D16] text-white flex flex-col justify-center items-center px-4 sm:px-6 py-10 transition-colors duration-150 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-bg-canvas text-text-primary flex flex-col justify-center items-center px-4 sm:px-6 py-12 transition-colors duration-150 relative overflow-hidden">
       
-      {/* Ambient Glows */}
-      <div className="absolute top-[-15%] left-[-10%] w-[500px] h-[500px] rounded-full bg-indigo-600/10 blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-[130px] pointer-events-none" />
+      {/* Decorative Brand Ambient Glows */}
+      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-accent-primary/10 blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-purple-500/10 blur-[140px] pointer-events-none" />
 
-      <div className="w-full max-w-xl z-10">
+      <div className="w-full max-w-lg z-10 animate-slide-up">
         
-        {/* Top Eyebrow Badge */}
-        <div className="text-center mb-6">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12px] font-bold tracking-wide uppercase bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 mb-4 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-            Free Live Online Build Workshop • September 2026
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-archivo text-white leading-tight mb-3">
+        {/* Brand Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-accent-primary/10 text-accent-primary border border-accent-primary/20 mb-4 shadow-sm">
+            <Sparkles className="w-3.5 h-3.5" />
+            Free Live Online Workshop • Sept 2026
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight font-archivo text-text-primary leading-tight mb-3">
             Build Real Web Apps with AI <br className="hidden sm:inline" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-indigo-400">
+            <span className="text-accent-primary">
               Without Writing Code
             </span>
           </h1>
-          <p className="text-sm sm:text-base text-gray-400 max-w-md mx-auto leading-relaxed">
+          <p className="text-sm text-text-secondary max-w-md mx-auto leading-relaxed">
             Join Ishmael live online as we open our laptops and build a functional web application from scratch in plain English.
           </p>
         </div>
 
-        {/* Free Gift Card Banner */}
-        <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-emerald-950/30 border border-indigo-500/30 backdrop-blur-md flex items-start gap-3.5">
-          <div className="p-2.5 rounded-lg bg-indigo-600/20 text-indigo-400 shrink-0 mt-0.5">
-            <BookOpen className="w-5 h-5 text-emerald-400" />
+        {/* Free Gift Card */}
+        <Card className="mb-6 border border-accent-primary/30 bg-accent-primary/5 p-4 flex items-start gap-3.5 shadow-sm">
+          <div className="p-2.5 rounded-lg bg-accent-primary/10 text-accent-primary shrink-0 mt-0.5">
+            <BookOpen className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-0.5">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-accent-primary mb-0.5">
               🎁 Free Welcome Gift Included
             </h4>
-            <p className="text-xs text-gray-300 leading-relaxed">
+            <p className="text-xs text-text-secondary leading-relaxed">
               Get immediate access to <strong>The Non-Coder’s Guide to AI: How to Prompt Like a Pro</strong> (60s Idea-to-App prompt blueprints) the instant you sign up!
             </p>
           </div>
-        </div>
+        </Card>
 
         {success ? (
-          /* Success Animation State */
-          <div className="text-center p-8 rounded-2xl border border-emerald-500/30 bg-[#0F172A]/80 backdrop-blur-xl shadow-2xl animate-fade-in">
-            <div className="inline-flex items-center justify-center p-3.5 rounded-full bg-emerald-500/20 text-emerald-400 mb-4">
+          /* Success State */
+          <Card className="text-center p-8 border border-success-brand/30 bg-success-brand/5 shadow-2xl animate-fade-in">
+            <div className="inline-flex items-center justify-center p-3.5 rounded-full bg-success-brand/10 text-success-brand mb-4">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h2 className="text-2xl font-bold font-archivo mb-2 text-white">
+            <h2 className="text-2xl font-bold font-archivo mb-2 text-text-primary">
               🎉 You're on the list!
             </h2>
-            <p className="text-sm text-gray-300 leading-relaxed mb-6">
-              We have reserved your spot and sent your Free AI Prompt Guide to <strong className="text-emerald-400">{email}</strong>.
+            <p className="text-sm text-text-secondary leading-relaxed mb-6">
+              We have reserved your spot and sent your Free AI Prompt Guide to <strong className="text-text-primary">{email}</strong>.
             </p>
 
             {/* Direct Guide Access Button */}
             <div className="mb-4">
-              <a
+              <Link
                 href="/guide"
-                className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all shadow-lg hover:shadow-indigo-500/25 active:scale-[0.99]"
+                className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-full bg-accent-primary hover:opacity-90 text-white font-bold text-sm transition-all shadow-lg shadow-accent-primary/20 active:scale-[0.99]"
               >
                 <BookOpen className="w-4 h-4" />
                 Read & Download Free AI Guide Now
-              </a>
+              </Link>
             </div>
 
             {/* WhatsApp Community Join Button */}
@@ -152,70 +154,69 @@ function WaitlistPageContent() {
                 href="https://chat.whatsapp.com/LtAPH7IPPTg160oJj0REpS?s=cl&p=a&ilr=1"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2.5 w-full py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm transition-all shadow-lg hover:shadow-green-500/20 active:scale-[0.99]"
+                className="inline-flex items-center justify-center gap-2.5 w-full py-3.5 px-4 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm transition-all shadow-lg hover:shadow-green-500/20 active:scale-[0.99]"
               >
                 <MessageCircle className="w-5 h-5 fill-current" />
                 Step 2: Join WhatsApp Community
               </a>
-              <span className="block text-[11px] text-gray-400 mt-2">
+              <span className="block text-[11px] text-text-muted mt-2">
                 We drop the direct live online room link and starter templates inside WhatsApp.
               </span>
             </div>
-          </div>
+          </Card>
         ) : (
-          /* High-Converting Streamlined Form */
-          <div className="border border-white/10 shadow-2xl p-6 sm:p-8 rounded-2xl bg-[#0F172A]/70 backdrop-blur-xl">
-            <form onSubmit={handleSubmit} className="space-y-4">
+          /* Streamlined Waitlist Form */
+          <Card className="border border-border-brand shadow-2xl p-8 bg-bg-surface/50 backdrop-blur-md">
+            <form onSubmit={handleSubmit} className="space-y-5">
               
               {/* Full Name */}
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Your Full Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Kwame Mensah"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                  required
-                />
-              </div>
+              <Input
+                id="waitlist-name"
+                label="Your Full Name"
+                type="text"
+                placeholder="e.g. Kwame Mensah"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                icon={<User className="w-4 h-4 text-text-secondary" />}
+                required
+              />
 
               {/* Email Address */}
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Email Address (For Free Guide Delivery)</label>
-                <input
-                  type="email"
-                  placeholder="e.g. kwame@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                  required
-                />
-              </div>
+              <Input
+                id="waitlist-email"
+                label="Email Address (For Free Guide Delivery)"
+                type="email"
+                placeholder="e.g. kwame@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                icon={<Mail className="w-4 h-4 text-text-secondary" />}
+                required
+              />
 
               {/* Optional WhatsApp Number */}
-              <div>
-                <label className="block text-xs font-semibold text-gray-300 mb-1.5">
-                  WhatsApp Phone Number <span className="text-gray-500 font-normal">(For workshop room link)</span>
-                </label>
-                <input
-                  type="tel"
-                  placeholder="e.g. 024 123 4567"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                />
-              </div>
+              <Input
+                id="waitlist-phone"
+                label="WhatsApp Phone Number (Optional)"
+                type="tel"
+                placeholder="024 123 4567"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                icon={<Phone className="w-4 h-4 text-text-secondary" />}
+              />
 
               {errorMsg && (
-                <p className="text-xs text-red-400 text-center font-medium py-1">{errorMsg}</p>
+                <div className="p-3 text-xs bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-center">
+                  {errorMsg}
+                </div>
               )}
 
               {/* Submit CTA Button */}
-              <button
+              <Button
                 type="submit"
+                variant="primary"
+                size="lg"
                 disabled={loading}
-                className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold text-sm sm:text-base transition-all shadow-lg hover:shadow-emerald-500/25 active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer mt-2"
+                className="w-full py-4 text-sm sm:text-base font-bold shadow-lg shadow-accent-primary/20 flex items-center justify-center gap-2 cursor-pointer mt-3"
               >
                 {loading ? (
                   'Reserving Your Spot...'
@@ -225,17 +226,17 @@ function WaitlistPageContent() {
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
-              </button>
+              </Button>
 
-              <p className="text-center text-[11px] text-gray-400 pt-1">
+              <p className="text-center text-[11px] text-text-muted pt-1">
                 🔒 100% Free • No spam • Instant AI Guide download
               </p>
             </form>
-          </div>
+          </Card>
         )}
 
         {/* Footer Brand Tag */}
-        <div className="text-center mt-8 text-xs text-gray-400">
+        <div className="text-center mt-8 text-xs text-text-muted">
           <p>© 2026 Sena Academy. <em>“Stop learning to code. Start learning to build.”</em></p>
         </div>
 
