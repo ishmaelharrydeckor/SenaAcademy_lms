@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Card, Button, Input } from '@/components/UI';
-import { CheckCircle2, ArrowRight, Sparkles, BookOpen, MessageCircle, User, Mail, Phone, ExternalLink } from 'lucide-react';
+import { CheckCircle2, ArrowRight, BookOpen, MessageCircle, Check } from 'lucide-react';
 import Link from 'next/link';
 
 function WaitlistPageContent() {
@@ -84,173 +83,166 @@ function WaitlistPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-bg-canvas text-text-primary flex flex-col font-sans transition-colors duration-200 relative overflow-x-hidden antialiased">
+    <div className="min-h-screen bg-[#080B11] text-gray-100 flex flex-col font-sans antialiased selection:bg-indigo-500 selection:text-white">
       
-      {/* 1. TOP BRAND NAVIGATION (No public guide link - gated behind form) */}
-      <nav className="sticky top-0 bg-bg-canvas/80 backdrop-blur-md border-b border-border-brand z-40 transition-colors duration-200">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14 sm:h-16">
-          <Link 
-            href="/"
-            className="bg-white px-2.5 py-1 rounded-xl border border-border-brand/20 shadow-sm flex items-center justify-center hover:opacity-90 transition-opacity"
-          >
-            <img src="/logo_full.png" alt="Sena Academy Logo" className="h-6 sm:h-7 object-contain" />
+      {/* Clean Minimalist Header */}
+      <header className="w-full border-b border-white/5 py-4 px-6">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="bg-white px-2 py-1 rounded-lg shadow-sm group-hover:opacity-90 transition-opacity">
+              <img src="/logo_full.png" alt="Sena Academy" className="h-5 sm:h-6 object-contain" />
+            </div>
           </Link>
-          <div className="text-xs font-medium text-text-muted">
-            Live Build Workshop
-          </div>
+          <span className="text-[11px] font-mono tracking-wider uppercase text-gray-400">
+            September 2026 Live Cohort
+          </span>
         </div>
-      </nav>
+      </header>
 
-      {/* Decorative Ambient Radial Glows */}
-      <div className="absolute top-[5%] left-1/2 -translate-x-1/2 w-[600px] h-[350px] rounded-full bg-accent-primary/10 blur-[140px] pointer-events-none" />
-      <div className="absolute top-[40%] right-[-10%] w-[400px] h-[400px] rounded-full bg-purple-500/5 blur-[120px] pointer-events-none" />
-
-      {/* 2. MAIN CONTENT AREA */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10">
-        <div className="w-full max-w-lg animate-slide-up">
+      {/* Main Container */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12 sm:py-16">
+        <div className="w-full max-w-xl">
           
-          {/* Header */}
-          <div className="text-center mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight font-archivo text-text-primary leading-tight mb-2">
-              Build Real Web Apps with AI <br className="hidden sm:inline" />
-              <span className="text-accent-primary">
-                Without Writing Code
-              </span>
+          {/* Header Typography */}
+          <div className="text-center mb-8 sm:mb-10">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white font-archivo leading-[1.15] mb-4">
+              Stop learning to code. <br />
+              <span className="text-indigo-400">Start learning to build.</span>
             </h1>
+            <p className="text-sm sm:text-base text-gray-300 max-w-lg mx-auto leading-relaxed">
+              Join our free live online workshop this September. We open our laptops and build a real, working web platform from scratch using plain English.
+            </p>
           </div>
-
-          {/* Free Gift Gated Lead Magnet Banner */}
-          <Card className="mb-6 border border-accent-primary/25 bg-accent-primary/5 p-4 flex items-start gap-3.5 shadow-sm">
-            <div className="p-2.5 rounded-lg bg-accent-primary/15 text-accent-primary shrink-0 mt-0.5">
-              <BookOpen className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-accent-primary bg-accent-primary/10 px-2 py-0.5 rounded">
-                  🎁 Free Welcome Gift
-                </span>
-              </div>
-              <p className="text-xs text-text-secondary leading-relaxed">
-                Register below to instantly unlock <strong>The Non-Coder’s Guide to AI: How to Prompt Like a Pro</strong> + your live September workshop invite.
-              </p>
-            </div>
-          </Card>
 
           {success ? (
-            /* Success State Card */
-            <Card className="text-center p-6 sm:p-8 border border-success-brand/30 bg-success-brand/5 shadow-2xl animate-fade-in">
-              <div className="inline-flex items-center justify-center p-3.5 rounded-full bg-success-brand/10 text-success-brand mb-4">
-                <CheckCircle2 className="w-10 h-10" />
+            /* Success State */
+            <div className="p-8 rounded-2xl border border-emerald-500/30 bg-[#0F1420] text-center shadow-xl animate-fade-in">
+              <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 className="w-6 h-6" />
               </div>
-              <h2 className="text-2xl font-bold font-archivo mb-2 text-text-primary">
-                🎉 You're on the list!
+              <h2 className="text-2xl font-bold font-archivo text-white mb-2">
+                You're on the list.
               </h2>
-              <p className="text-sm text-text-secondary leading-relaxed mb-6">
-                We have reserved your spot and sent your Free AI Prompt Guide to <strong className="text-text-primary">{email}</strong>.
+              <p className="text-sm text-gray-300 leading-relaxed mb-6">
+                Your spot is confirmed for the September live workshop. We’ve also unlocked your free copy of <strong>The Non-Coder Guide to AI</strong>.
               </p>
 
               {/* Direct Guide Access Button */}
               <div className="mb-4">
                 <Link
                   href="/guide"
-                  className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-full bg-accent-primary hover:opacity-90 text-white font-bold text-sm transition-all shadow-lg shadow-accent-primary/20 active:scale-[0.99]"
+                  className="w-full py-3.5 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-[0.99]"
                 >
                   <BookOpen className="w-4 h-4" />
                   Read & Download Free AI Guide Now
                 </Link>
               </div>
 
-              {/* WhatsApp Community Join Button */}
-              <div className="mb-6">
+              {/* WhatsApp Community Button */}
+              <div>
                 <a
                   href="https://chat.whatsapp.com/LtAPH7IPPTg160oJj0REpS?s=cl&p=a&ilr=1"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2.5 w-full py-3.5 px-4 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm transition-all shadow-lg hover:shadow-green-500/20 active:scale-[0.99]"
+                  className="w-full py-3.5 px-5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-lg active:scale-[0.99]"
                 >
-                  <MessageCircle className="w-5 h-5 fill-current" />
-                  Step 2: Join WhatsApp Community
+                  <MessageCircle className="w-4 h-4 fill-current" />
+                  Join Private WhatsApp Group
                 </a>
-                <span className="block text-[11px] text-text-muted mt-2">
-                  We drop the direct live workshop room link and code templates inside WhatsApp.
+                <span className="block text-[11px] text-gray-400 mt-2">
+                  Live workshop links, room keys, and templates are shared in WhatsApp.
                 </span>
               </div>
-            </Card>
+            </div>
           ) : (
-            /* Streamlined Form Card */
-            <Card className="border border-border-brand shadow-2xl p-6 sm:p-8 bg-bg-surface/60 backdrop-blur-xl">
+            /* Clean Form Card */
+            <div className="p-6 sm:p-8 rounded-2xl border border-white/10 bg-[#0F1420] shadow-2xl">
+              
+              {/* Value Bullet Points */}
+              <div className="space-y-2 pb-6 mb-6 border-b border-white/5 text-xs text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>100% Free • Live interactive build session on Google Meet</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Build real web tools without memorizing coding syntax</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Includes instant access to <strong>The Non-Coder Guide to AI</strong></span>
+                </div>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-4">
-                
-                {/* Full Name */}
-                <Input
-                  id="waitlist-name"
-                  label="Your Full Name"
-                  type="text"
-                  placeholder="e.g. Kwame Mensah"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  icon={<User className="w-4 h-4 text-text-secondary" />}
-                  required
-                />
+                <div>
+                  <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Kwame Mensah"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                    required
+                  />
+                </div>
 
-                {/* Email Address */}
-                <Input
-                  id="waitlist-email"
-                  label="Email Address (For Free Guide Delivery)"
-                  type="email"
-                  placeholder="e.g. kwame@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  icon={<Mail className="w-4 h-4 text-text-secondary" />}
-                  required
-                />
+                <div>
+                  <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="kwame@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                    required
+                  />
+                </div>
 
-                {/* Optional WhatsApp Number */}
-                <Input
-                  id="waitlist-phone"
-                  label="WhatsApp Phone Number (Optional)"
-                  type="tel"
-                  placeholder="024 123 4567"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  icon={<Phone className="w-4 h-4 text-text-secondary" />}
-                />
+                <div>
+                  <label className="block text-xs font-medium text-gray-300 mb-1.5">
+                    WhatsApp Number <span className="text-gray-400 font-normal">(Optional, for workshop link)</span>
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="024 123 4567"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  />
+                </div>
 
                 {errorMsg && (
-                  <div className="p-3 text-xs bg-red-500/10 border border-red-500/20 text-red-500 rounded-lg text-center font-medium">
-                    {errorMsg}
-                  </div>
+                  <p className="text-xs text-red-400 text-center py-1">{errorMsg}</p>
                 )}
 
-                {/* Submit CTA Button */}
-                <Button
+                <button
                   type="submit"
-                  variant="primary"
-                  size="lg"
                   disabled={loading}
-                  className="w-full py-3.5 sm:py-4 text-sm sm:text-base font-bold shadow-lg shadow-accent-primary/20 flex items-center justify-center gap-2 cursor-pointer mt-2"
+                  className="w-full py-3.5 px-5 rounded-xl bg-white hover:bg-gray-100 text-slate-950 font-bold text-sm transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer mt-2"
                 >
-                  {loading ? (
-                    'Reserving Your Spot...'
-                  ) : (
+                  {loading ? 'Reserving...' : (
                     <>
-                      👉 Reserve Free Spot & Get AI Guide
-                      <ArrowRight className="w-4 h-4" />
+                      Reserve My Free Spot
+                      <ArrowRight className="w-4 h-4 text-slate-950" />
                     </>
                   )}
-                </Button>
+                </button>
 
-                <div className="flex items-center justify-center gap-1.5 text-center text-[11px] text-text-muted pt-1">
-                  <Sparkles className="w-3 h-3 text-accent-primary" />
-                  <span>100% Free • Instant AI Guide download on submission</span>
-                </div>
+                <p className="text-center text-[11px] text-gray-400 pt-1">
+                  🔒 Free workshop • Instant guide access unlocked on submission
+                </p>
               </form>
-            </Card>
+            </div>
           )}
 
-          {/* Footer Brand Tag */}
-          <div className="text-center mt-8 text-xs text-text-muted">
-            <p>© 2026 Sena Academy. <em>“Stop learning to code. Start learning to build.”</em></p>
+          {/* Founder Signature Note */}
+          <div className="mt-8 text-center text-xs text-gray-400">
+            <p>Hosted by <strong>Ishmael Harry-Deckor</strong> • Founder, Sena Academy</p>
           </div>
 
         </div>
@@ -263,8 +255,8 @@ function WaitlistPageContent() {
 export default function WaitlistPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-bg-canvas text-text-secondary flex items-center justify-center font-mono text-xs uppercase tracking-wider">
-        Loading Waitlist Portal...
+      <div className="min-h-screen bg-[#080B11] text-gray-400 flex items-center justify-center font-mono text-xs uppercase tracking-wider">
+        Loading...
       </div>
     }>
       <WaitlistPageContent />
