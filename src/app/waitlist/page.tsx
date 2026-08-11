@@ -6,7 +6,8 @@ import { CheckCircle2, ArrowRight, BookOpen, MessageCircle, Check } from 'lucide
 import Link from 'next/link';
 
 function WaitlistPageContent() {
-  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [eventId, setEventId] = useState('91458b94-24c7-43f7-a734-b90f1b65c78a');
@@ -44,8 +45,8 @@ function WaitlistPageContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !email) {
-      setErrorMsg('Please enter your name and email.');
+    if (!firstName.trim() || !lastName.trim() || !email.trim()) {
+      setErrorMsg('Please enter your first name, last name, and email.');
       return;
     }
 
@@ -53,6 +54,7 @@ function WaitlistPageContent() {
     setErrorMsg('');
 
     try {
+      const fullName = `${firstName.trim()} ${lastName.trim()}`;
       const source = searchParams.get('src') || searchParams.get('utm_source') || 'direct';
       
       const res = await fetch('/api/events/waitlist', {
@@ -62,7 +64,7 @@ function WaitlistPageContent() {
         },
         body: JSON.stringify({
           eventId,
-          fullName: fullName.trim(),
+          fullName,
           email: email.trim(),
           phone: (phone || 'N/A').trim(),
           source,
@@ -175,18 +177,34 @@ function WaitlistPageContent() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Your Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Kwame Mensah"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 focus:bg-white transition-all"
-                    required
-                  />
+                {/* First Name & Last Name Inputs */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Kwame"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 focus:bg-white transition-all"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Mensah"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 focus:bg-white transition-all"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div>
