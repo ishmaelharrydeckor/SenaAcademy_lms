@@ -84,13 +84,13 @@ function WaitlistPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-bg-canvas text-text-primary flex flex-col justify-center items-center px-4 sm:px-6 py-12 transition-colors duration-150 relative overflow-hidden">
+    <div className="min-h-screen bg-bg-canvas text-text-primary flex flex-col justify-start sm:justify-center items-center px-4 sm:px-6 pt-8 pb-16 transition-colors duration-150 relative overflow-x-hidden overflow-y-auto">
       
       {/* Decorative Brand Ambient Glows */}
       <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-accent-primary/10 blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-purple-500/10 blur-[140px] pointer-events-none" />
 
-      <div className="w-full max-w-lg z-10 animate-slide-up">
+      <div className="w-full max-w-lg z-10 animate-slide-up my-auto">
         
         {/* Brand Header */}
         <div className="text-center mb-8">
