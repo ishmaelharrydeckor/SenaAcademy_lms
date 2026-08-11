@@ -86,7 +86,7 @@ function WaitlistPageContent() {
   return (
     <div className="min-h-screen bg-bg-canvas text-text-primary flex flex-col font-sans transition-colors duration-200 relative overflow-x-hidden antialiased">
       
-      {/* 1. TOP BRAND NAVIGATION */}
+      {/* 1. TOP BRAND NAVIGATION (No public guide link - gated behind form) */}
       <nav className="sticky top-0 bg-bg-canvas/80 backdrop-blur-md border-b border-border-brand z-40 transition-colors duration-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14 sm:h-16">
           <Link 
@@ -95,14 +95,8 @@ function WaitlistPageContent() {
           >
             <img src="/logo_full.png" alt="Sena Academy Logo" className="h-6 sm:h-7 object-contain" />
           </Link>
-          <div className="flex items-center gap-3">
-            <Link 
-              href="/guide" 
-              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-accent-primary/10 text-accent-primary border border-accent-primary/20 hover:bg-accent-primary/20 transition-all shadow-sm"
-            >
-              <BookOpen className="w-3.5 h-3.5" />
-              <span>Free AI Guide</span>
-            </Link>
+          <div className="text-xs font-medium text-text-muted">
+            Live Build Workshop
           </div>
         </div>
       </nav>
@@ -115,37 +109,32 @@ function WaitlistPageContent() {
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10">
         <div className="w-full max-w-lg animate-slide-up">
           
-          {/* Header & Eyebrow Badge */}
+          {/* Header */}
           <div className="text-center mb-6 sm:mb-8">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest bg-accent-primary/10 text-accent-primary border border-accent-primary/20 mb-3.5 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-              <span>Free Live Online Workshop • Sept 2026</span>
-            </div>
-            
-            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight font-archivo text-text-primary leading-tight mb-3">
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight font-archivo text-text-primary leading-tight mb-2">
               Build Real Web Apps with AI <br className="hidden sm:inline" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-primary via-indigo-400 to-purple-400">
+              <span className="text-accent-primary">
                 Without Writing Code
               </span>
             </h1>
           </div>
 
-          {/* Free Gift Lead Magnet Banner */}
-          <div className="mb-6 p-4 rounded-xl border border-accent-primary/25 bg-gradient-to-r from-accent-primary/10 via-indigo-500/5 to-transparent backdrop-blur-md flex items-start gap-3.5 shadow-sm">
+          {/* Free Gift Gated Lead Magnet Banner */}
+          <Card className="mb-6 border border-accent-primary/25 bg-accent-primary/5 p-4 flex items-start gap-3.5 shadow-sm">
             <div className="p-2.5 rounded-lg bg-accent-primary/15 text-accent-primary shrink-0 mt-0.5">
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-accent-primary bg-accent-primary/10 px-2 py-0.5 rounded">
-                  🎁 Free Welcome Gift Included
+                  🎁 Free Welcome Gift
                 </span>
               </div>
               <p className="text-xs text-text-secondary leading-relaxed">
-                Get instant access to <strong>The Non-Coder’s Guide to AI: How to Prompt Like a Pro</strong> (60s prompt blueprints) upon signing up.
+                Register below to instantly unlock <strong>The Non-Coder’s Guide to AI: How to Prompt Like a Pro</strong> + your live September workshop invite.
               </p>
             </div>
-          </div>
+          </Card>
 
           {success ? (
             /* Success State Card */
