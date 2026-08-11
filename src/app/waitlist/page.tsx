@@ -45,8 +45,8 @@ function WaitlistPageContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName.trim() || !lastName.trim() || !email.trim()) {
-      setErrorMsg('Please enter your first name, last name, and email.');
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim()) {
+      setErrorMsg('Please fill in all fields.');
       return;
     }
 
@@ -66,7 +66,7 @@ function WaitlistPageContent() {
           eventId,
           fullName,
           email: email.trim(),
-          phone: (phone || 'N/A').trim(),
+          phone: phone.trim(),
           source,
         }),
       });
@@ -223,7 +223,7 @@ function WaitlistPageContent() {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                    WhatsApp Number <span className="text-slate-400 font-normal">(Optional, for workshop link)</span>
+                    WhatsApp Phone Number
                   </label>
                   <input
                     type="tel"
@@ -231,6 +231,7 @@ function WaitlistPageContent() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 focus:bg-white transition-all"
+                    required
                   />
                 </div>
 
