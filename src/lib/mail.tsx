@@ -37,12 +37,12 @@ async function sendMail(
       console.log(`Routing email to Brevo API for recipient: ${toEmail}`);
       const htmlContent = await render(reactElement);
       
-      const senderEnv = getSenderEmail();
       let senderName = 'Sena Academy';
-      let senderEmail = 'no.reply@senaacademy.org';
+      let senderEmail = 'support@senaacademy.org';
       
+      const senderEnv = getSenderEmail();
       const match = senderEnv.match(/^(.*?)\s*<(.*?)>$/);
-      if (match) {
+      if (match && match[2].includes('support@senaacademy.org')) {
         senderName = match[1].trim();
         senderEmail = match[2].trim();
       }
@@ -346,9 +346,7 @@ export async function sendEventWaitlistEmail(
     const endTime = end.toLocaleTimeString('en-US', optionsTime);
     const eventDate = `${formattedDate} from ${startTime} to ${endTime}`;
 
-    const subject = isToday 
-      ? `Waitlist Update: ${event.title} today` 
-      : `Waitlist Update: ${event.title} tomorrow`;
+    const subject = `🎉 You're on the list! (Free Live Online Workshop + Free AI Guide)`;
 
     return sendMail(
       toEmail,
@@ -356,11 +354,9 @@ export async function sendEventWaitlistEmail(
       <EventWaitlistEmail
         registrantName={registrantName}
         eventTitle={event.title}
-        eventDate={eventDate}
+        eventDate="September 2026"
         email={toEmail}
-        isToday={isToday}
-        meetingLink={event.meeting_link}
-        coverImageUrl={event.cover_image_url}
+        whatsappLink="https://chat.whatsapp.com/LtAPH7IPPTg160oJj0REpS?s=cl&p=a&ilr=1"
       />
     );
   } catch (err: any) {

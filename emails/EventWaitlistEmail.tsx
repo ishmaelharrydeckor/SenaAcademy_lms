@@ -21,68 +21,48 @@ interface EventWaitlistEmailProps {
 
 export const EventWaitlistEmail = ({
   registrantName = 'Builder',
-  eventTitle = 'AI Builder Meetup',
-  eventDate = 'Today',
+  eventTitle = 'Free Live Online Build Workshop',
   email = 'builder@example.com',
-  isToday = true,
-  whatsappLink = 'https://chat.whatsapp.com/JsXT6Od90Ms77sqiCy5oHm?s=cl&p=a&ilr=1',
-  meetingLink = '',
-  coverImageUrl = '',
+  whatsappLink = 'https://chat.whatsapp.com/LtAPH7IPPTg160oJj0REpS?s=cl&p=a&ilr=1',
 }: EventWaitlistEmailProps) => {
+  const firstName = registrantName ? registrantName.split(' ')[0] : 'there';
+  const guideLink = 'https://senaacademy.org/guide';
+
   return (
-    <EmailLayout previewText={`Waitlist Update: ${eventTitle} ${isToday ? 'today' : 'tomorrow'}`} email={email}>
-      <Heading style={heading}>Waitlist Update</Heading>
+    <EmailLayout previewText="🎉 You're on the list! Here is your Free AI Guide + WhatsApp Access" email={email}>
+      <Heading style={heading}>🎉 You're on the Waitlist!</Heading>
       
-      {coverImageUrl && (
-        <Section style={imageContainer}>
-          <Img
-            src={coverImageUrl}
-            alt={eventTitle}
-            width="100%"
-            style={coverImage}
-          />
-        </Section>
-      )}
-      
-      <Text style={text}>Hi {registrantName},</Text>
+      <Text style={text}>Hi {firstName},</Text>
       
       <Text style={text}>
-        We wanted to reach out because you are currently on the waitlist for <strong>{eventTitle}</strong>, which takes place {isToday ? 'today' : 'tomorrow'}.
+        You have successfully reserved your spot for our upcoming <strong>Free Live Online Build Workshop</strong> in September!
       </Text>
       
+      <Text style={text}>
+        In this live session, we are going to open our laptops together and build a complete, functional web app live on screen in plain English.
+      </Text>
+
+      {/* Free Gift Card */}
       <Section style={detailsContainer}>
-        <Text style={detailsHeading}>EVENT DETAILS</Text>
+        <Text style={detailsHeading}>🎁 YOUR FREE WELCOME GIFT</Text>
         <Text style={detailsText}>
-          <strong>What:</strong> {eventTitle}
+          While you wait for our live workshop, I want to give you immediate access to <strong>The Non-Coder’s Guide to AI: How to Prompt Like a Pro</strong>.
         </Text>
         <Text style={detailsText}>
-          <strong>When:</strong> {eventDate}
+          Inside, you'll discover the 3-part prompt formula to generate web app prototypes in Google AI Studio in 60 seconds.
         </Text>
+        <Section style={{ textAlign: 'center', marginTop: '12px' }}>
+          <Button href={guideLink} style={button}>
+            👉 Read & Download Free AI Guide
+          </Button>
+        </Section>
       </Section>
       
-      <Text style={text}>
-        We are actively monitoring capacity. Since the event is starting soon, we want to make sure you have the links to join the online session directly or keep up to date in our community:
-      </Text>
-
-      {meetingLink && (
-        <Section style={buttonContainer}>
-          <Text style={linkNote}>
-            You can join the online session directly using the button below:
-          </Text>
-          <Button href={meetingLink} style={button}>
-            Join Online Meeting
-          </Button>
-          <Text style={rawLinkText}>
-            Or copy this link: <br />
-            <a href={meetingLink} style={linkColor}>{meetingLink}</a>
-          </Text>
-        </Section>
-      )}
-
       {/* WhatsApp Community Button */}
       <Section style={buttonContainer}>
         <Text style={linkNote}>
-          Join our WhatsApp Community to get real-time updates and notifications:
+          <strong>Step 2: Join Our Private WhatsApp Community</strong><br />
+          We will be dropping the direct online meeting room link and starter code templates inside our private WhatsApp group:
         </Text>
         <Button href={whatsappLink} style={secondaryButton}>
           Join WhatsApp Community
@@ -94,7 +74,10 @@ export const EventWaitlistEmail = ({
       </Section>
       
       <Text style={signoff}>
-        — The Sena Academy Team
+        Best regards,<br />
+        <strong>Ishmael Harry-Deckor</strong><br />
+        Founder, Sena Academy<br />
+        <em>“Stop learning to code. Start learning to build.”</em>
       </Text>
     </EmailLayout>
   );

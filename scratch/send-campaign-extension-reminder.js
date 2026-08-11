@@ -115,7 +115,7 @@ async function sendSMS(recipientPhone, messageText) {
         message: messageText,
         recipients: [recipientPhone]
       }),
-      signal: AbortSignal.timeout(10000)
+      signal: AbortSignal.timeout(30000)
     });
     const data = await response.json();
     if (response.ok && (data.status === 'success' || data.code === 1000 || data.code === '1000')) {

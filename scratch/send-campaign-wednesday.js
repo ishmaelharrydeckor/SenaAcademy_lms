@@ -196,7 +196,7 @@ async function main() {
       </div>
     `;
 
-    const smsText = `Hi ${firstName},\nthe GHS 100 discount (regularly GHS 200) for Founding Builders expires in 48 hours. Secure GHS 100 seat: senaacademy.org/enroll`;
+    const smsText = `Hi ${firstName},\nthe GHS 100 discount for the Founding Builders Cohort expires in 48 hours (Thursday at midnight). We kickoff live sessions this Saturday to start building real frontends, cloud backends, and installable Android apps. Secure your seat before the price returns to GHS 200: senaacademy.org/enroll`;
 
     console.log(`[${i + 1}/${pending.length}] Dispatching to ${contact.name}...`);
 

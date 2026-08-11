@@ -8,8 +8,8 @@ export async function callGemini(
     throw new Error('GEMINI_API_KEY is not configured in environment variables');
   }
 
-  // Using gemini-2.5-flash as it is fast, highly accurate, and supports structured JSON outputs.
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  // Using gemini-3.5-flash-lite as it is fast, highly accurate, and supports structured JSON outputs with active quota.
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`;
 
   const payload: any = {
     contents: [

@@ -41,7 +41,7 @@ async function sendSMSBatch(recipients) {
         message: messageText,
         recipients: recipients
       }),
-      signal: AbortSignal.timeout(45000) // 45 seconds timeout
+      signal: AbortSignal.timeout(90000) // 90 seconds timeout
     });
 
     const data = await response.json();
@@ -87,7 +87,7 @@ async function main() {
   }
 
   // Batching configuration
-  const BATCH_SIZE = 1000;
+  const BATCH_SIZE = 500;
   const totalPending = pending.length;
   
   console.log(`Starting campaign batch dispatch (size: ${BATCH_SIZE}) in 3 seconds...`);

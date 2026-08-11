@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card, Button, Input } from '@/components/UI';
-import { CheckCircle2, ArrowRight, Sparkles, BookOpen, Laptop, Phone } from 'lucide-react';
+import { CheckCircle2, ArrowRight, Sparkles, BookOpen, Laptop, Phone, MessageCircle } from 'lucide-react';
 
 function WaitlistPageContent() {
   const [firstName, setFirstName] = useState('');
@@ -11,7 +11,6 @@ function WaitlistPageContent() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [eventId, setEventId] = useState('91458b94-24c7-43f7-a734-b90f1b65c78a'); // Fallback default published event
-  const [eventTitle, setEventTitle] = useState('our upcoming workshops');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -26,7 +25,7 @@ function WaitlistPageContent() {
         const { supabase } = await import('@/lib/supabase');
         let query = supabase
           .from('events')
-          .select('id, title')
+          .select('id')
           .eq('status', 'published');
         
         if (eventSlug) {
@@ -37,9 +36,6 @@ function WaitlistPageContent() {
         
         if (data?.id) {
           setEventId(data.id);
-          if (data.title) {
-            setEventTitle(data.title);
-          }
         }
       } catch (err) {
         console.warn('Could not fetch active published event. Using fallback event ID.', err);
@@ -60,6 +56,7 @@ function WaitlistPageContent() {
 
     try {
       const fullName = `${firstName.trim()} ${lastName.trim()}`;
+      const source = searchParams.get('src') || searchParams.get('utm_source') || 'direct';
       
       const res = await fetch('/api/events/waitlist', {
         method: 'POST',
@@ -71,6 +68,7 @@ function WaitlistPageContent() {
           fullName,
           email,
           phone,
+          source,
         }),
       });
 
@@ -102,7 +100,7 @@ function WaitlistPageContent() {
             Join the Waitlist
           </h1>
           <p className="text-sm text-text-secondary max-w-md mx-auto leading-relaxed">
-            Get 100% free access to <strong className="text-text-primary">{eventTitle}</strong>, build-in-public workshops, and first-in-line access to enrollment.
+            Get 100% free access to our upcoming live build-in-public workshops, starter code templates, and first-in-line access to enrollment.
           </p>
         </div>
 
@@ -116,8 +114,25 @@ function WaitlistPageContent() {
               You're in!
             </h2>
             <p className="text-sm text-text-secondary leading-relaxed mb-6">
-              Congratulations! You have secured your waitlist spot. We will send a confirmation SMS and free workshop details to <strong className="text-text-primary">{phone}</strong> shortly.
+              Congratulations! You have secured your waitlist spot. We have sent a confirmation email with free workshop details to <strong className="text-text-primary">{email}</strong>.
             </p>
+
+            {/* WhatsApp Community Join Button */}
+            <div className="mb-6">
+              <a
+                href="https://chat.whatsapp.com/LtAPH7IPPTg160oJj0REpS?s=cl&p=a&ilr=1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2.5 w-full py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm transition-all shadow-lg hover:shadow-green-500/20 active:scale-[0.99]"
+              >
+                <MessageCircle className="w-5 h-5 fill-current" />
+                Join WhatsApp Community
+              </a>
+              <span className="block text-[11px] text-text-muted mt-2">
+                Join our community to get instant Google Meet invites and free templates.
+              </span>
+            </div>
+
             <div className="space-y-3 text-left bg-bg-canvas/50 p-4 rounded-lg border border-border-brand">
               <div className="flex items-start gap-3">
                 <Laptop className="w-4 h-4 mt-0.5 text-accent-primary" />

@@ -1,0 +1,8 @@
+node_modules
+.next
+.git
+.playwright-mcp
+scratch
+*.wav
+*.mp3
+*.m4a

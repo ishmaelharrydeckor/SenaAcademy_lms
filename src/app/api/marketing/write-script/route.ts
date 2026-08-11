@@ -49,7 +49,7 @@ export async function POST(req: Request) {
 
     // 4. Construct Prompt
     const prompt = `
-You are the Lead Creative Director and Copywriter for Sena Academy. Your task is to resolve a specific student objection by writing three marketing assets:
+You are the Lead Creative Director and Copywriter for Sena Academy. Sena Academy is a coding bootcamp in Ghana that teaches Web Development (Web Dev) and Application Development (App Dev). Your task is to resolve a specific student objection by writing three marketing assets:
 1. A high-retention short-form TikTok video script.
 2. A direct-response email newsletter.
 3. A build-in-public LinkedIn post.

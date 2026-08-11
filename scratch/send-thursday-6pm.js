@@ -153,7 +153,7 @@ async function main() {
     }
 
     fs.writeFileSync(progressFile, JSON.stringify(progress, null, 2));
-    await new Promise(r => setTimeout(r, 1000)); // 1s delay
+    await new Promise(r => setTimeout(r, 300)); // 300ms delay
   }
 
   console.log('\n6PM SMS blast complete.');

@@ -1,0 +1,35 @@
+{
+  "campaignName": "New Leads September Onboarding Sequence",
+  "sender": {
+    "name": "Sena Academy",
+    "email": "support@senaacademy.org"
+  },
+  "whatsappLink": "https://chat.whatsapp.com/LtAPH7IPPTg160oJj0REpS?s=cl&p=a&ilr=1",
+  "guideLink": "https://senaacademy.org/guide",
+  "steps": [
+    {
+      "stepId": "email_a",
+      "delayDays": 0,
+      "title": "Instant Welcome & Free Guide Delivery",
+      "subject": "🎉 You're on the list! Here is your Free AI Guide + WhatsApp Invite"
+    },
+    {
+      "stepId": "email_b",
+      "delayDays": 3,
+      "title": "KNUST Case Study & Google AI Studio",
+      "subject": "How non-coders in Ghana are building software in 48 hours 🇬🇭"
+    },
+    {
+      "stepId": "email_c",
+      "delayDays": 6,
+      "title": "3 Apps Ghanaian Businesses Pay GHS 1,500+ For",
+      "subject": "3 simple tools local businesses desperately need in Accra & Kumasi 💼"
+    },
+    {
+      "stepId": "email_d",
+      "delayDays": -2,
+      "title": "48-Hour Laptop Checklist",
+      "subject": "48 hours until our Free Live Online Workshop (Laptop Checklist) 💻"
+    }
+  ]
+}

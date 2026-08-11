@@ -1,0 +1,43 @@
+{
+  "campaignName": "Cohort 1 Unpaid Waitlist Nurture Sequence",
+  "sender": {
+    "name": "Sena Academy",
+    "email": "support@senaacademy.org"
+  },
+  "whatsappLink": "https://chat.whatsapp.com/LtAPH7IPPTg160oJj0REpS?s=cl&p=a&ilr=1",
+  "guideLink": "https://senaacademy.org/guide",
+  "emails": [
+    {
+      "id": "email_2",
+      "scheduledDate": "2026-08-12T09:00:00Z",
+      "displayDate": "Wednesday, August 12, 2026 @ 9:00 AM GMT",
+      "title": "The Non-Coder Epiphany",
+      "subject": "The real reason traditional coding tutorials felt impossible... 🧠",
+      "status": "scheduled"
+    },
+    {
+      "id": "email_3",
+      "scheduledDate": "2026-08-16T12:00:00Z",
+      "displayDate": "Sunday, August 16, 2026 @ 12:00 PM GMT",
+      "title": "The Client Opportunity in Ghana",
+      "subject": "3 simple web apps Ghanaian businesses will pay GHS 1,500+ for 🇬🇭",
+      "status": "scheduled"
+    },
+    {
+      "id": "email_4",
+      "scheduledDate": "2026-08-20T09:00:00Z",
+      "displayDate": "Thursday, August 20, 2026 @ 9:00 AM GMT",
+      "title": "Free Gift: Non-Coder AI Prompt Guide",
+      "subject": "A free gift for you: The Non-Coder's Guide to AI 🎁",
+      "status": "scheduled"
+    },
+    {
+      "id": "email_5",
+      "scheduledDate": "2026-08-26T09:00:00Z",
+      "displayDate": "Wednesday, August 26, 2026 @ 9:00 AM GMT",
+      "title": "Free Live Online Workshop Date Locked",
+      "subject": "Date confirmed: Free Live Online Build Workshop 🚀",
+      "status": "scheduled"
+    }
+  ]
+}

@@ -104,7 +104,7 @@ async function main() {
   for (let i = 0; i < pendingContacts.length; i++) {
     const contact = pendingContacts[i];
     const firstName = contact.name.split(' ')[0] || 'Builder';
-    const message = `Hi ${firstName}, Ishmael here from Sena Academy. We just sent out access codes to the latest batch of builders who completed their enrollment for the Founding Builders Cohort. The remaining GHS 100 discount slots (regularly GHS 200) are filling up. If you are ready to build with AI starting this Saturday, August 1st, complete your enrollment here: https://senaacademy.org/enroll. You can also join the cohort group here: https://chat.whatsapp.com/FMfa6oY0VhKGriix2EEH9e`;
+    const message = `Hi ${firstName},\n\nIshmael here from Sena Academy.\n\nWe just sent out access codes to the latest batch of builders who completed their enrollment for the Founding Builders Cohort. The remaining GHS 100 discount slots (regularly GHS 200) are filling up.\n\nIf you are ready to build with AI starting this Saturday, August 1st, complete your enrollment here:\nhttps://senaacademy.org/enroll\n\nYou can also join the cohort group here:\nhttps://chat.whatsapp.com/FMfa6oY0VhKGriix2EEH9e`;
 
     // Batch break control
     if (sessionCount >= CONFIG.batchSizeLimit) {
@@ -167,7 +167,13 @@ async function main() {
       // Simulate real typing speeds (20-60ms per character with random intervals)
       const textToType = message;
       for (const char of textToType) {
-        await page.keyboard.sendCharacter(char);
+        if (char === '\n') {
+          await page.keyboard.down('Shift');
+          await page.keyboard.press('Enter');
+          await page.keyboard.up('Shift');
+        } else {
+          await page.keyboard.sendCharacter(char);
+        }
         const typingDelay = Math.floor(Math.random() * 40) + 20; 
         await new Promise(resolve => setTimeout(resolve, typingDelay));
       }

@@ -10,7 +10,7 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRole);
 
 export async function POST(request: NextRequest) {
   try {
-    const { eventId, fullName, email, phone } = await request.json();
+    const { eventId, fullName, email, phone, source: requestSource } = await request.json();
 
     if (!eventId || !fullName || !email || !phone) {
       return NextResponse.json({ error: 'Missing required details' }, { status: 400 });
@@ -45,12 +45,15 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Insert into event_waitlist
+    const cleanEmail = email.toLowerCase().trim();
+    const sourceTag = (requestSource || 'direct').toLowerCase().trim();
+
     const { data: waitlistData, error: waitlistError } = await supabaseAdmin
       .from('event_waitlist')
       .insert({
         event_id: eventId,
         full_name: fullName,
-        email: email.toLowerCase().trim(),
+        email: cleanEmail,
         phone: phone.trim()
       })
       .select()
@@ -59,6 +62,29 @@ export async function POST(request: NextRequest) {
     if (waitlistError) {
       console.error('Failed to join waitlist:', waitlistError.message);
       return NextResponse.json({ error: 'Failed to join waitlist. Database error.' }, { status: 500 });
+    }
+
+    // 2b. Track source in Upstash Redis KV if configured
+    if (process.env.harry_KV_REST_API_URL && process.env.harry_KV_REST_API_TOKEN) {
+      try {
+        await fetch(`${process.env.harry_KV_REST_API_URL}/set/lead_source:${cleanEmail}`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${process.env.harry_KV_REST_API_TOKEN}`,
+          },
+          body: sourceTag,
+        });
+
+        // Increment counter
+        await fetch(`${process.env.harry_KV_REST_API_URL}/incr/leads_count:${sourceTag}`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${process.env.harry_KV_REST_API_TOKEN}`,
+          },
+        });
+      } catch (kvErr) {
+        console.warn('Could not record lead source in KV:', kvErr);
+      }
     }
 
     // 3. Send automated waitlist confirmation email
