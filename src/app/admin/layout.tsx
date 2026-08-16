@@ -14,7 +14,8 @@ import {
   Menu,
   X,
   Sun,
-  Moon
+  Moon,
+  Mail
 } from 'lucide-react';
 import Link from 'next/link';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
@@ -54,6 +55,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const navLinks = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Marketing OS', href: '/admin/marketing', icon: FileSpreadsheet },
+    { name: 'Communications', href: '/admin/communications', icon: Mail },
   ];
 
   return (

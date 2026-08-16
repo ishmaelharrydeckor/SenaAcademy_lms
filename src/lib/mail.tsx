@@ -7,6 +7,7 @@ import { FacilitatorOnboardingEmail } from '../../emails/FacilitatorOnboardingEm
 import { EventRegistrationEmail } from '../../emails/EventRegistrationEmail';
 import { EventReminderEmail } from '../../emails/EventReminderEmail';
 import { EventWaitlistEmail } from '../../emails/EventWaitlistEmail';
+import { EmailLayout } from '../../emails/EmailLayout';
 
 // Initialize Resend SDK lazily to prevent errors at import/build time
 let resendClient: Resend | null = null;
@@ -364,3 +365,22 @@ export async function sendEventWaitlistEmail(
     return { success: false, error: err };
   }
 }
+
+/**
+ * Sends a generic styled marketing or administrative email broadcast.
+ */
+export async function sendBroadcastEmail(
+  toEmail: string,
+  subject: string,
+  previewText: string,
+  htmlContent: string
+): Promise<{ success: boolean; messageId?: string; error?: any }> {
+  return sendMail(
+    toEmail,
+    subject,
+    <EmailLayout previewText={previewText} email={toEmail}>
+      <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+    </EmailLayout>
+  );
+}
+
