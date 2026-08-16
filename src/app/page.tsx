@@ -91,8 +91,31 @@ export default function LandingPage() {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
 
-  // Navigation redirect if already logged in
+  // Redirect to reset-password if landing page gets recovery tokens/codes (due to default Supabase redirect url config)
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      const searchParams = new URLSearchParams(window.location.search);
+      const isRecovery = hash.includes('type=recovery') || hash.includes('access_token=') || searchParams.has('code');
+      
+      if (isRecovery) {
+        const targetUrl = `/reset-password${window.location.search}${window.location.hash}`;
+        router.replace(targetUrl);
+      }
+    }
+  }, [router]);
+
+  // Navigation redirect if already logged in (ignore during recovery flow)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      const searchParams = new URLSearchParams(window.location.search);
+      const isRecovery = hash.includes('type=recovery') || hash.includes('access_token=') || searchParams.has('code');
+      if (isRecovery) {
+        return;
+      }
+    }
+
     if (user && profile) {
       if (profile.role === 'admin') router.replace('/admin');
       else if (profile.role === 'facilitator') router.replace('/facilitator');
