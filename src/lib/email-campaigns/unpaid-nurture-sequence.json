@@ -13,7 +13,8 @@
       "displayDate": "Wednesday, August 12, 2026 @ 9:00 AM GMT",
       "title": "The Non-Coder Epiphany",
       "subject": "The real reason traditional coding tutorials felt impossible... 🧠",
-      "status": "scheduled"
+      "status": "sent",
+      "sentAt": "2026-08-12T13:52:28.943Z"
     },
     {
       "id": "email_3",

@@ -8,8 +8,8 @@ const arkeselSenderMatch = envContent.match(/ARKESEL_SENDER_ID\s*=\s*(.*)/);
 const apiKey = arkeselKeyMatch ? arkeselKeyMatch[1].trim().replace(/^['"]|['"]$/g, '') : '';
 const senderId = arkeselSenderMatch ? arkeselSenderMatch[1].trim().replace(/^['"]|['"]$/g, '') : 'SenaAcademy';
 
-// EXACT CLEAN MESSAGE (156 characters • 1 SMS credit • No brackets)
-const message = "Hi, Ishmael here. We're hosting a Free Live Online Build Workshop in Sept for non-coders in Ghana. Reserve your free spot: senaacademy.org/waitlist?src=sms";
+// HORMOZI OUTCOME-FIRST MESSAGE — Version 4 (143 chars • Single SMS page • Waitlist destination)
+const message = "Local businesses in Ghana pay GHS 900-2,500 for websites. Free workshop: build one with AI in 60 mins. No coding. 30 spots. September: https://bit.ly/4g3aydK";
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -19,14 +19,38 @@ async function dispatchCustomBatch(batchType) {
   let batchFile = '';
   let batchLabel = '';
 
+  let sliceRange = null;
+
   if (batchType === 'batch3') {
     batchFile = path.join(__dirname, 'batch-3-contacts.json');
-    batchLabel = 'WEDNESDAY BATCH #3 (1,557 Contacts)';
+    batchLabel = 'BATCH #3 — Hormozi Retarget (Waitlist)';
+  } else if (batchType === 'batch4_morning') {
+    batchFile = path.join(__dirname, 'batch-4-contacts.json');
+    sliceRange = [0, 778];
+    batchLabel = 'BATCH #4 MORNING (Part 1 of 2: 778 Contacts → Waitlist)';
+  } else if (batchType === 'batch4_evening') {
+    batchFile = path.join(__dirname, 'batch-4-contacts.json');
+    sliceRange = [778];
+    batchLabel = 'BATCH #4 EVENING (Part 2 of 2: 779 Contacts → Waitlist)';
+  } else if (batchType === 'batch4') {
+    batchFile = path.join(__dirname, 'batch-4-contacts.json');
+    batchLabel = 'BATCH #4 FULL (1,557 Contacts → Waitlist)';
+  } else if (batchType === 'batch5_morning') {
+    batchFile = path.join(__dirname, 'batch-5-contacts.json');
+    sliceRange = [0, 778];
+    batchLabel = 'BATCH #5 MORNING (Part 1 of 2: 778 Contacts → Waitlist)';
+  } else if (batchType === 'batch5_evening') {
+    batchFile = path.join(__dirname, 'batch-5-contacts.json');
+    sliceRange = [778];
+    batchLabel = 'BATCH #5 EVENING (Part 2 of 2: 779 Contacts → Waitlist)';
+  } else if (batchType === 'batch5') {
+    batchFile = path.join(__dirname, 'batch-5-contacts.json');
+    batchLabel = 'BATCH #5 FULL (1,557 Contacts → Waitlist)';
   } else if (batchType === 'batch1_resend') {
     batchFile = path.join(__dirname, 'batch-1-non-signups.json');
-    batchLabel = 'BATCH #1 NON-SIGNUPS RETARGET (1,773 Contacts)';
+    batchLabel = 'BATCH #1 NON-SIGNUPS RETARGET (1,773 Contacts → Waitlist)';
   } else {
-    console.error('Usage: node scratch/send-custom-sms-batch.js [batch3 | batch1_resend]');
+    console.error('Usage: node scratch/send-custom-sms-batch.js [batch4_morning | batch4_evening | batch4 | batch5_morning | batch5_evening | batch5 | batch1_resend]');
     process.exit(1);
   }
 
@@ -35,7 +59,10 @@ async function dispatchCustomBatch(batchType) {
     process.exit(1);
   }
 
-  const recipients = JSON.parse(fs.readFileSync(batchFile, 'utf8'));
+  let recipients = JSON.parse(fs.readFileSync(batchFile, 'utf8'));
+  if (sliceRange) {
+    recipients = sliceRange.length === 2 ? recipients.slice(sliceRange[0], sliceRange[1]) : recipients.slice(sliceRange[0]);
+  }
   console.log(`\n========================================`);
   console.log(`🚀 LAUNCHING SMS BROADCAST: ${batchLabel}`);
   console.log(`Total Recipients: ${recipients.length}`);
@@ -94,5 +121,9 @@ async function dispatchCustomBatch(batchType) {
   console.log(`========================================\n`);
 }
 
-const arg = process.argv[2] || 'batch3';
+const arg = process.argv[2];
+if (!arg) {
+  console.log('Usage: node scratch/send-custom-sms-batch.js <batch4_morning | batch4_evening | batch4 | batch5_morning | batch5_evening | batch5 | batch1_resend>');
+  process.exit(0);
+}
 dispatchCustomBatch(arg).catch(err => console.error(err));

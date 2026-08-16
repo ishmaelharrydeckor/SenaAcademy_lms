@@ -20,12 +20,37 @@ export default function ResetPasswordPage() {
   const [resetCompleted, setResetCompleted] = useState(false);
   const [checkingHash, setCheckingHash] = useState(true);
 
-  // Parse URL hash for access token to prevent flashing expired link
+  // Parse URL hash or search params for access token or code to prevent flashing expired link
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash;
       const searchParams = new URLSearchParams(window.location.search);
+      const code = searchParams.get('code');
       
+      // If there's an error param in query or hash, immediately stop checking
+      if (searchParams.has('error') || hash.includes('error=')) {
+        setTimeout(() => setCheckingHash(false), 0);
+        return;
+      }
+      
+      // If we see a PKCE code in query params, exchange it for a session
+      if (code) {
+        supabase.auth.exchangeCodeForSession(code)
+          .then(({ error }) => {
+            if (error) {
+              console.error('Error exchanging PKCE code:', error.message);
+              setValidationError(error.message);
+            }
+            setCheckingHash(false);
+          })
+          .catch((err: unknown) => {
+            console.error('Exception exchanging PKCE code:', err);
+            setValidationError('Failed to authenticate with authorization code.');
+            setCheckingHash(false);
+          });
+        return;
+      }
+
       // If we see an access token in the URL hash, wait up to 1.5 seconds for Supabase Auth to process it
       if (hash.includes('access_token=') || hash.includes('id_token=')) {
         const timer = setTimeout(() => {
@@ -34,14 +59,8 @@ export default function ResetPasswordPage() {
         return () => clearTimeout(timer);
       }
       
-      // If there's an error param in query or hash, immediately stop checking
-      if (searchParams.has('error') || hash.includes('error=')) {
-        setCheckingHash(false);
-        return;
-      }
-      
       // Otherwise immediately stop checking
-      setCheckingHash(false);
+      setTimeout(() => setCheckingHash(false), 0);
     }
   }, []);
 
@@ -63,7 +82,7 @@ export default function ResetPasswordPage() {
           } else {
             router.push('/student');
           }
-        } catch (err) {
+        } catch {
           router.push('/');
         }
       };
@@ -99,10 +118,11 @@ export default function ResetPasswordPage() {
 
       showToast('Password Updated', 'Your new password has been saved successfully.', 'success');
       setResetCompleted(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to update password.';
       console.error('Password reset failed:', err);
-      setValidationError(err.message || 'Failed to update password.');
-      showToast('Update Failed', err.message || 'Error updating password', 'error');
+      setValidationError(errorMsg);
+      showToast('Update Failed', errorMsg, 'error');
     } finally {
       setSubmitting(false);
     }
