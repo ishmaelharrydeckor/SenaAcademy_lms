@@ -22,7 +22,8 @@
       "displayDate": "Sunday, August 16, 2026 @ 12:00 PM GMT",
       "title": "The Client Opportunity in Ghana",
       "subject": "3 simple web apps Ghanaian businesses will pay GHS 1,500+ for 🇬🇭",
-      "status": "scheduled"
+      "status": "sent",
+      "sentAt": "2026-08-17T12:35:48.020Z"
     },
     {
       "id": "email_4",
@@ -30,7 +31,8 @@
       "displayDate": "Thursday, August 20, 2026 @ 9:00 AM GMT",
       "title": "Free Gift: Non-Coder AI Prompt Guide",
       "subject": "A free gift for you: The Non-Coder's Guide to AI 🎁",
-      "status": "scheduled"
+      "status": "sent",
+      "sentAt": "2026-08-22T11:16:13.255Z"
     },
     {
       "id": "email_5",
@@ -38,7 +40,8 @@
       "displayDate": "Wednesday, August 26, 2026 @ 9:00 AM GMT",
       "title": "Free Live Online Workshop Date Locked",
       "subject": "Date confirmed: Free Live Online Build Workshop 🚀",
-      "status": "scheduled"
+      "status": "sent",
+      "sentAt": "2026-08-26T09:00:00.000Z"
     }
   ]
 }

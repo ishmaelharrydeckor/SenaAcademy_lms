@@ -120,13 +120,11 @@ export async function GET(request: NextRequest) {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const now = new Date();
 
-    // Check Email #5 trigger (August 26 @ 9:00 AM GMT)
-    const email5Scheduled = new Date('2026-08-26T09:00:00Z');
-    const email5SentTag = 'campaign_sent:email_5';
-    const isEmail5Sent = await kvGet(email5SentTag);
+    // Email #5 has already been delivered on August 26. Lock to prevent any re-triggers.
+    const isEmail5Sent = true;
 
-    if (now >= email5Scheduled && !isEmail5Sent) {
-      actions.push('Executing Email #5 Master Broadcast...');
+    if (!isEmail5Sent) {
+      actions.push('Email #5 already sent.');
 
       // 1. Fetch paid emails to exclude
       const { data: payments } = await supabase.from('payments').select('email').eq('status', 'success');
